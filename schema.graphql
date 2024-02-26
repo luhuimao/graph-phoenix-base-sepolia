@@ -569,6 +569,7 @@ type VintageFundingProposalInfo @entity{
   proposalExecuteTimestamp: BigInt! # uint256
   creationTime: BigInt
   createDateTime: String!
+  executeBlockNum: BigInt
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -735,6 +736,8 @@ type VintageEscrowFundEntity @entity{
   finalRaisedFromWei: String!
   fundRaisedSucceed:Boolean!
   succeedFundRound: BigInt! # uint256
+  myRedemptionAmount: BigInt
+  myInvestmentAmount: BigInt
 }
 
 type VintageFreeInEscrowFundEntity @entity{
@@ -827,4 +830,20 @@ type VintageFundRaiseEntity @entity{
   fundInvested: BigInt! # uint256
   fundInvestedFromWei: String!
   fundedVentures: BigInt! # uint256
+}
+
+type VintageInvestorInvestmentEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundRound: BigInt!
+  investor: Bytes! # address
+  investedAmount: BigInt!
+}
+
+type VintageInvestorRedemptionsInFundRoundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundRound: BigInt!
+  investor: Bytes! # address
+  redemptionAmount: BigInt!
 }

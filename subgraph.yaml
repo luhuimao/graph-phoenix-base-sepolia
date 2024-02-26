@@ -114,6 +114,10 @@ dataSources:
           file: ./abis/VintageFundRaiseAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: VintageFundingPoolAdapterContract
+          file: ./abis/VintageFundingPoolAdapterContract.json
+        - name: VintageFundingPoolExtension
+          file: ./abis/VintageFundingPoolExtension.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32)
           handler: handleProposalCreated

@@ -13,14 +13,18 @@ import {
     VintageFundingAdapterContract
 } from "../generated/VintageFundingAdapterContract/VintageFundingAdapterContract";
 import { VintageFundRaiseAdapterContract } from "../generated/VintageFundRaiseAdapterContract/VintageFundRaiseAdapterContract";
+import { VintageFundingPoolAdapterContract } from "../generated/VintageFundingAdapterContract/VintageFundingPoolAdapterContract";
 import { DaoRegistry } from "../generated/VintageFundingAdapterContract/DaoRegistry";
+import { VintageFundingPoolExtension } from "../generated/VintageFundingAdapterContract/VintageFundingPoolExtension";
 import {
     VintageFundingProposalInfo,
     VintageFundRoundToNewFundProposalId,
     VintageDaoStatistic,
     VintageProposalVoteInfo,
     VintageFundRoundStatistic,
-    VintageFundRaiseEntity
+    VintageFundRaiseEntity,
+    VintageEscrowFundEntity,
+    VintageInvestorInvestmentEntity
 } from "../generated/schema"
 import { bigInt, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
 
@@ -76,6 +80,15 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
 }
 
 export function handleProposalExecuted(event: ProposalExecutedEvent): void {
+    const daoContract = DaoRegistry.bind(event.params.daoAddr);
+    const fundingPoolContractAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892"));
+    const fundingPoolAdapt = VintageFundingPoolAdapterContract.bind(fundingPoolContractAddress);
+
+    const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"))
+    const fundingPoolExtContr = VintageFundingPoolExtension.bind(fundingPoolExtAddress)
+
+    const vintageFundingContract = VintageFundingAdapterContract.bind(event.address);
+    const proposalInfo = vintageFundingContract.proposals(event.params.daoAddr, event.params.proposalID);
     let proposalEntity = VintageFundingProposalInfo.load(event.params.proposalID.toHexString())
     // log.error("funding proposal state: {}", [event.params.state.toString()]);
     if (proposalEntity) {
@@ -86,6 +99,7 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
 
         proposalEntity.state = BigInt.fromI32(vintageFundingProposalInfo.getStatus());
         proposalEntity.proposalExecuteTimestamp = event.block.timestamp;
+        proposalEntity.executeBlockNum = proposalInfo.getExecuteBlockNum();
         proposalEntity.save();
 
         if (proposalEntity.state == BigInt.fromI32(3)) {
@@ -142,6 +156,39 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                     fundRaiseEntity.save();
                 }
             }
+            log.error("currentFundRound {}", [currentFundRound.toString()]);
+            const investors = fundingPoolAdapt.try_getFundInvestors(event.params.daoAddr, currentFundRound);
+            if (!investors.reverted && investors.value.length > 0) {
+                log.error("investors: {}", [investors.value.toString()]);
+
+                for (var i = 0; i < investors.value.length; i++) {
+                    const bal1 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.fundingToken), proposalInfo.getExecuteBlockNum().minus(BigInt.fromI32(1)));
+                    // const bal2 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.fundingToken), proposalInfo.getExecuteBlockNum());
+                    const bal2 = fundingPoolAdapt.balanceOf(event.params.daoAddr, investors.value[i]);
+                    if (!bal1.reverted) {
+                        log.error("prior value1: {}", [bal1.value.toString()]);
+                        log.error("prior value2: {}", [bal2.toString()]);
+                        const investedAmount = bal1.value.minus(bal2);
+                        log.error("investedAmount: {}", [investedAmount.toString()]);
+                        let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(event.params.daoAddr.toHexString() + currentFundRound.toHexString() + investors.value[i].toHexString());
+                        // let escrowFundEntity = VintageEscrowFundEntity.load(event.params.daoAddr.toHexString() + investors.value[i].toHexString() + currentFundRound.toHexString());
+                        if (!investorInvestmentEntity) {
+                            investorInvestmentEntity = new VintageInvestorInvestmentEntity(
+                                event.params.daoAddr.toHexString()
+                                + currentFundRound.toHexString() +
+                                investors.value[i].toHexString()
+                            );
+                            investorInvestmentEntity.daoAddr = event.params.daoAddr;
+                            investorInvestmentEntity.fundRound = currentFundRound;
+                            investorInvestmentEntity.investor = investors.value[i];
+                            investorInvestmentEntity.investedAmount = BigInt.fromI32(0);
+                        }
+                        investorInvestmentEntity.investedAmount = investorInvestmentEntity.investedAmount.plus(investedAmount);
+                        investorInvestmentEntity.save();
+                    }
+                }
+
+            }
         }
     }
 }
@@ -161,4 +208,3 @@ export function handleStartVote(event: handleStartVoteEvent): void {
     }
 }
 
-export function donothing(): void { }

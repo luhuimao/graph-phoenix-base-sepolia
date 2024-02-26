@@ -30,7 +30,8 @@ import {
     VintageFundRoundStatistic,
     VintageSuccessedFundCounter,
     VintageFundRoundToNewFundProposalId,
-    VintageFundRaiseEntity
+    VintageFundRaiseEntity,
+    VintageInvestorRedemptionsInFundRoundEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -199,6 +200,30 @@ export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
     entity.timeStamp = event.block.timestamp;
     entity.txHash = event.transaction.hash;
     entity.save();
+
+    const daoContract = DaoRegistry.bind(event.params.dao);
+    const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
+    const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
+    const createdNewFundId = vintageNewFundCont.createdFundCounter(event.params.dao);
+
+    let redemptionsInFundRoundEntity = VintageInvestorRedemptionsInFundRoundEntity.load(
+        event.params.dao.toHexString() +
+        createdNewFundId.toHexString() +
+        event.params.account.toHexString()
+    );
+    if (!redemptionsInFundRoundEntity) {
+        redemptionsInFundRoundEntity = new VintageInvestorRedemptionsInFundRoundEntity(
+            event.params.dao.toHexString() +
+            createdNewFundId.toHexString() +
+            event.params.account.toHexString()
+        );
+        redemptionsInFundRoundEntity.daoAddr = event.params.dao;
+        redemptionsInFundRoundEntity.fundRound = createdNewFundId;
+        redemptionsInFundRoundEntity.investor = event.params.account;
+        redemptionsInFundRoundEntity.redemptionAmount = BigInt.fromI32(0);
+    }
+    redemptionsInFundRoundEntity.redemptionAmount = redemptionsInFundRoundEntity.redemptionAmount.plus(event.params.redempAmount);
+    redemptionsInFundRoundEntity.save();
 }
 
 export function handleProcessFundRaise(event: ProcessFundRaise): void {

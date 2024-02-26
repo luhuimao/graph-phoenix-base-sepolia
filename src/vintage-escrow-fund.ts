@@ -9,7 +9,7 @@
 // import { BigInt } from "@graphprotocol/graph-ts"
 // import { EnsResolver } from "ethers"
 // import { EventLog } from "ethers/types/contract"
-import { BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, bigInt } from "@graphprotocol/graph-ts";
 import {
     EscrowFund as EscorwFundEvent,
     WithDraw as WithDrawEvent
@@ -18,7 +18,9 @@ import {
     VintageEscrowFundEntity,
     VintageFundRoundToNewFundProposalId,
     VintageNewFundProposal,
-    VintageFundRoundStatistic
+    VintageFundRoundStatistic,
+    VintageInvestorInvestmentEntity,
+    VintageInvestorRedemptionsInFundRoundEntity
 } from "../generated/schema"
 
 
@@ -72,6 +74,29 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.finalRaised = finalraised;
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.succeedFundRound = BigInt.fromI32(0);
+
+    let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(
+        event.params.dao.toHexString()
+        + event.params.fundRound.toHexString() +
+        event.params.account.toHexString());
+
+    if (investorInvestmentEntity) {
+        entity.myInvestmentAmount = investorInvestmentEntity.investedAmount;
+    } else {
+        entity.myInvestmentAmount = BigInt.fromI32(0);
+    }
+
+    let redemptionsInFundRoundEntity = VintageInvestorRedemptionsInFundRoundEntity.load(
+        event.params.dao.toHexString() +
+        event.params.fundRound.toHexString() +
+        event.params.account.toHexString()
+    );
+    if (redemptionsInFundRoundEntity) {
+        entity.myRedemptionAmount = redemptionsInFundRoundEntity.redemptionAmount;
+    } else {
+        entity.myRedemptionAmount = BigInt.fromI32(0);
+    }
+
     if (finalraised >= minfundgoal)
         entity.fundRaisedSucceed = true;
     else entity.fundRaisedSucceed = false;
