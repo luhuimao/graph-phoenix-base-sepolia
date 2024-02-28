@@ -163,9 +163,9 @@ dataSources:
     name: VintageVesting
     network: base-sepolia
     source:
-      address: "0xb894560E51dB39c906238b13E84b1822C1e0D604"
+      address: "0x8F7754369E1E84538649d6f4841eE5Ef8b211B7e"
       abi: VintageVesting
-      startBlock: 6313435
+      startBlock: 6663075
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -371,9 +371,9 @@ dataSources:
     name: FlexVesting
     network: base-sepolia
     source:
-      address: "0x7d79Dc1E9d7f170697D39c2004b527BfD958760D"
+      address: "0x42F01f3Eb0573A35193e43995108D4BAdfF40b34"
       abi: FlexVesting
-      startBlock: 6313156
+      startBlock: 6663073
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

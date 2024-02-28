@@ -393,6 +393,15 @@ type FlexDaosetProposal @entity{
   flexDaoEntity: FlexDaoEntity
 }
 
+type FlexVestingClaimedActivityEntity @entity{
+  id: ID!
+  vestId: BigInt!
+  timeStamp: BigInt!
+  account: Bytes! # address
+  txHash: Bytes!
+  claimedAmount: BigInt!
+}
+
 type VintageDaoEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
@@ -846,4 +855,13 @@ type VintageInvestorRedemptionsInFundRoundEntity @entity{
   fundRound: BigInt!
   investor: Bytes! # address
   redemptionAmount: BigInt!
+}
+
+type VintageVestingClaimedActivityEntity @entity{
+  id: ID!
+  vestId: BigInt!
+  timeStamp: BigInt!
+  account: Bytes! # address
+  txHash: Bytes!
+  claimedAmount: BigInt!
 }

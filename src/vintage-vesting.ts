@@ -16,7 +16,7 @@ import {
     Withdraw
 } from "../generated/VintageVesting/VintageVesting";
 import { VintageVestingERC721, Transfer } from "../generated/VintageVestingERC721/VintageVestingERC721";
-import { VintageVestEntity, VintageUserVestInfo } from "../generated/schema"
+import { VintageVestEntity, VintageUserVestInfo, VintageVestingClaimedActivityEntity } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = VintageVestEntity.load(event.params.vestId.toString())
@@ -67,6 +67,17 @@ export function handleWithdraw(event: Withdraw): void {
         entity.claimedAmount = entity.claimedAmount.plus(event.params.amount);
         entity.save();
     }
+
+    let claimedEntity = VintageVestingClaimedActivityEntity.load(event.transaction.hash.toHexString());
+    if (!claimedEntity) {
+        claimedEntity = new VintageVestingClaimedActivityEntity(event.transaction.hash.toHexString());
+        claimedEntity.account = event.transaction.from;
+        claimedEntity.claimedAmount = event.params.amount;
+        claimedEntity.vestId = event.params.vestId;
+        claimedEntity.txHash = event.transaction.hash;
+        claimedEntity.timeStamp = event.block.timestamp;
+    }
+    claimedEntity.save();
 }
 
 

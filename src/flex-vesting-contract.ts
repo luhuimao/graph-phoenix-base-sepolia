@@ -17,7 +17,8 @@ import {
 } from "../generated/FlexVesting/FlexVesting"
 
 import { FlexVestingERC721, Transfer } from "../generated/FlexVestingERC721/FlexVestingERC721";
-import { FlexVestEntity, FlexUserVestInfo } from "../generated/schema"
+import { FlexVestEntity, FlexUserVestInfo, FlexVestingClaimedActivityEntity } from "../generated/schema"
+// import { calendarFormat } from "moment";
 
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = FlexVestEntity.load(event.params.vestId.toString())
@@ -80,6 +81,17 @@ export function handleWithdraw(event: Withdraw): void {
         entity.claimedAmount = entity.claimedAmount.plus(event.params.amount);
         entity.save();
     }
+
+    let claimedEntity = FlexVestingClaimedActivityEntity.load(event.transaction.hash.toHexString());
+    if (!claimedEntity) {
+        claimedEntity = new FlexVestingClaimedActivityEntity(event.transaction.hash.toHexString());
+        claimedEntity.account = event.transaction.from;
+        claimedEntity.claimedAmount = event.params.amount;
+        claimedEntity.vestId = event.params.vestId;
+        claimedEntity.txHash = event.transaction.hash;
+        claimedEntity.timeStamp = event.block.timestamp;
+    }
+    claimedEntity.save();
 }
 
 export function handleERC721Transfer(event: Transfer): void {
