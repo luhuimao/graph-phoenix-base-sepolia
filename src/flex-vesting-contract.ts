@@ -15,9 +15,9 @@ import {
     LogUpdateOwner,
     Withdraw
 } from "../generated/FlexVesting/FlexVesting"
-
+// import { FlexFundingAdapterContract } from "../generated/FlexVesting/FlexFundingAdapterContract"
 import { FlexVestingERC721, Transfer } from "../generated/FlexVestingERC721/FlexVestingERC721";
-import { FlexVestEntity, FlexUserVestInfo, FlexVestingClaimedActivityEntity } from "../generated/schema"
+import { FlexVestEntity, FlexUserVestInfo, FlexVestingClaimedActivityEntity, FlexFundingProposal } from "../generated/schema"
 // import { calendarFormat } from "moment";
 
 export function handleCreateVesting(event: CreateVesting): void {
@@ -64,12 +64,22 @@ export function handleCreateVesting(event: CreateVesting): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    let userVestInfo = FlexUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
-    if (userVestInfo) {
-        userVestInfo.created = true;
-        userVestInfo.save();
-    }
+    let flexFundingProposalEntity = FlexFundingProposal.load(event.params.proposalId.toHexString());
 
+    let flexUserVestInfo = FlexUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
+    if (!flexUserVestInfo) {
+        flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
+        flexUserVestInfo.daoAddr =
+            flexUserVestInfo.fundingProposalId = event.params.proposalId;
+        flexUserVestInfo.recipient = event.params.recipient;
+        flexUserVestInfo.vestingStartTime = event.params.start;
+        flexUserVestInfo.vestingCliffEndTime = flexFundingProposalEntity ? flexFundingProposalEntity.vestingCliffEndTime : BigInt.fromI32(0);
+        flexUserVestInfo.vestingInterval = flexFundingProposalEntity ? flexFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
+        flexUserVestInfo.vestingEndTime = flexFundingProposalEntity ? flexFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
+        flexUserVestInfo.totalAmount = flexFundingProposalEntity ? flexFundingProposalEntity.returnTokenAmount : BigInt.fromI32(0);
+    }
+    flexUserVestInfo.created = true;
+    flexUserVestInfo.save();
 }
 
 

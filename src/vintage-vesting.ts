@@ -7,7 +7,7 @@
  * @LastEditTime: 2023-08-09 15:38:08
  */
 
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     VintageVesting,
     CancelVesting,
@@ -16,7 +16,10 @@ import {
     Withdraw
 } from "../generated/VintageVesting/VintageVesting";
 import { VintageVestingERC721, Transfer } from "../generated/VintageVestingERC721/VintageVestingERC721";
-import { VintageVestEntity, VintageUserVestInfo, VintageVestingClaimedActivityEntity } from "../generated/schema"
+import {
+    VintageVestEntity, VintageUserVestInfo, VintageVestingClaimedActivityEntity,
+    VintageFundingProposalInfo
+} from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = VintageVestEntity.load(event.params.vestId.toString())
@@ -52,12 +55,24 @@ export function handleCreateVesting(event: CreateVesting): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
+    let vintageFundingProposalEntity = VintageFundingProposalInfo.load(event.params.proposalId.toHexString())
+
     let userVestInfo = VintageUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
-    if (userVestInfo) {
-        userVestInfo.created = true;
-        userVestInfo.save();
+    if (!userVestInfo) {
+        userVestInfo = new VintageUserVestInfo(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
+        userVestInfo.daoAddr = vintageFundingProposalEntity ? vintageFundingProposalEntity.daoAddress : Bytes.fromHexString("0x");
+        userVestInfo.fundingProposalId = event.params.proposalId;
+        userVestInfo.recipient = event.params.recipient;
+        userVestInfo.vestingStartTime = event.params.start;
+        userVestInfo.vestingCliffEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingCliffEndTime : BigInt.fromI32(0);
+        userVestInfo.vestingInterval = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
+        userVestInfo.vestingEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vetingEndTime : BigInt.fromI32(0);
+        userVestInfo.totalAmount = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackTokenAmount : BigInt.fromI32(0);
+        userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
     }
 
+    userVestInfo.created = true;
+    userVestInfo.save();
 }
 
 

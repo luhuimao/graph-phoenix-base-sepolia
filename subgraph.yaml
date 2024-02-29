@@ -384,6 +384,8 @@ dataSources:
       abis:
         - name: FlexVesting
           file: ./abis/FlexVesting.json
+        - name: FlexFundingAdapterContract
+          file: ./abis/FlexFundingAdapterContract.json
       eventHandlers:
         - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128,bytes32)
           handler: handleCreateVesting
