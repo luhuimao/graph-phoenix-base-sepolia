@@ -58,6 +58,7 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.daoAddr = event.params.dao;
     entity.newFundProposalId = newFundProposalId;
     entity.account = event.params.account;
+
     // entity.fundRound = event.params.fundRound;
     entity.token = event.params.token;
     entity.createTimeStamp = event.block.timestamp;
@@ -67,6 +68,8 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.amount = event.params.amount;
     entity.amountFromWei = entity.amount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.withdrawTxHash = Bytes.empty();
+    entity.escrowBlockNum = event.block.number;
+    entity.fundRound = event.params.fundRound;
     // entity.minFundGoal = minfundgoal;
     // entity.minFundGoalFromWei = entity.minFundGoal.div(BigInt.fromI64(10 ** 18)).toString();
     // entity.finalRaised = finalraised;

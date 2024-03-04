@@ -762,6 +762,8 @@ type VintageFreeInEscrowFundEntity @entity{
    withdrawTimeStamp: BigInt! # uint256
    withdrawDateTime: String!
    withdrawTxHash: Bytes! # address
+   escrowBlockNum: BigInt!
+   fundRound: BigInt!
 }
 
 type VintageFundRoundStatistic @entity{
