@@ -223,6 +223,10 @@ dataSources:
       abis:
         - name: VintageEscrowFundAdapterContract
           file: ./abis/VintageEscrowFundAdapterContract.json
+        - name: VintageFundingPoolExtension
+          file: ./abis/VintageFundingPoolExtension.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
       eventHandlers:
         - event: WithDraw(address,uint256,address,address,uint256)
           handler: handleWithDraw
@@ -245,6 +249,10 @@ dataSources:
       abis:
         - name: VintageFreeInEscrowFundAdapterContract
           file: ./abis/VintageFreeInEscrowFundAdapterContract.json
+        - name: VintageFundingPoolExtension
+          file: ./abis/VintageFundingPoolExtension.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
       eventHandlers:
         - event: WithDraw(address,uint256,address,address,uint256)
           handler: handleWithDraw
@@ -344,7 +352,7 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0x4c30AA413304ff440783a80663e64852DAec5D3E"
+      address: "0xE3aC90d9aC6ed9074de8CaabF234E5E0a1c308Bc"
       abi: FlexFundingAdapterContract
       startBlock: 6313019
     mapping:

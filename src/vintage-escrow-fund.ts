@@ -14,6 +14,8 @@ import {
     EscrowFund as EscorwFundEvent,
     WithDraw as WithDrawEvent
 } from "../generated/vintageEscrowFundAdapterContract/vintageEscrowFundAdapterContract"
+import { VintageFundingPoolExtension } from "../generated/VintageEscrowFundAdapterContract/VintageFundingPoolExtension";
+import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
     VintageEscrowFundEntity,
     VintageFundRoundToNewFundProposalId,
@@ -32,14 +34,16 @@ export function handleWithDraw(event: WithDrawEvent): void {
         entity.withdrawTimeStamp = event.block.timestamp;
         entity.withdrawDateTime = new Date(entity.withdrawTimeStamp.toI64() * 1000).toISOString();
         entity.withdrawTxHash = event.transaction.hash;
-
+        entity.myWithdraw = event.params.amount;
         entity.save();
     }
 }
 
 export function handleEscrowFund(event: EscorwFundEvent): void {
     let entity = VintageEscrowFundEntity.load(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.fundRound.toHexString());
-
+    const dao = DaoRegistry.bind(event.params.dao);
+    const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
+    const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
     if (!entity) {
         entity = new VintageEscrowFundEntity(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.fundRound.toHexString());
     }
@@ -74,6 +78,13 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.finalRaised = finalraised;
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.succeedFundRound = BigInt.fromI32(0);
+    entity.escrowBlockNum = event.block.number;
+
+    // entity.myAdvanceDepositAmount = vintageFundingPoolExt.getPriorAmount(event.params.account,
+    //     event.params.token, event.block.number.minus(BigInt.fromI32(1)));
+
+    // entity.myConfirmedDepositAmount = vintageFundingPoolExt.getPriorAmount(event.params.account,
+    //     event.params.token, event.block.number);
 
     let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(
         event.params.dao.toHexString()

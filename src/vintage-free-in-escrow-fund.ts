@@ -13,7 +13,10 @@ import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
     EscrowFund as EscorwFundEvent,
     WithDraw as WithDrawEvent
-} from "../generated/vintageEscrowFundAdapterContract/vintageEscrowFundAdapterContract"
+} from "../generated/vintageEscrowFundAdapterContract/vintageEscrowFundAdapterContract";
+
+import { DaoRegistry } from "../generated/VintageFreeInEscrowFundAdapterContract/DaoRegistry";
+import { VintageFundingPoolExtension } from "../generated/VintageFreeInEscrowFundAdapterContract/VintageFundingPoolExtension";
 import {
     VintageFreeInEscrowFundEntity,
     VintageFundRoundToNewFundProposalId,
@@ -30,12 +33,19 @@ export function handleWithDraw(event: WithDrawEvent): void {
         entity.withdrawTimeStamp = event.block.timestamp;
         entity.withdrawDateTime = new Date(entity.withdrawTimeStamp.toI64() * 1000).toISOString();
         entity.withdrawTxHash = event.transaction.hash;
+        entity.myWithdraw = event.params.amount;
 
         entity.save();
     }
 }
 
 export function handleEscrowFund(event: EscorwFundEvent): void {
+    const daoContract = DaoRegistry.bind(event.params.dao);
+    // const fundingPoolContractAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892"));
+    // const fundingPoolAdapt = VintageFundingPoolAdapterContract.bind(fundingPoolContractAddress);
+
+    const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"))
+    const fundingPoolExtContr = VintageFundingPoolExtension.bind(fundingPoolExtAddress)
     let entity = VintageFreeInEscrowFundEntity.load(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.fundRound.toHexString());
 
     if (!entity) {
@@ -69,6 +79,13 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.amountFromWei = entity.amount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.withdrawTxHash = Bytes.empty();
     entity.escrowBlockNum = event.block.number;
+
+    let rel = fundingPoolExtContr.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
+    if (!rel.reverted) entity.myAdvanceDepositAmount = rel.value;
+
+    // rel = fundingPoolExtContr.try_getPriorAmount(event.params.account, event.params.token, event.block.number);
+    // if (!rel.reverted) entity.myConfirmedDepositAmount = rel.value;
+    entity.myConfirmedDepositAmount = fundingPoolExtContr.balanceOf(event.params.account)
     entity.fundRound = event.params.fundRound;
     // entity.minFundGoal = minfundgoal;
     // entity.minFundGoalFromWei = entity.minFundGoal.div(BigInt.fromI64(10 ** 18)).toString();

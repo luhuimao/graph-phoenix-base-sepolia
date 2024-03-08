@@ -24,7 +24,8 @@ import {
     VintageFundRoundStatistic,
     VintageFundRaiseEntity,
     VintageEscrowFundEntity,
-    VintageInvestorInvestmentEntity
+    VintageInvestorInvestmentEntity,
+    VintageSuccessedFundCounter
 } from "../generated/schema"
 import { bigInt, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
 
@@ -76,6 +77,9 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     entity.creationTime = event.block.timestamp;
     entity.createDateTime = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.vintageDaoEntity = event.params.daoAddr.toHexString();
+    let successedFundCounter = VintageSuccessedFundCounter.load(event.params.daoAddr.toString());
+
+    entity.succeedFundRound = successedFundCounter ? successedFundCounter.counter : BigInt.fromI32(0);
     entity.save()
 }
 
