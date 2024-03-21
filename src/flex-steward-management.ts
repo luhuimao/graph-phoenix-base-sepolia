@@ -18,7 +18,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
     let entity = FlexStewardMangementProposal.load(event.params.proposalId.toHexString())
-
+    const contract = StewardManagementContract.bind(event.address);
+    const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
@@ -43,6 +44,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.stateInString = "Voting";
     entity.type = BigInt.fromI32(event.params.pType);
     entity.typeInString = event.params.pType == 0 ? "Governor In" : "Governor Out";
+    entity.allocation = BigInt.fromI32(0);
+    if (!rel.reverted) {
+        entity.allocation = rel.value.getAllocation();
+    }
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save()

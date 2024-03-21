@@ -34,7 +34,7 @@ export function handleWithDraw(event: WithDrawEvent): void {
         entity.withdrawTimeStamp = event.block.timestamp;
         entity.withdrawDateTime = new Date(entity.withdrawTimeStamp.toI64() * 1000).toISOString();
         entity.withdrawTxHash = event.transaction.hash;
-        entity.myWithdraw = event.params.amount;
+        entity.myWithdraw = entity.myWithdraw.plus(event.params.amount);
         entity.save();
     }
 }
@@ -46,6 +46,7 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
     if (!entity) {
         entity = new VintageEscrowFundEntity(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.fundRound.toHexString());
+        entity.myWithdraw = BigInt.fromI32(0);
     }
     let newFundEntity: VintageNewFundProposal | null;
     let minfundgoal = BigInt.fromI32(0);
@@ -79,7 +80,6 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.succeedFundRound = BigInt.fromI32(0);
     entity.escrowBlockNum = event.block.number;
-
     // entity.myAdvanceDepositAmount = vintageFundingPoolExt.getPriorAmount(event.params.account,
     //     event.params.token, event.block.number.minus(BigInt.fromI32(1)));
 

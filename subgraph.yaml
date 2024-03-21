@@ -163,9 +163,9 @@ dataSources:
     name: VintageVesting
     network: base-sepolia
     source:
-      address: "0x8F7754369E1E84538649d6f4841eE5Ef8b211B7e"
+      address: "0x437b5cc75e145736fc96abcA0Ad16Ac515B252B8"
       abi: VintageVesting
-      startBlock: 6663075
+      startBlock: 7617457
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -379,9 +379,9 @@ dataSources:
     name: FlexVesting
     network: base-sepolia
     source:
-      address: "0x42F01f3Eb0573A35193e43995108D4BAdfF40b34"
+      address: "0x227d3086512bBB9c54C573E001991352b6B737a1"
       abi: FlexVesting
-      startBlock: 6663073
+      startBlock: 7617449
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -468,9 +468,9 @@ dataSources:
     name: FlexInvestmentPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0xceEb2b45a74A4d9F8348F09C33f70CEdEB0B7878"
+      address: "0x676CdD840f812e73be161026d02c1e23A5688297"
       abi: FlexInvestmentPoolAdapterContract
-      startBlock: 6313143
+      startBlock: 7617444
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -493,9 +493,9 @@ dataSources:
     name: FlexAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x6B93AAD680B156D68F90aC62e61058728f071716"
+      address: "0x1aE9f36d51bec89360201FF7233E328ec1bd9757"
       abi: FlexAllocationAdapterContract
-      startBlock: 6313262
+      startBlock: 7617453
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -647,3 +647,253 @@ dataSources:
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
       file: ./src/vesting.ts
+  - kind: ethereum
+    name: SummonCollectiveDao
+    network: base-sepolia
+    source:
+      address: "0xF77Ec77a4F6FCEA80740540a7CEd64758AC3eb1b"
+      abi: SummonCollectiveDao
+      startBlock: 6883264
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: SummonCollectiveDao
+          file: ./abis/SummonCollectiveDao.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: CollectiveDaoCreated(address,address,string,address)
+          handler: handleCollectiveDaoCreated
+      file: ./src/summon-collective-dao.ts
+  - kind: ethereum
+    name: ColletiveTopUpProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xF25f3875694F3969343c00d8A873A9999eDaB50C"
+      abi: ColletiveTopUpProposalAdapterContract
+      startBlock: 6883250
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: ColletiveTopUpProposalAdapterContract
+          file: ./abis/ColletiveTopUpProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32)
+          handler: handleProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
+          handler: handleProposalProcessed
+        - event: StartVoting(address,bytes32,uint8)
+          handler: handleStartVoting
+      file: ./src/collective-top-up.ts
+  - kind: ethereum
+    name: CollectiveVotingAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xFddbd0CbF73ce0EbDde700386A0db6f5735A9eEF"
+      abi: CollectiveVotingAdapterContract
+      startBlock: 6883250
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: CollectiveVotingAdapterContract
+          file: ./abis/CollectiveVotingAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: SubmitVote(address,bytes32,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleSubmitVote
+      file: ./src/collective-voting.ts
+  - kind: ethereum
+    name: ColletiveGovernorManagementAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x043572b715D78B22BC1BBCAEA8aB6cd57F050adc"
+      abi: ColletiveGovernorManagementAdapterContract
+      startBlock: 6883039
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: ColletiveGovernorManagementAdapterContract
+          file: ./abis/ColletiveGovernorManagementAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: GovernorQuit(address,address)
+          handler: handleGovernorQuit
+        - event: ProposalCreated(address,bytes32,address,uint256,uint256,uint8)
+          handler: handleProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint8,uint128,uint256,uint256,uint256)
+          handler: handlerProposalProcessed
+      file: ./src/collective-governor-management.ts
+  - kind: ethereum
+    name: ColletiveFundRaiseProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x2BA88e7a66524F2395BcB65f0b3c0D8A9A6B5eA8"
+      abi: ColletiveFundRaiseProposalAdapterContract
+      startBlock: 6883069
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: ColletiveFundRaiseProposalAdapterContract
+          file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32)
+          handler: handleProposalCreated
+        - event: proposalExecuted(address,bytes32,uint8,uint256,uint256,uint256,uint256)
+          handler: handlerProposalProcessed
+      file: ./src/collective-fund-raise.ts
+  - kind: ethereum
+    name: ColletiveFundingProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x819d88Bf08d54A06962FD1E153F4B05baBCeBC5f"
+      abi: ColletiveFundingProposalAdapterContract
+      startBlock: 6883051
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: ColletiveFundingProposalAdapterContract
+          file: ./abis/ColletiveFundingProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32)
+          handler: handleProposalCreated
+        - event: ProposalExecuted(address,bytes32,uint256,uint256,uint256)
+          handler: handlerProposalProcessed
+        - event: StartVoting(address,bytes32)
+          handler: handlerStartVoting
+      file: ./src/collective-funding.ts
+  - kind: ethereum
+    name: ColletiveExpenseProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x6EaA82ca0BDdD7521F17040e10F5ceC95B05F9c2"
+      abi: ColletiveExpenseProposalAdapterContract
+      startBlock: 6883257
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: ColletiveExpenseProposalAdapterContract
+          file: ./abis/ColletiveExpenseProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32)
+          handler: handleProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
+          handler: handlerProposalProcessed
+      file: ./src/collective-expense.ts
+  - kind: ethereum
+    name: ColletiveDaoSetProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xB02ff3BA5A6FFf8F3D26693b710bB7c658E6E9F2"
+      abi: ColletiveDaoSetProposalAdapterContract
+      startBlock: 6883024
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: ColletiveDaoSetProposalAdapterContract
+          file: ./abis/ColletiveDaoSetProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32,uint8)
+          handler: handleProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint256,uint256)
+          handler: handleProposalExecuted
+      file: ./src/collective-dao-set.ts
+  - kind: ethereum
+    name: CollectiveVestingAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x87967aa0CB6676AB5F4Cd4Eb365b513a553DCe78"
+      abi: CollectiveVestingAdapterContract
+      startBlock: 6883024
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexDaoCreated
+        - VintageDaoCreated
+      abis:
+        - name: CollectiveVestingAdapterContract
+          file: ./abis/CollectiveVestingAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128,bytes32)
+          handler: handleCreateVesting
+        - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
+          handler: handleWithdraw
+      file: ./src/collective-vesting.ts
+  - kind: ethereum
+    name: CollectiveAllocationAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x31e162ff835508abEf5C56aC3051C568c86B332f"
+      abi: CollectiveAllocationAdapterContract
+      startBlock: 6313431
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: CollectiveAllocationAdapterContract
+          file: ./abis/CollectiveAllocationAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: AllocateToken(address,bytes32,address,address[])
+          handler: handleAllocateToken
+      file: ./src/collective-allocation.ts

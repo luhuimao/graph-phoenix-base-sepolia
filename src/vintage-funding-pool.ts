@@ -31,7 +31,8 @@ import {
     VintageSuccessedFundCounter,
     VintageFundRoundToNewFundProposalId,
     VintageFundRaiseEntity,
-    VintageInvestorRedemptionsInFundRoundEntity
+    VintageInvestorRedemptionsInFundRoundEntity,
+    VintageEscrowFundEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -119,8 +120,9 @@ export function handleWithDraw(event: WithDraw): void {
     const createdNewFundId = vintageNewFundCont.createdFundCounter(event.params.daoAddress);
     const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.daoAddress.toHexString() + createdNewFundId.toString());
 
-
     if (roundProposalIdEntity) {
+        let newFundEntity = VintageNewFundProposal.load(roundProposalIdEntity.proposalId.toHexString());
+
         let InvestorBalanceEntity = VintageInvestorBalance.load(
             event.params.daoAddress.toString()
             + roundProposalIdEntity.proposalId.toString()
@@ -132,6 +134,96 @@ export function handleWithDraw(event: WithDraw): void {
             InvestorBalanceEntity.save();
         }
 
+        if (newFundEntity) {
+            const lastFundEndTime = newFundEntity.fundEndTime;
+            const refundDuration = daoContract.getConfiguration(
+                Bytes.fromHexString("0xb0d4178853a5320a41f8c55fa6d58af06637e392beff71e66dba4e8f32c39bb8")
+            );
+            let fundRaiseEntity = VintageFundRaiseEntity.load(roundProposalIdEntity.proposalId.toHexString());
+            let escrowFundEntity = VintageEscrowFundEntity.load(
+                event.params.daoAddress.toHexString()
+                + event.params.account.toHexString()
+                + createdNewFundId.toHexString()
+            );
+            if (fundRaiseEntity && fundRaiseEntity.fundRaiseState == "failed") {
+                if (event.block.timestamp > newFundEntity.fundRaiseEndTime) {
+                    if (!escrowFundEntity) {
+                        escrowFundEntity = new VintageEscrowFundEntity(
+                            event.params.daoAddress.toHexString()
+                            + event.params.account.toHexString()
+                            + createdNewFundId.toHexString()
+                        );
+                        escrowFundEntity.daoAddr = event.params.daoAddress;
+                        escrowFundEntity.newFundProposalId = roundProposalIdEntity.proposalId;
+                        escrowFundEntity.account = event.params.account;
+                        escrowFundEntity.fundRound = createdNewFundId;
+                        escrowFundEntity.token = Bytes.empty();
+                        escrowFundEntity.createTimeStamp = BigInt.fromI32(0);
+                        escrowFundEntity.createDateTime = "0";
+                        escrowFundEntity.withdrawTimeStamp = BigInt.fromI32(0);
+                        escrowFundEntity.withdrawDateTime = "0";
+                        escrowFundEntity.amount = BigInt.fromI32(0);
+                        escrowFundEntity.amountFromWei = "0";
+                        escrowFundEntity.withdrawTxHash = Bytes.empty();
+                        escrowFundEntity.minFundGoal = BigInt.fromI32(0);
+                        escrowFundEntity.minFundGoalFromWei = "0";
+                        escrowFundEntity.finalRaised = BigInt.fromI32(0);
+                        escrowFundEntity.finalRaisedFromWei = "0";
+                        escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
+                        escrowFundEntity.escrowBlockNum = BigInt.fromI32(0);
+                        escrowFundEntity.myWithdraw = BigInt.fromI32(0);
+                        escrowFundEntity.myInvestmentAmount = BigInt.fromI32(0);
+                        escrowFundEntity.myRedemptionAmount = BigInt.fromI32(0);
+                        escrowFundEntity.fundRaisedSucceed = false;
+                        escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
+                    }
+                    escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
+                    escrowFundEntity.save();
+
+                }
+
+            }
+            if (fundRaiseEntity && fundRaiseEntity.fundRaiseState == "succeed") {
+                if (event.block.timestamp > lastFundEndTime.plus(refundDuration)) {
+                    if (!escrowFundEntity) {
+                        escrowFundEntity = new VintageEscrowFundEntity(
+                            event.params.daoAddress.toHexString()
+                            + event.params.account.toHexString()
+                            + createdNewFundId.toHexString()
+                        );
+                        escrowFundEntity.daoAddr = event.params.daoAddress;
+                        escrowFundEntity.newFundProposalId = roundProposalIdEntity.proposalId;
+                        escrowFundEntity.account = event.params.account;
+                        escrowFundEntity.fundRound = createdNewFundId;
+                        escrowFundEntity.token = Bytes.empty();
+                        escrowFundEntity.createTimeStamp = BigInt.fromI32(0);
+                        escrowFundEntity.createDateTime = "0";
+                        escrowFundEntity.withdrawTimeStamp = BigInt.fromI32(0);
+                        escrowFundEntity.withdrawDateTime = "0";
+                        escrowFundEntity.amount = BigInt.fromI32(0);
+                        escrowFundEntity.amountFromWei = "0";
+                        escrowFundEntity.withdrawTxHash = Bytes.empty();
+                        escrowFundEntity.minFundGoal = BigInt.fromI32(0);
+                        escrowFundEntity.minFundGoalFromWei = "0";
+                        escrowFundEntity.finalRaised = BigInt.fromI32(0);
+                        escrowFundEntity.finalRaisedFromWei = "0";
+                        escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
+                        escrowFundEntity.escrowBlockNum = BigInt.fromI32(0);
+                        escrowFundEntity.myWithdraw = BigInt.fromI32(0);
+                        escrowFundEntity.myInvestmentAmount = BigInt.fromI32(0);
+                        escrowFundEntity.myRedemptionAmount = BigInt.fromI32(0);
+                        escrowFundEntity.fundRaisedSucceed = true;
+                        escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
+                    }
+                    escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
+
+                    escrowFundEntity.save();
+
+                }
+            }
+
+
+        }
     }
 
 
@@ -146,10 +238,7 @@ export function handleWithDraw(event: WithDraw): void {
     entity.timeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
 
     // Entities can be written to the store with `.save()`
-    entity.save()
-
-
-
+    entity.save();
 }
 
 export function handleClearFund(event: ClearFund): void {

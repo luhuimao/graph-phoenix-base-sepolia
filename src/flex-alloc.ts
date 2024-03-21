@@ -84,17 +84,23 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
         );
 
         if (vestInfo.getTokenAmount() > BigInt.fromI32(0)) {
-            let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + managementFeeAddress.toHexString());
-            flexUserVestInfo.daoAddr = event.params.daoAddr;
-            flexUserVestInfo.fundingProposalId = event.params.proposalId;
-            flexUserVestInfo.recipient = managementFeeAddress;
-            flexUserVestInfo.vestingStartTime = vestingStartTime;
-            flexUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
-            flexUserVestInfo.vestingInterval = vestingInterval;
-            flexUserVestInfo.vestingEndTime = vestingEndTime;
-            flexUserVestInfo.totalAmount = vestInfo.getTokenAmount();
-            flexUserVestInfo.created = false;
-            flexUserVestInfo.save();
+            let flexUserVestInfo = FlexUserVestInfo.load(entity.proposalId.toHexString() + "-" + managementFeeAddress.toHexString());
+            if (!flexUserVestInfo) {
+                let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + managementFeeAddress.toHexString());
+                flexUserVestInfo.daoAddr = event.params.daoAddr;
+                flexUserVestInfo.fundingProposalId = event.params.proposalId;
+                flexUserVestInfo.recipient = managementFeeAddress;
+                flexUserVestInfo.vestingStartTime = vestingStartTime;
+                flexUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
+                flexUserVestInfo.vestingInterval = vestingInterval;
+                flexUserVestInfo.vestingEndTime = vestingEndTime;
+                flexUserVestInfo.totalAmount = vestInfo.getTokenAmount();
+                flexUserVestInfo.created = false;
+                flexUserVestInfo.save();
+            } else {
+                flexUserVestInfo.totalAmount = flexUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
+                flexUserVestInfo.save();
+            }
         }
 
         //proposer payback token reward
@@ -105,17 +111,23 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
         );
 
         if (proposerVestInfo.getTokenAmount() > BigInt.fromI32(0)) {
-            let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + event.params.proposer.toHexString());
-            flexUserVestInfo.daoAddr = event.params.daoAddr;
-            flexUserVestInfo.fundingProposalId = event.params.proposalId;
-            flexUserVestInfo.recipient = event.params.proposer;
-            flexUserVestInfo.vestingStartTime = vestingStartTime;
-            flexUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
-            flexUserVestInfo.vestingInterval = vestingInterval;
-            flexUserVestInfo.vestingEndTime = vestingEndTime;
-            flexUserVestInfo.totalAmount = proposerVestInfo.getTokenAmount();
-            flexUserVestInfo.created = false;
-            flexUserVestInfo.save();
+            let flexUserVestInfo = FlexUserVestInfo.load(entity.proposalId.toHexString() + "-" + event.params.proposer.toHexString());
+            if (!flexUserVestInfo) {
+                let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + event.params.proposer.toHexString());
+                flexUserVestInfo.daoAddr = event.params.daoAddr;
+                flexUserVestInfo.fundingProposalId = event.params.proposalId;
+                flexUserVestInfo.recipient = event.params.proposer;
+                flexUserVestInfo.vestingStartTime = vestingStartTime;
+                flexUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
+                flexUserVestInfo.vestingInterval = vestingInterval;
+                flexUserVestInfo.vestingEndTime = vestingEndTime;
+                flexUserVestInfo.totalAmount = proposerVestInfo.getTokenAmount();
+                flexUserVestInfo.created = false;
+                flexUserVestInfo.save();
+            } else {
+                flexUserVestInfo.totalAmount = flexUserVestInfo.totalAmount.plus(proposerVestInfo.getTokenAmount());
+                flexUserVestInfo.save();
+            }
         }
     }
 

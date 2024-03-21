@@ -41,6 +41,7 @@ type CollectiveDaoEntity @entity(immutable: true){
   creator: Bytes! # address
   createTimeStamp: BigInt!
   createDateTime: String!
+  collectiveVoting: CollectiveVoting
 }
 
 type DaoEntityCounter @entity{
@@ -283,6 +284,7 @@ type FlexStewardMangementProposal @entity{
   stateInString: String!
   type: BigInt! # uint256
   typeInString: String!
+  allocation: BigInt!
   flexDaoEntity: FlexDaoEntity
 }
 
@@ -542,6 +544,7 @@ type VintageRaiserMangementProposal @entity{
   stateInString: String!
   type: BigInt! # uint256
   typeInString: String!
+  allocation: BigInt!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -748,7 +751,7 @@ type VintageEscrowFundEntity @entity{
   succeedFundRound: BigInt! # uint256
   myRedemptionAmount: BigInt
   myInvestmentAmount: BigInt
-  myWithdraw: BigInt
+  myWithdraw: BigInt!
   escrowBlockNum: BigInt
 }
 
@@ -872,4 +875,209 @@ type VintageVestingClaimedActivityEntity @entity{
   account: Bytes! # address
   txHash: Bytes!
   claimedAmount: BigInt!
+}
+
+type CollectiveTopUpProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # address
+  account: Bytes! # address
+  amount: BigInt!
+  state: BigInt!
+  token: Bytes! # address
+  creationTime: BigInt!
+  stopVoteTime: BigInt!
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveProposalVoteInfo @entity{
+  id:ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # address
+  startVoteTime: BigInt! # uint256
+  stopVoteTime: BigInt! # uint256
+  startVoteTimeString: String!
+  stopVoteTimeString: String!
+  nbYes: BigInt! # uint256
+  nbNo: BigInt! # uint256
+  totalWeights: BigInt! # uint256
+  currentSupport: BigInt! # uint256
+  currentQuorum: BigInt! # uint256
+}
+
+type CollectiveVoting @entity{
+  id: ID!
+  txHash:Bytes! # address
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # address
+  votedTimeStamp: BigInt! # uint256
+  votedDateTimeString: String!
+  voter: Bytes! # address
+  voteValue: BigInt! # uint256
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type VintageGovernorMangementProposal @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposer: Bytes! # address
+  proposalId: Bytes!
+  governorAddress: Bytes! # address
+  creationTime: BigInt! # uint256
+  createTimeString: String!
+  stopVoteTime: BigInt! # uint256
+  stopVoteTimeString: String!
+  state: BigInt! # uint256
+  stateInString: String!
+  type: BigInt! # uint256
+  typeInString: String!
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveFundRaiseProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # bytes32
+  proposer: Bytes! # bytes32
+  acceptTokenAddr: Bytes! # address
+  fundRaiseTarget: BigInt! # uint256
+  fundRaiseTargetFromWei: String!
+  fundRaiseMaxAmount: BigInt! # uint256
+  fundRaiseMaxAmountFromWei: String!
+  lpMinDepositAmount: BigInt! # uint256
+  lpMinDepositAmountFromWei: String!
+  lpMaxDepositAmount: BigInt! # uint256
+  lpMaxDepositAmountFromWei: String!
+  fundRaiseStartTime: BigInt! # uint256
+  fundRaiseEndTime: BigInt! # uint256
+  fundTerm: BigInt! # uint256
+  redemptPeriod: BigInt! # uint256
+  redemptDuration: BigInt! # uint256
+  returnDuration: BigInt! # uint256
+  managementFeeRatio: BigInt! # uint256
+  returnTokenManagementFeeRatio: BigInt! # uint256
+  redepmtFeeRatio: BigInt! # uint256
+  protocolFeeRatio: BigInt! # uint256
+  managementFeeAddress: Bytes! # bytes32
+  fundFromInverstor: BigInt! # uint256
+  projectTokenFromInvestor: BigInt! # uint256
+  state: BigInt! # uint256
+  creationTime: BigInt! # uint256
+  stopVoteTime: BigInt! # uint256
+  fundStartTime: BigInt! # uint256
+  fundEndTime: BigInt! # uint256
+  totalFund: BigInt! # uint256
+  totalFundFromWei: String!
+  fundRaiseType: BigInt # uint256
+  fundRaiseTypeInString: String
+  priorityDepositEnable: Boolean
+  priorityDepositType: BigInt
+  priorityDepositTokenAddress: Bytes
+  priorityDepositTokenId: BigInt
+  priorityDepositAmount: BigInt
+  priorityDepositWhiteList: [String!]
+  collectiveDaoEntity: CollectiveDaoEntity
+} 
+
+type CollectiveFundingProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # bytes32
+  approver: Bytes! # address
+  escrow: Boolean!
+  paybackAmount: BigInt!
+  paybackToken: Bytes! # address
+  price: BigInt!
+  executeBlockNum: BigInt!
+  fundingAmount: BigInt!
+  receiver: Bytes! # address
+  token: Bytes! # address
+  totalAmount: BigInt!
+  proposer: Bytes! # address
+  state: BigInt!
+  startVotingTime: BigInt!
+  stopVotingTime: BigInt!
+  cliffEndTime: BigInt!
+  cliffVestingAmount: BigInt!
+  vestingEndTime: BigInt!
+  vestingStartTime: BigInt!
+  vestingInterval: BigInt!
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveExpenseProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # bytes32
+  amount: BigInt!
+  creationTime: BigInt!
+  receiver: Bytes! # address
+  state: BigInt!
+  stopVoteTime:BigInt!
+  tokenAddress: Bytes! # address
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveDaoSetProposalEntity @entity{
+  id:ID!
+  daoAddr: Bytes! # address
+  proposer: Bytes
+  proposalId: Bytes! # bytes32
+  proposalType: BigInt! # uint256
+  proposalTypeString: String!
+  state: BigInt! # uint256
+  creationTime: BigInt
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveVestEntity @entity {
+  id: ID!
+  vestId: BigInt! # uint256
+  recipient: Bytes! # address
+  proposalId: Bytes! 
+  tokenAddress: Bytes! # address
+  startTime: BigInt! # uint256
+  startTimeString:  String!
+  cliffEndTimeString: String!
+  vestEndTimeString: String!
+  cliffDuration: BigInt! # uint256
+  stepDuration: BigInt! # uint256
+  steps: BigInt! # uint256
+  cliffShares: BigInt! # uint256
+  stepShares: BigInt! # uint256
+  totalAmount:  BigInt! # uint256
+  claimedAmount: BigInt! # uint256
+  nftToken: Bytes! # address
+  tokenId: BigInt! # uint256
+  originalRecipient: Bytes! # address
+}
+
+type CollectiveUserVestInfo @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundingProposalId: Bytes! # bytes32
+  recipient: Bytes! # address
+  vestingStartTime: BigInt! # uint256
+  vestingCliffEndTime: BigInt! # uint256
+  vestingInterval: BigInt! # uint256
+  vestingEndTime: BigInt! # uint256
+  totalAmount: BigInt! # uint256
+  totalAmountFromWei: String!
+  created: Boolean!
+}
+
+type CollectiveVestingClaimedActivityEntity @entity{
+  id: ID!
+  vestId: BigInt!
+  timeStamp: BigInt!
+  account: Bytes! # address
+  txHash: Bytes!
+  claimedAmount: BigInt!
+}
+
+type CollectiveVestingEligibleUsers @entity {
+  id: ID!
+  proposalId: Bytes! # bytes32
+  proposer: Bytes! # address
+  lps: [String!]! # address[]
 }
