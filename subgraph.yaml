@@ -621,6 +621,33 @@ dataSources:
           handler: handleERC721Transfer
       file: ./src/flex-vesting-contract.ts
   - kind: ethereum
+    name: FlexFreeInEscrowFundAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x4eb495209dD39bCCf6B5f916971d28B33072FFe6"
+      abi: FlexFreeInEscrowFundAdapterContract
+      startBlock: 6313013
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: FlexFreeInEscrowFundAdapterContract
+          file: ./abis/FlexFreeInEscrowFundAdapterContract.json
+        - name: FlexInvestmentPoolExtension
+          file: ./abis/FlexInvestmentPoolExtension.json
+      eventHandlers:
+        - event:  EscrowFund(address,bytes32,address,address,uint256)
+          handler: handleEscrowFund
+        - event: WithDraw(address,bytes32,address,address,uint256)
+          handler: handleWithdraw
+      file: ./src/flex-free-in-escrow.ts
+  - kind: ethereum
     name: Vesting
     network: base-sepolia
     source:

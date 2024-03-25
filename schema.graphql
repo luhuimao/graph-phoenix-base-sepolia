@@ -404,6 +404,25 @@ type FlexVestingClaimedActivityEntity @entity{
   claimedAmount: BigInt!
 }
 
+type FlexFreeInEscrowFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  fundingProposalId: Bytes! # address
+  amount: BigInt! # uint256
+  amountFromWei: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  escrowBlockNum: BigInt!
+  myAdvanceDepositAmount: BigInt
+  myConfirmedDepositAmount: BigInt
+  myWithdraw: BigInt
+}
+
 type VintageDaoEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address

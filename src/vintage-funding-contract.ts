@@ -160,20 +160,20 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                     fundRaiseEntity.save();
                 }
             }
-            log.error("currentFundRound {}", [currentFundRound.toString()]);
+            // log.error("currentFundRound {}", [currentFundRound.toString()]);
             const investors = fundingPoolAdapt.try_getFundInvestors(event.params.daoAddr, currentFundRound);
             if (!investors.reverted && investors.value.length > 0) {
-                log.error("investors: {}", [investors.value.toString()]);
+                // log.error("investors: {}", [investors.value.toString()]);
 
                 for (var i = 0; i < investors.value.length; i++) {
                     const bal1 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.fundingToken), proposalInfo.getExecuteBlockNum().minus(BigInt.fromI32(1)));
                     // const bal2 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.fundingToken), proposalInfo.getExecuteBlockNum());
                     const bal2 = fundingPoolAdapt.balanceOf(event.params.daoAddr, investors.value[i]);
                     if (!bal1.reverted) {
-                        log.error("prior value1: {}", [bal1.value.toString()]);
-                        log.error("prior value2: {}", [bal2.toString()]);
+                        // log.error("prior value1: {}", [bal1.value.toString()]);
+                        // log.error("prior value2: {}", [bal2.toString()]);
                         const investedAmount = bal1.value.minus(bal2);
-                        log.error("investedAmount: {}", [investedAmount.toString()]);
+                        // log.error("investedAmount: {}", [investedAmount.toString()]);
                         let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(event.params.daoAddr.toHexString() + currentFundRound.toHexString() + investors.value[i].toHexString());
                         // let escrowFundEntity = VintageEscrowFundEntity.load(event.params.daoAddr.toHexString() + investors.value[i].toHexString() + currentFundRound.toHexString());
                         if (!investorInvestmentEntity) {
