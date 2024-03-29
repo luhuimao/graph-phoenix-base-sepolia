@@ -21,7 +21,8 @@ import { FlexInvestmentPoolAdapterContract } from "../generated/FlexDaoSetAdapte
 import { FlexFundingAdapterContract } from "../generated/FlexDaoSetAdapterContract/FlexFundingAdapterContract";
 
 import {
-    FlexDaosetProposal, FlexProposalVoteInfo,
+    FlexDaosetProposal,
+    FlexProposalVoteInfo,
     FlexDaoInvestorCapacityEntity,
     FlexDaoStewardMembershipEntity,
     FlexDaoInvestorMembershipEntity,
@@ -42,6 +43,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.daoAddr = event.params.daoAddr;
     entity.proposalId = event.params.proposalId;
     entity.proposer = event.transaction.from;
+    entity.executeHash = Bytes.empty();
     entity.proposalType = BigInt.fromI32(event.params.pType);
     switch (event.params.pType) {
         // INVESTOR_CAP,
@@ -345,7 +347,7 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
                 break;
         }
         entity.state = proposalState;
-
+        entity.executeHash = event.transaction.hash;
         entity.save();
     }
 

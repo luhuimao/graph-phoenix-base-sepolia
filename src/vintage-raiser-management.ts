@@ -6,13 +6,16 @@
  * @LastEditors: huhuimao
  * @LastEditTime: 2023-04-27 15:08:11
  */
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     VintageRaiserManagementContract,
     ProposalProcessed,
     ProposalCreated
 } from "../generated/VintageRaiserManagementContract/VintageRaiserManagementContract"
-import { VintageRaiserMangementProposal, VintageProposalVoteInfo } from "../generated/schema";
+import {
+    VintageRaiserMangementProposal,
+    VintageProposalVoteInfo
+} from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
@@ -49,6 +52,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     if (!rel.reverted) {
         entity.allocation = rel.value.getAllocation();
     }
+    entity.executeHash = Bytes.empty();
     entity.vintageDaoEntity = event.params.daoAddr.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save()
@@ -63,7 +67,7 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
     if (entity) {   // Entity fields can be set based on event parameters
         entity.state = BigInt.fromI32(event.params.state);
         entity.stateInString = event.params.state == 2 ? "Passed" : "Failed";
-
+        entity.executeHash = event.transaction.hash;
         // Entities can be written to the store with `.save()`
         entity.save()
     }

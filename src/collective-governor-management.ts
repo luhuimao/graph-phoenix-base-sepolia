@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     ColletiveGovernorManagementAdapterContract,
     ProposalCreated,
@@ -6,12 +6,12 @@ import {
     GovernorQuit
 } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveGovernorManagementAdapterContract"
 import {
-    VintageGovernorMangementProposal,
+    CollectiveGovernorManagementProposal,
     CollectiveProposalVoteInfo
 } from "../generated/schema"
 
 export function handleProposalCreated(event: ProposalCreated): void {
-    let entity = new VintageGovernorMangementProposal(event.params.proposalId.toHexString());
+    let entity = new CollectiveGovernorManagementProposal(event.params.proposalId.toHexString());
     const contract = ColletiveGovernorManagementAdapterContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     if (!rel.reverted) {
@@ -27,6 +27,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.stateInString = "";
         entity.type = BigInt.fromI32(rel.value.getPType());
         entity.typeInString = "";
+        entity.executeHash = Bytes.empty();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
     }
@@ -34,9 +35,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
 
 export function handlerProposalProcessed(event: ProposalProcessed): void {
-    let entity = VintageGovernorMangementProposal.load(event.params.proposalId.toHexString());
+    let entity = CollectiveGovernorManagementProposal.load(event.params.proposalId.toHexString());
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
+        entity.executeHash = event.transaction.hash;
         entity.save();
     }
 

@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     ColletiveExpenseProposalAdapterContract,
     ProposalCreated,
@@ -21,6 +21,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.stopVoteTime = rel.value.getStopVoteTime();
         entity.tokenAddress = rel.value.getTokenAddress();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
+        entity.executeHash = Bytes.empty();
         entity.save();
     }
 }
@@ -29,6 +30,7 @@ export function handlerProposalProcessed(event: ProposalProcessed): void {
     let entity = CollectiveExpenseProposalEntity.load(event.params.proposalId.toHexString());
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
+        entity.executeHash = event.transaction.hash;
         entity.save();
     }
 

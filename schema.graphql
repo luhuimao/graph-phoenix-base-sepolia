@@ -247,6 +247,8 @@ type FlexFundingProposal @entity{
   totalFund: BigInt! # uint256
   totalFundFromWei: String!
   investors: [String!]! # address[]
+  ultimateInvestedFund: BigInt!
+  executeHash: Bytes!
   flexDaoEntity: FlexDaoEntity
 }
 
@@ -285,6 +287,7 @@ type FlexStewardMangementProposal @entity{
   type: BigInt! # uint256
   typeInString: String!
   allocation: BigInt!
+  executeHash: Bytes!
   flexDaoEntity: FlexDaoEntity
 }
 
@@ -392,6 +395,7 @@ type FlexDaosetProposal @entity{
   state: BigInt! # uint256
   creationTime: BigInt! # uint256
   createTimeString: String!
+  executeHash: Bytes!
   flexDaoEntity: FlexDaoEntity
 }
 
@@ -546,6 +550,7 @@ type VintageNewFundProposal @entity{
   priorityDepositTokenId: BigInt
   priorityDepositAmount: BigInt
   priorityDepositWhiteList: [String!]
+  executeHash: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -564,6 +569,7 @@ type VintageRaiserMangementProposal @entity{
   type: BigInt! # uint256
   typeInString: String!
   allocation: BigInt!
+  executeHash: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -602,6 +608,7 @@ type VintageFundingProposalInfo @entity{
   createDateTime: String!
   executeBlockNum: BigInt
   succeedFundRound: BigInt
+  executeHash: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -614,6 +621,7 @@ type VintageDaoSetProposal @entity{
   proposalTypeString: String!
   state: BigInt! # uint256
   creationTime: BigInt
+  executeHash: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -906,6 +914,7 @@ type CollectiveTopUpProposalEntity @entity{
   token: Bytes! # address
   creationTime: BigInt!
   stopVoteTime: BigInt!
+  executeHash: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -936,7 +945,7 @@ type CollectiveVoting @entity{
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
-type VintageGovernorMangementProposal @entity{
+type CollectiveGovernorManagementProposal @entity{
   id: ID!
   daoAddr: Bytes! # address
   proposer: Bytes! # address
@@ -950,6 +959,7 @@ type VintageGovernorMangementProposal @entity{
   stateInString: String!
   type: BigInt! # uint256
   typeInString: String!
+  executeHash: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -995,6 +1005,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   priorityDepositTokenId: BigInt
   priorityDepositAmount: BigInt
   priorityDepositWhiteList: [String!]
+  executeHash: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 
@@ -1021,6 +1032,7 @@ type CollectiveFundingProposalEntity @entity{
   vestingEndTime: BigInt!
   vestingStartTime: BigInt!
   vestingInterval: BigInt!
+  executeHash: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -1034,6 +1046,7 @@ type CollectiveExpenseProposalEntity @entity{
   state: BigInt!
   stopVoteTime:BigInt!
   tokenAddress: Bytes! # address
+  executeHash: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -1046,6 +1059,7 @@ type CollectiveDaoSetProposalEntity @entity{
   proposalTypeString: String!
   state: BigInt! # uint256
   creationTime: BigInt
+  executeHash: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 

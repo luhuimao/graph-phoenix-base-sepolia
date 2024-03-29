@@ -78,7 +78,7 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     entity.createDateTime = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.vintageDaoEntity = event.params.daoAddr.toHexString();
     let successedFundCounter = VintageSuccessedFundCounter.load(event.params.daoAddr.toString());
-
+    entity.executeHash = Bytes.empty();
     entity.succeedFundRound = successedFundCounter ? successedFundCounter.counter : BigInt.fromI32(0);
     entity.save()
 }
@@ -104,6 +104,7 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
         proposalEntity.state = BigInt.fromI32(vintageFundingProposalInfo.getStatus());
         proposalEntity.proposalExecuteTimestamp = event.block.timestamp;
         proposalEntity.executeBlockNum = proposalInfo.getExecuteBlockNum();
+        proposalEntity.executeHash = event.transaction.hash;
         proposalEntity.save();
 
         if (proposalEntity.state == BigInt.fromI32(3)) {

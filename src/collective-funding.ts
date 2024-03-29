@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     ColletiveFundingProposalAdapterContract,
     ProposalCreated,
@@ -41,6 +41,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.vestingEndTime = rel.value.getVestingInfo().endTime
         entity.vestingStartTime = rel.value.getVestingInfo().startTime
         entity.vestingInterval = rel.value.getVestingInfo().vestingInterval
+        entity.executeHash = Bytes.empty();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
     }
@@ -54,6 +55,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
     if (!rel.reverted && entity) {
         entity.state = BigInt.fromI32(rel.value.getState());
         entity.executeBlockNum = rel.value.getExecuteBlockNum();
+        entity.executeHash = event.transaction.hash;
         entity.save();
     }
 

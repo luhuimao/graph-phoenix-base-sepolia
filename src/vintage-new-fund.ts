@@ -84,6 +84,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
             entity.priorityDepositWhiteList = tem;
         }
         entity.vintageDaoEntity = event.params.daoAddr.toHexString();
+        entity.executeHash = Bytes.empty();
         entity.save()
 
         const erc20 = ERC20.bind(Address.fromBytes(entity.acceptTokenAddr));
@@ -150,6 +151,7 @@ export function handleProposalExecuted(event: proposalExecuted): void {
             vintageDaoFeeInfoEntity.redemptionFee = entity.redepmtFeeRatio;
             vintageDaoFeeInfoEntity.save();
         }
+        entity.executeHash = event.transaction.hash;
         entity.save();
 
         let fundRaiseEntity = VintageFundRaiseEntity.load(event.params.proposalId.toHexString());

@@ -16,7 +16,9 @@ import { DaoRegistry } from "../generated/VintageDaoSetAdapterContract/DaoRegist
 import { VintageRaiserManagementContract } from "../generated/VintageDaoSetAdapterContract/VintageRaiserManagementContract";
 import { VintageFundingPoolAdapterContract } from "../generated/VintageDaoSetAdapterContract/VintageFundingPoolAdapterContract";
 import {
-    VintageDaoSetProposal, VintageProposalVoteInfo, VintageFundRoundToNewFundProposalId,
+    VintageDaoSetProposal,
+    VintageProposalVoteInfo,
+    VintageFundRoundToNewFundProposalId,
     VintageDaoInvestorCapacityEntity,
     VintageInvestorMembershipEntity,
     VintageGovernorMembershipEntity,
@@ -34,6 +36,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.proposer = event.transaction.from;
     entity.creationTime = event.block.timestamp;
     entity.proposalId = event.params.proposalId;
+    entity.executeHash = Bytes.empty();
     entity.proposalType = BigInt.fromI32(event.params.pType);
     switch (event.params.pType) {
         // INVESTOR_CAP,
@@ -189,7 +192,7 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
                 break;
         }
         entity.state = BigInt.fromI32(event.params.state);
-
+        entity.executeHash = event.transaction.hash;
         entity.save();
     }
 
