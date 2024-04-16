@@ -779,6 +779,7 @@ type VintageEscrowFundEntity @entity{
   myRedemptionAmount: BigInt
   myInvestmentAmount: BigInt
   myWithdraw: BigInt!
+  myConfirmedDepositAmount: BigInt!
   escrowBlockNum: BigInt
 }
 

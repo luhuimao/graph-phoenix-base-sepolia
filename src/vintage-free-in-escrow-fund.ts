@@ -10,18 +10,21 @@
 // import { EnsResolver } from "ethers"
 // import { EventLog } from "ethers/types/contract"
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
+// import {
+//     EscrowFund as EscorwFundEvent,
+//     WithDraw as WithDrawEvent
+// } from "../generated/vintageEscrowFundAdapterContract/vintageEscrowFundAdapterContract";
+
 import {
     EscrowFund as EscorwFundEvent,
     WithDraw as WithDrawEvent
-} from "../generated/vintageEscrowFundAdapterContract/vintageEscrowFundAdapterContract";
-
+} from "../generated/VintageFreeInEscrowFundAdapterContract/VintageFreeInEscrowFundAdapterContract";
 import { DaoRegistry } from "../generated/VintageFreeInEscrowFundAdapterContract/DaoRegistry";
 import { VintageFundingPoolExtension } from "../generated/VintageFreeInEscrowFundAdapterContract/VintageFundingPoolExtension";
 import {
     VintageFreeInEscrowFundEntity,
     VintageFundRoundToNewFundProposalId,
-    VintageNewFundProposal,
-    VintageFundRoundStatistic
+    VintageNewFundProposal
 } from "../generated/schema"
 
 

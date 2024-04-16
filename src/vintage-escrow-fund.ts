@@ -80,12 +80,8 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.succeedFundRound = BigInt.fromI32(0);
     entity.escrowBlockNum = event.block.number;
-    // entity.myAdvanceDepositAmount = vintageFundingPoolExt.getPriorAmount(event.params.account,
-    //     event.params.token, event.block.number.minus(BigInt.fromI32(1)));
-
-    // entity.myConfirmedDepositAmount = vintageFundingPoolExt.getPriorAmount(event.params.account,
-    //     event.params.token, event.block.number);
-
+    entity.myConfirmedDepositAmount = vintageFundingPoolExt.balanceOf( event.params.account);
+   
     let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(
         event.params.dao.toHexString()
         + event.params.fundRound.toHexString() +

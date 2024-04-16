@@ -176,6 +176,7 @@ export function handleWithDraw(event: WithDraw): void {
                         escrowFundEntity.myRedemptionAmount = BigInt.fromI32(0);
                         escrowFundEntity.fundRaisedSucceed = false;
                         escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
+                        escrowFundEntity.myConfirmedDepositAmount=BigInt.fromI32(0);
                     }
                     escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
                     escrowFundEntity.save();
@@ -214,6 +215,7 @@ export function handleWithDraw(event: WithDraw): void {
                         escrowFundEntity.myRedemptionAmount = BigInt.fromI32(0);
                         escrowFundEntity.fundRaisedSucceed = true;
                         escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
+                        escrowFundEntity.myConfirmedDepositAmount=BigInt.fromI32(0);
                     }
                     escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
 
