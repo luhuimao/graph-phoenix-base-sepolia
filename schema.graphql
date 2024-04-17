@@ -214,7 +214,11 @@ type FlexFundingProposal @entity{
   vestingCliffEndTime: BigInt! # uint256
   vestingEndTime: BigInt! # uint256
   vestingCliffLockAmount: BigInt! # uint256
-  vestingInterval:BigInt! # uint256
+  vestingInterval: BigInt! # uint256
+  vestingERC721: Bytes! #address
+  vestingNFTEnable: Boolean!
+  vestingName: String!
+  vestingDescription: String!
   fundRaiseType: BigInt! # uint256
   fundRaiseStartTime: BigInt! # uint256
   fundRaiseEndTime: BigInt! # uint256
@@ -270,6 +274,8 @@ type FlexVestEntity @entity {
   totalAmount:  BigInt! # uint256
   claimedAmount: BigInt! # uint256
   originalRecipient: Bytes! # address
+  nftToken: Bytes! # address
+  tokenId: BigInt! # uint256
 }
 
 type FlexStewardMangementProposal @entity{
@@ -550,6 +556,7 @@ type VintageNewFundProposal @entity{
   priorityDepositTokenId: BigInt
   priorityDepositAmount: BigInt
   priorityDepositWhiteList: [String!]
+  executeBlockNum: BigInt!
   executeHash: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
@@ -597,6 +604,8 @@ type VintageFundingProposalInfo @entity{
   vestingCliffEndTime: BigInt! # uint256
   vestingCliffLockAmount: BigInt! # uint256
   vestingInterval: BigInt! # uint256
+  vestingERC721: Bytes! #address
+  vestingNFTEnable: Boolean!
   paybackToken: Bytes! # bytes32
   paybackTokenAmount: BigInt! # uint256
   paybackTokenAmountFromWei: String!
@@ -609,6 +618,7 @@ type VintageFundingProposalInfo @entity{
   executeBlockNum: BigInt
   succeedFundRound: BigInt
   executeHash: Bytes!
+  newFundProposalId: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 

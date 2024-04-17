@@ -57,12 +57,17 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.minReturnAmountFromWei = entity.minReturnAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.maxReturnAmountFromWei = entity.maxReturnAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.approverAddr = proposalInfo.getInvestmentInfo().approverAddr;
-    entity.recipientAddr = proposalInfo.getInvestmentInfo().tokenAddress;
+    entity.recipientAddr = proposalInfo.getInvestmentInfo().recipientAddr;
     entity.vestingStartTime = proposalInfo.getVestInfo().vestingStartTime;
     entity.vestingCliffEndTime = proposalInfo.getVestInfo().vestingCliffEndTime;
     entity.vestingEndTime = proposalInfo.getVestInfo().vestingEndTime;
     entity.vestingInterval = proposalInfo.getVestInfo().vestingInterval;
     entity.vestingCliffLockAmount = proposalInfo.getVestInfo().vestingCliffLockAmount;
+    entity.vestingERC721 = proposalInfo.getVestInfo().erc721;
+    entity.vestingNFTEnable = proposalInfo.getVestInfo().nftEnable;
+    entity.vestingName = proposalInfo.getVestInfo().vestName;
+    entity.vestingDescription = proposalInfo.getVestInfo().vestDescription;
+
     entity.fundRaiseType = BigInt.fromI32(proposalInfo.getFundRaiseInfo().fundRaiseType);
     entity.fundRaiseStartTime = proposalInfo.getFundRaiseInfo().fundRaiseStartTime;
     entity.fundRaiseEndTime = proposalInfo.getFundRaiseInfo().fundRaiseEndTime;

@@ -19,7 +19,6 @@ import {
 import { FlexVestingERC721, Transfer } from "../generated/FlexVestingERC721/FlexVestingERC721";
 import { FlexVestEntity, FlexUserVestInfo, FlexVestingClaimedActivityEntity, FlexFundingProposal } from "../generated/schema"
 // import { calendarFormat } from "moment";
-
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = FlexVestEntity.load(event.params.vestId.toString())
 
@@ -61,6 +60,10 @@ export function handleCreateVesting(event: CreateVesting): void {
         ) *
         1000
     ).toISOString();
+
+    const vestInfo= vestingContract.vests(event.params.vestId);
+    entity.nftToken= vestInfo.getNftInfo().nftToken;
+    entity.tokenId= vestInfo.getNftInfo().tokenId;
     // Entities can be written to the store with `.save()`
     entity.save()
 

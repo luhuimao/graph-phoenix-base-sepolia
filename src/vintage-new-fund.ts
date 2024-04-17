@@ -84,6 +84,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
             entity.priorityDepositWhiteList = tem;
         }
         entity.vintageDaoEntity = event.params.daoAddr.toHexString();
+        entity.executeBlockNum= BigInt.fromI32(0);
         entity.executeHash = Bytes.empty();
         entity.save()
 

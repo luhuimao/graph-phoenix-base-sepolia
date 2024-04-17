@@ -30,7 +30,9 @@ import {
 import { bigInt, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
 
 export function handleProposalCreated(event: ProposalCreatedEvent): void {
-
+    const daoContract = DaoRegistry.bind(event.params.daoAddr);
+    const fundRaiseAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
+    const fundRaiseContract = VintageFundRaiseAdapterContract.bind(fundRaiseAddress);
     let entity = VintageFundingProposalInfo.load(event.params.proposalId.toHexString())
 
     // Entities only exist after they have been saved to the store;
@@ -69,6 +71,9 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     entity.vestingInterval = vintageFundingProposalInfo.getVestInfo().vestingInterval;
     entity.paybackToken = vintageFundingProposalInfo.getProposalPaybackTokenInfo().paybackToken;
     entity.paybackTokenAmount = vintageFundingProposalInfo.getProposalPaybackTokenInfo().paybackTokenAmount;
+    entity.vestingERC721 = vintageFundingProposalInfo.getProposalPaybackTokenInfo().erc721;
+    entity.vestingNFTEnable = vintageFundingProposalInfo.getProposalPaybackTokenInfo().nftEnable;
+
     entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.inQueueTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().inQueueTimestamp;
     entity.proposalStartVotingTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().proposalStartVotingTimestamp;
@@ -80,6 +85,10 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     let successedFundCounter = VintageSuccessedFundCounter.load(event.params.daoAddr.toString());
     entity.executeHash = Bytes.empty();
     entity.succeedFundRound = successedFundCounter ? successedFundCounter.counter : BigInt.fromI32(0);
+
+    const currentFundRound = fundRaiseContract.createdFundCounter(event.params.daoAddr);
+    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
+    if(roundProposalIdEntity)entity.newFundProposalId= roundProposalIdEntity.proposalId;else{entity.newFundProposalId=Bytes.empty();}
     entity.save()
 }
 

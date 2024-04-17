@@ -52,6 +52,7 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     let minfundgoal = BigInt.fromI32(0);
     let finalraised = BigInt.fromI32(0);
     let newFundProposalId = Bytes.empty();
+    let newFundExeBlockNum= BigInt.fromI32(0);
     const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
     if (roundProposalIdEntity) {
         newFundProposalId = roundProposalIdEntity.proposalId;
@@ -59,6 +60,7 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
         if (newFundEntity) {
             minfundgoal = newFundEntity.fundRaiseTarget;
             finalraised = newFundEntity.totalFund;
+            newFundExeBlockNum= newFundEntity.executeBlockNum;
         }
     }
 
@@ -80,7 +82,9 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.succeedFundRound = BigInt.fromI32(0);
     entity.escrowBlockNum = event.block.number;
-    entity.myConfirmedDepositAmount = vintageFundingPoolExt.balanceOf( event.params.account);
+
+    let rel = vintageFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token,newFundExeBlockNum.plus(BigInt.fromI32(1)));
+    if (!rel.reverted) entity.myConfirmedDepositAmount = rel.value;
    
     let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(
         event.params.dao.toHexString()
