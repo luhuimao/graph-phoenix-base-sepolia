@@ -14,9 +14,9 @@ import {
 } from "../generated/VintageFundRaiseAdapterContract/VintageFundRaiseAdapterContract"
 import { ERC20 } from "../generated/VintageFundRaiseAdapterContract/ERC20";
 import {
-    VintageNewFundProposal,
+    VintageFundEstablishmentProposal,
     VintageProposalVoteInfo,
-    VintageFundRoundToNewFundProposalId,
+    VintageFundRoundToFundEstablishmentProposalId,
     VintageFundRaiseEntity,
     VintageDaoFeeInfoEntity
 } from "../generated/schema"
@@ -24,10 +24,10 @@ import {
 export function handleProposalCreated(event: ProposalCreated): void {
     // log.error("proposalId {}", [event.params.proposalId.toHexString()]);
 
-    let entity = VintageNewFundProposal.load(event.params.proposalId.toHexString())
+    let entity = VintageFundEstablishmentProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
-        entity = new VintageNewFundProposal(event.params.proposalId.toHexString())
+        entity = new VintageFundEstablishmentProposal(event.params.proposalId.toHexString())
     }
 
     let vintageFundRaiseContract = VintageFundRaiseAdapterContract.bind(event.address);
@@ -53,7 +53,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.redemptDuration = proposalInfo.getTimesInfo().redemptDuration;
         entity.returnDuration = proposalInfo.getTimesInfo().refundDuration;
         entity.managementFeeRatio = proposalInfo.getFeeInfo().managementFeeRatio;
-        entity.returnTokenManagementFeeRatio = proposalInfo.getFeeInfo().paybackTokenManagementFeeRatio;
+        entity.paybackTokenManagementFeeRatio = proposalInfo.getFeeInfo().paybackTokenManagementFeeRatio;
         entity.redepmtFeeRatio = proposalInfo.getFeeInfo().redepmtFeeRatio;
         entity.protocolFeeRatio = proposalInfo.getFeeInfo().protocolFeeRatio;
         entity.managementFeeAddress = proposalInfo.getFeeInfo().managementFeeAddress;
@@ -118,7 +118,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 }
 
 export function handleProposalExecuted(event: proposalExecuted): void {
-    let entity = VintageNewFundProposal.load(event.params.proposalId.toHexString())
+    let entity = VintageFundEstablishmentProposal.load(event.params.proposalId.toHexString())
 
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
@@ -132,7 +132,7 @@ export function handleProposalExecuted(event: proposalExecuted): void {
             let vintageFundRaiseContract = VintageFundRaiseAdapterContract.bind(event.address);
             const fundRound = vintageFundRaiseContract.createdFundCounter(event.params.daoAddr);
             fundNumber = fundRound;
-            let roundPropossalEntity = new VintageFundRoundToNewFundProposalId(event.params.daoAddr.toHexString() + fundRound.toString());
+            let roundPropossalEntity = new VintageFundRoundToFundEstablishmentProposalId(event.params.daoAddr.toHexString() + fundRound.toString());
             roundPropossalEntity.daoAddr = event.params.daoAddr;
             roundPropossalEntity.fundRound = fundRound;
             roundPropossalEntity.proposalId = event.params.proposalId;
@@ -146,7 +146,7 @@ export function handleProposalExecuted(event: proposalExecuted): void {
             }
             vintageDaoFeeInfoEntity.feeReceiver = entity.managementFeeAddress;
             vintageDaoFeeInfoEntity.managementFee = entity.managementFeeRatio;
-            vintageDaoFeeInfoEntity.payTokenManagementFee = entity.returnTokenManagementFeeRatio;
+            vintageDaoFeeInfoEntity.payTokenManagementFee = entity.paybackTokenManagementFeeRatio;
             vintageDaoFeeInfoEntity.proposerPaybackTokenReward = entity.projectTokenFromInvestor;
             vintageDaoFeeInfoEntity.proposerReward = entity.fundFromInverstor;
             vintageDaoFeeInfoEntity.redemptionFee = entity.redepmtFeeRatio;

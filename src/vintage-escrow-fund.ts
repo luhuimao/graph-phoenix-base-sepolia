@@ -18,8 +18,8 @@ import { VintageFundingPoolExtension } from "../generated/VintageEscrowFundAdapt
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
     VintageEscrowFundEntity,
-    VintageFundRoundToNewFundProposalId,
-    VintageNewFundProposal,
+    VintageFundRoundToFundEstablishmentProposalId,
+    VintageFundEstablishmentProposal,
     VintageFundRoundStatistic,
     VintageInvestorInvestmentEntity,
     VintageInvestorRedemptionsInFundRoundEntity
@@ -48,15 +48,15 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
         entity = new VintageEscrowFundEntity(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.fundRound.toHexString());
         entity.myWithdraw = BigInt.fromI32(0);
     }
-    let newFundEntity: VintageNewFundProposal | null;
+    let newFundEntity: VintageFundEstablishmentProposal | null;
     let minfundgoal = BigInt.fromI32(0);
     let finalraised = BigInt.fromI32(0);
     let newFundProposalId = Bytes.empty();
     let newFundExeBlockNum= BigInt.fromI32(0);
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
     if (roundProposalIdEntity) {
         newFundProposalId = roundProposalIdEntity.proposalId;
-        newFundEntity = VintageNewFundProposal.load(newFundProposalId.toHexString());
+        newFundEntity = VintageFundEstablishmentProposal.load(newFundProposalId.toHexString());
         if (newFundEntity) {
             minfundgoal = newFundEntity.fundRaiseTarget;
             finalraised = newFundEntity.totalFund;
@@ -65,7 +65,7 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     }
 
     entity.daoAddr = event.params.dao;
-    entity.newFundProposalId = newFundProposalId;
+    entity.fundEstablishmentProposalId = newFundProposalId;
     entity.account = event.params.account;
     entity.fundRound = event.params.fundRound;
     entity.token = event.params.token;

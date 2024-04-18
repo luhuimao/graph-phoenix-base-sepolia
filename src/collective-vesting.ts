@@ -20,7 +20,7 @@ import {
     CollectiveVestEntity,
     CollectiveUserVestInfo,
     CollectiveVestingClaimedActivityEntity,
-    CollectiveFundingProposalEntity
+    CollectiveInvestmentProposalEntity
 } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
@@ -57,13 +57,13 @@ export function handleCreateVesting(event: CreateVesting): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    let vintageFundingProposalEntity = CollectiveFundingProposalEntity.load(event.params.proposalId.toHexString())
+    let vintageFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
 
     let userVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!userVestInfo) {
         userVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
         userVestInfo.daoAddr = vintageFundingProposalEntity ? vintageFundingProposalEntity.daoAddr : Bytes.fromHexString("0x");
-        userVestInfo.fundingProposalId = event.params.proposalId;
+        userVestInfo.investmentProposalId = event.params.proposalId;
         userVestInfo.recipient = event.params.recipient;
         userVestInfo.vestingStartTime = event.params.start;
         userVestInfo.vestingCliffEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.cliffEndTime : BigInt.fromI32(0);

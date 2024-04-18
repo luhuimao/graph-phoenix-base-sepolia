@@ -14,7 +14,7 @@ import {
 import { DaoRegistry } from "../generated/FlexAllocationAdapterContract/DaoRegistry";
 import {
     ConfigureDao,
-    FlexFundingProposal,
+    FlexInvestmentProposal,
     FlexVestingEligibleUsers,
     FlexUserVestInfo
 } from "../generated/schema"
@@ -39,20 +39,20 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
     entity.lps = tem;
     entity.save()
 
-    let flexFundingProposalEntity = FlexFundingProposal.load(event.params.proposalId.toHexString());
+    let flexInvstmentProposalEntity = FlexInvestmentProposal.load(event.params.proposalId.toHexString());
     let allocContract = FlexAllocationAdapterContract.bind(event.address);
 
-    if (flexFundingProposalEntity) {
-        const vestingStartTime = flexFundingProposalEntity.vestingStartTime;
-        const vestingCliffEndTime = flexFundingProposalEntity.vestingCliffEndTime;
-        const vestingInterval = flexFundingProposalEntity.vestingInterval;
-        const vestingEndTime = flexFundingProposalEntity.vestingEndTime;
+    if (flexInvstmentProposalEntity) {
+        const vestingStartTime = flexInvstmentProposalEntity.vestingStartTime;
+        const vestingCliffEndTime = flexInvstmentProposalEntity.vestingCliffEndTime;
+        const vestingInterval = flexInvstmentProposalEntity.vestingInterval;
+        const vestingEndTime = flexInvstmentProposalEntity.vestingEndTime;
 
         //investors 
         for (var i = 0; i < entity.lps.length; i++) {
             let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + entity.lps[i]);
             flexUserVestInfo.daoAddr = event.params.daoAddr;
-            flexUserVestInfo.fundingProposalId = event.params.proposalId;
+            flexUserVestInfo.investmentProposalId = event.params.proposalId;
             flexUserVestInfo.recipient = Bytes.fromHexString(entity.lps[i]);
             // let vestInfo = allocContract.vestingInfos(
             //     event.params.daoAddr,
@@ -88,7 +88,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             if (!flexUserVestInfo) {
                 let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + managementFeeAddress.toHexString());
                 flexUserVestInfo.daoAddr = event.params.daoAddr;
-                flexUserVestInfo.fundingProposalId = event.params.proposalId;
+                flexUserVestInfo.investmentProposalId = event.params.proposalId;
                 flexUserVestInfo.recipient = managementFeeAddress;
                 flexUserVestInfo.vestingStartTime = vestingStartTime;
                 flexUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
@@ -115,7 +115,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             if (!flexUserVestInfo) {
                 let flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + event.params.proposer.toHexString());
                 flexUserVestInfo.daoAddr = event.params.daoAddr;
-                flexUserVestInfo.fundingProposalId = event.params.proposalId;
+                flexUserVestInfo.investmentProposalId = event.params.proposalId;
                 flexUserVestInfo.recipient = event.params.proposer;
                 flexUserVestInfo.vestingStartTime = vestingStartTime;
                 flexUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;

@@ -27,7 +27,7 @@ type FlexDaoEntity @entity(immutable: true){
   flexDaoFeeInfo: FlexDaoFeeInfoEntity
   flexDaoPollingInfo: FlexDaoPollingInfoEntity
   flexDaoInvestorCapacity: FlexDaoInvestorCapacityEntity
-  flexFundingProposal: [FlexFundingProposal!] @derivedFrom(field: "flexDaoEntity")
+  flexInvestmentProposal: [FlexInvestmentProposal!] @derivedFrom(field: "flexDaoEntity")
   flexStewardMangementProposal: [FlexStewardMangementProposal!] @derivedFrom(field: "flexDaoEntity")
   flexPollVoting: [FlexPollVoting!] @derivedFrom(field: "flexDaoEntity")
   flexVoting: [FlexVoting!] @derivedFrom(field: "flexDaoEntity")
@@ -189,20 +189,20 @@ type FlexDaoVoteConfigEntity @entity{
   flexDaoEntity: FlexDaoEntity
 }
 
-type FlexFundingProposal @entity{
+type FlexInvestmentProposal @entity{
   id: ID!
   daoAddress: Bytes! # bytes32
   proposalId: Bytes! # bytes32
   proposer: Bytes! # address
   tokenAddress: Bytes! # address
-  minFundingAmount: BigInt! # uint256
-  minFundingAmountFromWei: String!
-  maxFundingAmount: BigInt! # uint256
-  maxFundingAmountFromWei: String!
+  minInvestmentAmount: BigInt! # uint256
+  minInvestmentAmountFromWei: String!
+  maxInvestmentAmount: BigInt! # uint256
+  maxInvestmentAmountFromWei: String!
   escrow: Boolean!
-  returnTokenAddr: Bytes! # address
-  returnTokenAmount: BigInt! # uint256
-  returnTokenAmountFromWei: String!
+  paybackTokenAddr: Bytes! # address
+  paybackTokenAmount: BigInt! # uint256
+  paybackTokenAmountFromWei: String!
   price: BigInt! # uint256
   minReturnAmount: BigInt! # uint256
   minReturnAmountFromWei: String!
@@ -228,7 +228,7 @@ type FlexFundingProposal @entity{
   minDepositAmountFromWei: String!
   maxDepositAmount: BigInt! # uint256
   maxDepositAmountFromWei: String!
-  backerIdentification: Boolean!
+  investorIdentification: Boolean!
   bType: BigInt! # uint256
   bChainId: BigInt! # uint256
   bTokanAddr: Bytes! # address
@@ -370,7 +370,7 @@ type FlexVestingEligibleUsers @entity {
 type FlexUserVestInfo @entity{
   id: ID!
   daoAddr: Bytes! # address
-  fundingProposalId: Bytes! # bytes32
+  investmentProposalId: Bytes! # bytes32
   recipient: Bytes! # address
   vestingStartTime: BigInt! # uint256
   vestingCliffEndTime: BigInt! # uint256
@@ -420,7 +420,7 @@ type FlexFreeInEscrowFundEntity @entity{
   token: Bytes! # address
   createTimeStamp: BigInt! # uint256
   createDateTime: String!
-  fundingProposalId: Bytes! # address
+  investmentProposalId: Bytes! # address
   amount: BigInt! # uint256
   amountFromWei: String!
   account: Bytes! # address
@@ -440,9 +440,9 @@ type VintageDaoEntity @entity(immutable: true){
   creator: Bytes! # address
   createTimeStamp: BigInt!
   createDateTime: String!
-  vintageNewFundProposal: [VintageNewFundProposal!] @derivedFrom(field: "vintageDaoEntity")
-  vintageRaiserMangementProposal: [VintageRaiserMangementProposal!] @derivedFrom(field: "vintageDaoEntity")
-  vintageFundingProposalInfo: [VintageFundingProposalInfo!] @derivedFrom(field: "vintageDaoEntity")
+  vintageFundEstablishmentProposal: [VintageFundEstablishmentProposal!] @derivedFrom(field: "vintageDaoEntity")
+  vintageGovernorManagementProposal: [VintageGovernorManagementProposal!] @derivedFrom(field: "vintageDaoEntity")
+  vintageInvestmentProposalInfo: [VintageInvestmentProposalInfo!] @derivedFrom(field: "vintageDaoEntity")
   vintageDaoSetProposal: [VintageDaoSetProposal!] @derivedFrom(field: "vintageDaoEntity")
   vintageDaoInvestorCapacity: VintageDaoInvestorCapacityEntity
   vintageInvestorMembership: VintageInvestorMembershipEntity
@@ -514,7 +514,7 @@ type VintageVotingInfoEntity @entity{
   vintageDaoEntity: VintageDaoEntity
 }
 
-type VintageNewFundProposal @entity{
+type VintageFundEstablishmentProposal @entity{
   id: ID!
   daoAddr: Bytes! # address
   proposalId: Bytes! # bytes32
@@ -535,7 +535,7 @@ type VintageNewFundProposal @entity{
   redemptDuration: BigInt! # uint256
   returnDuration: BigInt! # uint256
   managementFeeRatio: BigInt! # uint256
-  returnTokenManagementFeeRatio: BigInt! # uint256
+  paybackTokenManagementFeeRatio: BigInt! # uint256
   redepmtFeeRatio: BigInt! # uint256
   protocolFeeRatio: BigInt! # uint256
   managementFeeAddress: Bytes! # bytes32
@@ -561,12 +561,12 @@ type VintageNewFundProposal @entity{
   vintageDaoEntity: VintageDaoEntity
 }
 
-type VintageRaiserMangementProposal @entity{
+type VintageGovernorManagementProposal @entity{
   id: ID!
   daoAddr: Bytes! # address
   proposer: Bytes! # address
   proposalId: Bytes!
-  raiserAddress: Bytes! # address
+  governorAddress: Bytes! # address
   creationTime: BigInt! # uint256
   createTimeString: String!
   stopVoteTime: BigInt! # uint256
@@ -580,7 +580,7 @@ type VintageRaiserMangementProposal @entity{
   vintageDaoEntity: VintageDaoEntity
 }
 
-type VintageFundingProposalInfo @entity{
+type VintageInvestmentProposalInfo @entity{
   id: ID!
   daoAddress: Bytes! # bytes32
   proposalId: Bytes! # bytes32
@@ -590,9 +590,9 @@ type VintageFundingProposalInfo @entity{
   minDepositAmountFromWei: String!
   maxDepositAmount: BigInt! # uint256
   maxDepositAmountFromWei: String!
-  fundingToken: Bytes! # bytes32
-  fundingAmount: BigInt! # uint256
-  fundingAmountFromWei: String!
+  investmentToken: Bytes! # bytes32
+  investmentAmount: BigInt! # uint256
+  investmentAmountFromWei: String!
   totalAmount: BigInt! # uint256
   totalAmountFromWei: String!
   price: BigInt! # uint256
@@ -618,7 +618,7 @@ type VintageFundingProposalInfo @entity{
   executeBlockNum: BigInt
   succeedFundRound: BigInt
   executeHash: Bytes!
-  newFundProposalId: Bytes!
+  fundEstablishmentProposalId: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -638,7 +638,7 @@ type VintageDaoSetProposal @entity{
 type VintageUserVestInfo @entity{
   id: ID!
   daoAddr: Bytes! # address
-  fundingProposalId: Bytes! # bytes32
+  investmentProposalId: Bytes! # bytes32
   recipient: Bytes! # address
   vestingStartTime: BigInt! # uint256
   vestingCliffEndTime: BigInt! # uint256
@@ -694,7 +694,7 @@ type VintageInvestorBalance @entity{
   account:  Bytes! # address
   balance: BigInt! # uint256
   balanceFromWei: String!
-  newFundProposalId: Bytes! # bytes32
+  fundEstablishmentProposalId: Bytes! # bytes32
   fundId: BigInt! # uint256
 }
 
@@ -751,7 +751,7 @@ type VintageClearFundEntity @entity{
   timeStamp: BigInt! # uint256
   amount: BigInt! # uint256
   executor: Bytes! #address
-  newFundProposalId: Bytes! # bytes32
+  fundEstablishmentProposalId: Bytes! # bytes32
   createdFundCounter: BigInt! # uint256
   createdSucceedFundCounter: BigInt! # uint256
 }
@@ -769,7 +769,7 @@ type VintageRedempteEntity @entity{
 type VintageEscrowFundEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
-  newFundProposalId: Bytes! # bytes32
+  fundEstablishmentProposalId: Bytes! # bytes32
   token: Bytes! # address
   createTimeStamp: BigInt! # uint256
   createDateTime: String!
@@ -796,7 +796,7 @@ type VintageEscrowFundEntity @entity{
 type VintageFreeInEscrowFundEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
-  newFundProposalId: Bytes! # bytes32
+  fundEstablishmentProposalId: Bytes! # bytes32
   token: Bytes! # address
   createTimeStamp: BigInt! # uint256
   createDateTime: String!
@@ -856,7 +856,7 @@ type VestEntity @entity {
   claimedAmountFromWei: String!
 }
 
-type VintageFundRoundToNewFundProposalId @entity{
+type VintageFundRoundToFundEstablishmentProposalId @entity{
   id:ID!
   daoAddr: Bytes! # address
   fundRound: BigInt! # uint256
@@ -995,7 +995,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   redemptDuration: BigInt! # uint256
   returnDuration: BigInt! # uint256
   managementFeeRatio: BigInt! # uint256
-  returnTokenManagementFeeRatio: BigInt! # uint256
+  paybackTokenManagementFeeRatio: BigInt! # uint256
   redepmtFeeRatio: BigInt! # uint256
   protocolFeeRatio: BigInt! # uint256
   managementFeeAddress: Bytes! # bytes32
@@ -1020,7 +1020,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 
-type CollectiveFundingProposalEntity @entity{
+type CollectiveInvestmentProposalEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   proposalId: Bytes! # bytes32
@@ -1030,7 +1030,7 @@ type CollectiveFundingProposalEntity @entity{
   paybackToken: Bytes! # address
   price: BigInt!
   executeBlockNum: BigInt!
-  fundingAmount: BigInt!
+  investmentAmount: BigInt!
   receiver: Bytes! # address
   token: Bytes! # address
   totalAmount: BigInt!
@@ -1099,7 +1099,7 @@ type CollectiveVestEntity @entity {
 type CollectiveUserVestInfo @entity{
   id: ID!
   daoAddr: Bytes! # address
-  fundingProposalId: Bytes! # bytes32
+  investmentProposalId: Bytes! # bytes32
   recipient: Bytes! # address
   vestingStartTime: BigInt! # uint256
   vestingCliffEndTime: BigInt! # uint256

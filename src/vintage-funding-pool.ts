@@ -24,12 +24,12 @@ import {
     VintageRedempteEntity,
     VintageInvestorBalance,
     VintageInvestorAtivity,
-    VintageNewFundProposal,
+    VintageFundEstablishmentProposal,
     VintageDaoStatistic,
     VintageClearFundEntity,
     VintageFundRoundStatistic,
     VintageSuccessedFundCounter,
-    VintageFundRoundToNewFundProposalId,
+    VintageFundRoundToFundEstablishmentProposalId,
     VintageFundRaiseEntity,
     VintageInvestorRedemptionsInFundRoundEntity,
     VintageEscrowFundEntity
@@ -48,7 +48,7 @@ export function handleDeposit(event: Deposit): void {
     const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
     const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
     const createdNewFundId = vintageNewFundCont.createdFundCounter(event.params.daoAddress);
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.daoAddress.toHexString() + createdNewFundId.toString());
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddress.toHexString() + createdNewFundId.toString());
 
 
     if (roundProposalIdEntity) {
@@ -67,7 +67,7 @@ export function handleDeposit(event: Deposit): void {
             InvestorBalanceEntity.balanceFromWei = "0";
             InvestorBalanceEntity.daoAddr = event.params.daoAddress;
             InvestorBalanceEntity.account = event.params.account;
-            InvestorBalanceEntity.newFundProposalId = roundProposalIdEntity.proposalId;
+            InvestorBalanceEntity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId;
             InvestorBalanceEntity.fundId = createdNewFundId;
         }
 
@@ -118,10 +118,10 @@ export function handleWithDraw(event: WithDraw): void {
     const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
     const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
     const createdNewFundId = vintageNewFundCont.createdFundCounter(event.params.daoAddress);
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.daoAddress.toHexString() + createdNewFundId.toString());
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddress.toHexString() + createdNewFundId.toString());
 
     if (roundProposalIdEntity) {
-        let newFundEntity = VintageNewFundProposal.load(roundProposalIdEntity.proposalId.toHexString());
+        let newFundEntity = VintageFundEstablishmentProposal.load(roundProposalIdEntity.proposalId.toHexString());
 
         let InvestorBalanceEntity = VintageInvestorBalance.load(
             event.params.daoAddress.toString()
@@ -154,7 +154,7 @@ export function handleWithDraw(event: WithDraw): void {
                             + createdNewFundId.toHexString()
                         );
                         escrowFundEntity.daoAddr = event.params.daoAddress;
-                        escrowFundEntity.newFundProposalId = roundProposalIdEntity.proposalId;
+                        escrowFundEntity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId;
                         escrowFundEntity.account = event.params.account;
                         escrowFundEntity.fundRound = createdNewFundId;
                         escrowFundEntity.token = Bytes.empty();
@@ -193,7 +193,7 @@ export function handleWithDraw(event: WithDraw): void {
                             + createdNewFundId.toHexString()
                         );
                         escrowFundEntity.daoAddr = event.params.daoAddress;
-                        escrowFundEntity.newFundProposalId = roundProposalIdEntity.proposalId;
+                        escrowFundEntity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId;
                         escrowFundEntity.account = event.params.account;
                         escrowFundEntity.fundRound = createdNewFundId;
                         escrowFundEntity.token = Bytes.empty();
@@ -256,7 +256,7 @@ export function handleClearFund(event: ClearFund): void {
     const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
     const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
     const createdFundRound = vintageNewFundCont.createdFundCounter(event.params.dao);
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.dao.toHexString() + createdFundRound.toString());
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + createdFundRound.toString());
     const fundRoundStatisticEntity = VintageFundRoundStatistic.load(event.params.dao.toString() + createdFundRound.toString());
     let newFundProposalId = Bytes.empty();
     let createdSucceedFundCounter = BigInt.fromI32(0);
@@ -268,7 +268,7 @@ export function handleClearFund(event: ClearFund): void {
     entity.amount = event.params.amount;
     entity.executor = event.params.executor;
     entity.timeStamp = event.block.timestamp;
-    entity.newFundProposalId = newFundProposalId;
+    entity.fundEstablishmentProposalId = newFundProposalId;
     entity.createdFundCounter = createdFundRound;
     entity.createdSucceedFundCounter = createdSucceedFundCounter;
     entity.save();
@@ -329,9 +329,9 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     }
     const totoalRaised = event.params.fundRaisedAmount;
     const round = event.params.fundRound
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.dao.toHexString() + round.toString());
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + round.toString());
     if (roundProposalIdEntity) {
-        let newFundEntity = VintageNewFundProposal.load(roundProposalIdEntity.proposalId.toHexString());
+        let newFundEntity = VintageFundEstablishmentProposal.load(roundProposalIdEntity.proposalId.toHexString());
         if (newFundEntity) {
             newFundEntity.totalFund = totoalRaised;
             newFundEntity.totalFundFromWei = newFundEntity.totalFund.div(BigInt.fromI64(10 ** 18)).toString();

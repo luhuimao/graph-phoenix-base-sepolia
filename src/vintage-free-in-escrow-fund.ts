@@ -23,8 +23,8 @@ import { DaoRegistry } from "../generated/VintageFreeInEscrowFundAdapterContract
 import { VintageFundingPoolExtension } from "../generated/VintageFreeInEscrowFundAdapterContract/VintageFundingPoolExtension";
 import {
     VintageFreeInEscrowFundEntity,
-    VintageFundRoundToNewFundProposalId,
-    VintageNewFundProposal
+    VintageFundRoundToFundEstablishmentProposalId,
+    VintageFundEstablishmentProposal
 } from "../generated/schema"
 
 
@@ -52,14 +52,14 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     if (!entity) {
         entity = new VintageFreeInEscrowFundEntity(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.fundRound.toHexString());
     }
-    let newFundEntity: VintageNewFundProposal | null;
+    let newFundEntity: VintageFundEstablishmentProposal | null;
     let minfundgoal = BigInt.fromI32(0);
     let finalraised = BigInt.fromI32(0);
     let newFundProposalId = Bytes.empty();
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
     if (roundProposalIdEntity) {
         newFundProposalId = roundProposalIdEntity.proposalId;
-        newFundEntity = VintageNewFundProposal.load(newFundProposalId.toHexString());
+        newFundEntity = VintageFundEstablishmentProposal.load(newFundProposalId.toHexString());
         if (newFundEntity) {
             minfundgoal = newFundEntity.fundRaiseTarget;
             finalraised = newFundEntity.totalFund;
@@ -67,7 +67,7 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     }
 
     entity.daoAddr = event.params.dao;
-    entity.newFundProposalId = newFundProposalId;
+    entity.fundEstablishmentProposalId = newFundProposalId;
     entity.account = event.params.account;
 
     entity.token = event.params.token;

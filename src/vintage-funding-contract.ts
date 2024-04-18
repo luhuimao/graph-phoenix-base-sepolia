@@ -17,8 +17,8 @@ import { VintageFundingPoolAdapterContract } from "../generated/VintageFundingAd
 import { DaoRegistry } from "../generated/VintageFundingAdapterContract/DaoRegistry";
 import { VintageFundingPoolExtension } from "../generated/VintageFundingAdapterContract/VintageFundingPoolExtension";
 import {
-    VintageFundingProposalInfo,
-    VintageFundRoundToNewFundProposalId,
+    VintageInvestmentProposalInfo,
+    VintageFundRoundToFundEstablishmentProposalId,
     VintageDaoStatistic,
     VintageProposalVoteInfo,
     VintageFundRoundStatistic,
@@ -33,52 +33,52 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
     const fundRaiseAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
     const fundRaiseContract = VintageFundRaiseAdapterContract.bind(fundRaiseAddress);
-    let entity = VintageFundingProposalInfo.load(event.params.proposalId.toHexString())
+    let entity = VintageInvestmentProposalInfo.load(event.params.proposalId.toHexString())
 
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
-        entity = new VintageFundingProposalInfo(event.params.proposalId.toHexString())
+        entity = new VintageInvestmentProposalInfo(event.params.proposalId.toHexString())
         // Entity fields can be set using simple assignments
         // entity.count = BigInt.fromI32(0)
     }
 
     let vintageFundingContract = VintageFundingAdapterContract.bind(event.address);
-    const vintageFundingProposalInfo = vintageFundingContract.
+    const vintageInvestmentProposalInfo = vintageFundingContract.
         proposals(event.params.daoAddr,
             event.params.proposalId);
     entity.proposalId = event.params.proposalId
     entity.daoAddress = event.params.daoAddr;
     entity.state = BigInt.fromI32(0);
-    entity.escrow = vintageFundingProposalInfo.getProposalPaybackTokenInfo().escrow;
-    entity.approverAddr = vintageFundingProposalInfo.getProposalPaybackTokenInfo().approveOwnerAddr;
+    entity.escrow = vintageInvestmentProposalInfo.getProposalPaybackTokenInfo().escrow;
+    entity.approverAddr = vintageInvestmentProposalInfo.getProposalPaybackTokenInfo().approveOwnerAddr;
     entity.minDepositAmount = BigInt.fromI32(0);
     entity.minDepositAmountFromWei = entity.minDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.maxDepositAmount = BigInt.fromI32(0);
     entity.maxDepositAmountFromWei = entity.maxDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.fundingToken = vintageFundingProposalInfo.getInvestmentToken();
-    entity.fundingAmount = vintageFundingProposalInfo.getInvestmentAmount();
-    entity.fundingAmountFromWei = entity.fundingAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.totalAmount = vintageFundingProposalInfo.getTotalAmount();
+    entity.investmentToken = vintageInvestmentProposalInfo.getInvestmentToken();
+    entity.investmentAmount = vintageInvestmentProposalInfo.getInvestmentAmount();
+    entity.investmentAmountFromWei = entity.investmentAmount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.totalAmount = vintageInvestmentProposalInfo.getTotalAmount();
     entity.totalAmountFromWei = entity.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.price = vintageFundingProposalInfo.getPrice();
-    entity.recipientAddr = vintageFundingProposalInfo.getRecipientAddr();
-    entity.proposer = vintageFundingProposalInfo.getProposer();
-    entity.vestingStartTime = vintageFundingProposalInfo.getVestInfo().vestingStartTime;
-    entity.vetingEndTime = vintageFundingProposalInfo.getVestInfo().vetingEndTime;
-    entity.vestingCliffEndTime = vintageFundingProposalInfo.getVestInfo().vestingCliffEndTime;
-    entity.vestingCliffLockAmount = vintageFundingProposalInfo.getVestInfo().vestingCliffLockAmount;
-    entity.vestingInterval = vintageFundingProposalInfo.getVestInfo().vestingInterval;
-    entity.paybackToken = vintageFundingProposalInfo.getProposalPaybackTokenInfo().paybackToken;
-    entity.paybackTokenAmount = vintageFundingProposalInfo.getProposalPaybackTokenInfo().paybackTokenAmount;
-    entity.vestingERC721 = vintageFundingProposalInfo.getProposalPaybackTokenInfo().erc721;
-    entity.vestingNFTEnable = vintageFundingProposalInfo.getProposalPaybackTokenInfo().nftEnable;
+    entity.price = vintageInvestmentProposalInfo.getPrice();
+    entity.recipientAddr = vintageInvestmentProposalInfo.getRecipientAddr();
+    entity.proposer = vintageInvestmentProposalInfo.getProposer();
+    entity.vestingStartTime = vintageInvestmentProposalInfo.getVestInfo().vestingStartTime;
+    entity.vetingEndTime = vintageInvestmentProposalInfo.getVestInfo().vetingEndTime;
+    entity.vestingCliffEndTime = vintageInvestmentProposalInfo.getVestInfo().vestingCliffEndTime;
+    entity.vestingCliffLockAmount = vintageInvestmentProposalInfo.getVestInfo().vestingCliffLockAmount;
+    entity.vestingInterval = vintageInvestmentProposalInfo.getVestInfo().vestingInterval;
+    entity.paybackToken = vintageInvestmentProposalInfo.getProposalPaybackTokenInfo().paybackToken;
+    entity.paybackTokenAmount = vintageInvestmentProposalInfo.getProposalPaybackTokenInfo().paybackTokenAmount;
+    entity.vestingERC721 = vintageInvestmentProposalInfo.getProposalPaybackTokenInfo().erc721;
+    entity.vestingNFTEnable = vintageInvestmentProposalInfo.getProposalPaybackTokenInfo().nftEnable;
 
     entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.inQueueTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().inQueueTimestamp;
-    entity.proposalStartVotingTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().proposalStartVotingTimestamp;
-    entity.proposalStopVotingTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().proposalStopVotingTimestamp;
-    entity.proposalExecuteTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().proposalExecuteTimestamp;
+    entity.inQueueTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().inQueueTimestamp;
+    entity.proposalStartVotingTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalStartVotingTimestamp;
+    entity.proposalStopVotingTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalStopVotingTimestamp;
+    entity.proposalExecuteTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalExecuteTimestamp;
     entity.creationTime = event.block.timestamp;
     entity.createDateTime = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.vintageDaoEntity = event.params.daoAddr.toHexString();
@@ -87,8 +87,8 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     entity.succeedFundRound = successedFundCounter ? successedFundCounter.counter : BigInt.fromI32(0);
 
     const currentFundRound = fundRaiseContract.createdFundCounter(event.params.daoAddr);
-    const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
-    if(roundProposalIdEntity)entity.newFundProposalId= roundProposalIdEntity.proposalId;else{entity.newFundProposalId=Bytes.empty();}
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
+    if(roundProposalIdEntity)entity.fundEstablishmentProposalId= roundProposalIdEntity.proposalId;else{entity.fundEstablishmentProposalId=Bytes.empty();}
     entity.save()
 }
 
@@ -102,15 +102,15 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
 
     const vintageFundingContract = VintageFundingAdapterContract.bind(event.address);
     const proposalInfo = vintageFundingContract.proposals(event.params.daoAddr, event.params.proposalID);
-    let proposalEntity = VintageFundingProposalInfo.load(event.params.proposalID.toHexString())
+    let proposalEntity = VintageInvestmentProposalInfo.load(event.params.proposalID.toHexString())
     // log.error("funding proposal state: {}", [event.params.state.toString()]);
     if (proposalEntity) {
         const vintageFundingContract = VintageFundingAdapterContract.bind(event.address);
-        const vintageFundingProposalInfo = vintageFundingContract.
+        const vintageInvestmentProposalInfo = vintageFundingContract.
             proposals(event.params.daoAddr,
                 event.params.proposalID);
 
-        proposalEntity.state = BigInt.fromI32(vintageFundingProposalInfo.getStatus());
+        proposalEntity.state = BigInt.fromI32(vintageInvestmentProposalInfo.getStatus());
         proposalEntity.proposalExecuteTimestamp = event.block.timestamp;
         proposalEntity.executeBlockNum = proposalInfo.getExecuteBlockNum();
         proposalEntity.executeHash = event.transaction.hash;
@@ -128,7 +128,7 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                 VintageDaoStatisticsEntity.members = BigInt.fromI64(0);
                 VintageDaoStatisticsEntity.daoAddr = event.params.daoAddr;
             }
-            VintageDaoStatisticsEntity.fundInvested = VintageDaoStatisticsEntity.fundInvested.plus(proposalEntity.fundingAmount);
+            VintageDaoStatisticsEntity.fundInvested = VintageDaoStatisticsEntity.fundInvested.plus(proposalEntity.investmentAmount);
             VintageDaoStatisticsEntity.fundInvestedFromWei = VintageDaoStatisticsEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
             VintageDaoStatisticsEntity.fundedVentures = VintageDaoStatisticsEntity.fundedVentures.plus(BigInt.fromI32(1));
 
@@ -153,17 +153,17 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
         if (proposalEntity.state == BigInt.fromI32(3)) {
             let fundRoundEntity = VintageFundRoundStatistic.load(event.params.daoAddr.toString() + currentFundRound.toString());
             if (fundRoundEntity) {
-                fundRoundEntity.fundInvested = fundRoundEntity.fundInvested.plus(proposalEntity.fundingAmount);
+                fundRoundEntity.fundInvested = fundRoundEntity.fundInvested.plus(proposalEntity.investmentAmount);
                 fundRoundEntity.fundedVentures = fundRoundEntity.fundedVentures.plus(BigInt.fromI32(1));
                 fundRoundEntity.save();
             }
 
-            const roundProposalIdEntity = VintageFundRoundToNewFundProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
+            const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
             if (roundProposalIdEntity) {
                 const newFundProposalId = roundProposalIdEntity.proposalId;
                 let fundRaiseEntity = VintageFundRaiseEntity.load(roundProposalIdEntity.proposalId.toHexString());
                 if (fundRaiseEntity) {
-                    fundRaiseEntity.fundInvested = fundRaiseEntity.fundInvested.plus(proposalEntity.fundingAmount);
+                    fundRaiseEntity.fundInvested = fundRaiseEntity.fundInvested.plus(proposalEntity.investmentAmount);
                     fundRaiseEntity.fundInvestedFromWei = fundRaiseEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
                     fundRaiseEntity.fundedVentures = fundRaiseEntity.fundedVentures.plus(BigInt.fromI32(1));
 
@@ -176,8 +176,7 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                 // log.error("investors: {}", [investors.value.toString()]);
 
                 for (var i = 0; i < investors.value.length; i++) {
-                    const bal1 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.fundingToken), proposalInfo.getExecuteBlockNum().minus(BigInt.fromI32(1)));
-                    // const bal2 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.fundingToken), proposalInfo.getExecuteBlockNum());
+                    const bal1 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.investmentToken), proposalInfo.getExecuteBlockNum().minus(BigInt.fromI32(1)));
                     const bal2 = fundingPoolAdapt.balanceOf(event.params.daoAddr, investors.value[i]);
                     if (!bal1.reverted) {
                         // log.error("prior value1: {}", [bal1.value.toString()]);
@@ -208,16 +207,16 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
 }
 
 export function handleStartVote(event: handleStartVoteEvent): void {
-    let entity = VintageFundingProposalInfo.load(event.params.proposalID.toHexString())
+    let entity = VintageInvestmentProposalInfo.load(event.params.proposalID.toHexString())
     if (entity) {
         const vintageFundingContract = VintageFundingAdapterContract.bind(event.address);
-        const vintageFundingProposalInfo = vintageFundingContract.
+        const vintageInvestmentProposalInfo = vintageFundingContract.
             proposals(event.params.daoAddr,
                 event.params.proposalID);
 
-        entity.state = BigInt.fromI32(vintageFundingProposalInfo.getStatus());
-        entity.proposalStartVotingTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().proposalStartVotingTimestamp;
-        entity.proposalStopVotingTimestamp = vintageFundingProposalInfo.getProposalTimeInfo().proposalStopVotingTimestamp;
+        entity.state = BigInt.fromI32(vintageInvestmentProposalInfo.getStatus());
+        entity.proposalStartVotingTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalStartVotingTimestamp;
+        entity.proposalStopVotingTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalStopVotingTimestamp;
         entity.save();
     }
 }

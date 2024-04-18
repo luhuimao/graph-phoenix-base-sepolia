@@ -18,7 +18,7 @@ import { VintageFundingPoolAdapterContract } from "../generated/VintageDaoSetAda
 import {
     VintageDaoSetProposal,
     VintageProposalVoteInfo,
-    VintageFundRoundToNewFundProposalId,
+    VintageFundRoundToFundEstablishmentProposalId,
     VintageDaoInvestorCapacityEntity,
     VintageInvestorMembershipEntity,
     VintageGovernorMembershipEntity,

@@ -17,19 +17,19 @@ import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry
 // import { DaoFactory } from "../generated/DaoFactory/DaoFactory";
 import { FlexInvestmentPoolAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
 
-import { FlexFundingProposal, FlexDaoStatistic } from "../generated/schema"
+import { FlexInvestmentProposal, FlexDaoStatistic } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
 export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
-    let entity = FlexFundingProposal.load(event.params.proposalId.toHexString())
+    let entity = FlexInvestmentProposal.load(event.params.proposalId.toHexString())
 
 
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
-        entity = new FlexFundingProposal(event.params.proposalId.toHexString())
+        entity = new FlexInvestmentProposal(event.params.proposalId.toHexString())
     }
 
     // BigInt and BigDecimal math are supported
@@ -43,14 +43,14 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.daoAddress = event.params.daoAddress;
     entity.proposer = event.params.proposer;
     entity.tokenAddress = proposalInfo.getInvestmentInfo().tokenAddress;
-    entity.minFundingAmount = proposalInfo.getInvestmentInfo().minInvestmentAmount;
-    entity.maxFundingAmount = proposalInfo.getInvestmentInfo().maxInvestmentAmount;
-    entity.minFundingAmountFromWei = entity.minFundingAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.maxFundingAmountFromWei = entity.maxFundingAmount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.minInvestmentAmount = proposalInfo.getInvestmentInfo().minInvestmentAmount;
+    entity.maxInvestmentAmount = proposalInfo.getInvestmentInfo().maxInvestmentAmount;
+    entity.minInvestmentAmountFromWei = entity.minInvestmentAmount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.maxInvestmentAmountFromWei = entity.maxInvestmentAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.escrow = proposalInfo.getInvestmentInfo().escrow;
-    entity.returnTokenAddr = proposalInfo.getInvestmentInfo().paybackTokenAddr;
-    entity.returnTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
-    entity.returnTokenAmountFromWei = entity.returnTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.paybackTokenAddr = proposalInfo.getInvestmentInfo().paybackTokenAddr;
+    entity.paybackTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
+    entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.price = proposalInfo.getInvestmentInfo().price;
     entity.minReturnAmount = proposalInfo.getInvestmentInfo().minReturnAmount;
     entity.maxReturnAmount = proposalInfo.getInvestmentInfo().maxReturnAmount.plus(BigInt.fromI32(10000));
@@ -77,7 +77,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.maxDepositAmount = proposalInfo.getFundRaiseInfo().maxDepositAmount;
     entity.minDepositAmountFromWei = entity.minDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.maxDepositAmountFromWei = entity.maxDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.backerIdentification = proposalInfo.getFundRaiseInfo().investorIdentification;
+    entity.investorIdentification = proposalInfo.getFundRaiseInfo().investorIdentification;
     entity.bType = BigInt.fromI32(proposalInfo.getFundRaiseInfo().investorIdentificationInfo.bType);
     entity.bChainId = proposalInfo.getFundRaiseInfo().investorIdentificationInfo.bChainId;
     entity.bTokanAddr = proposalInfo.getFundRaiseInfo().investorIdentificationInfo.bTokanAddr;
@@ -117,7 +117,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 }
 
 export function handleproposalExecuted(event: ProposalExecuted): void {
-    let entity = FlexFundingProposal.load(event.params.proposalId.toHexString())
+    let entity = FlexInvestmentProposal.load(event.params.proposalId.toHexString())
     let flexFundingContract = FlexFundingAdapterContract.bind(event.address);
     let proposalInfo = flexFundingContract.Proposals((event.params.daoAddress),
         event.params.proposalId);
@@ -132,8 +132,8 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
         let proposalInfo = flexFundingContract.Proposals((event.params.daoAddress),
             event.params.proposalId);
 
-        entity.returnTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
-        entity.returnTokenAmountFromWei = entity.returnTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        entity.paybackTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
+        entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.executeHash = event.transaction.hash;
 
         if (entity.state == BigInt.fromI32(3)) {

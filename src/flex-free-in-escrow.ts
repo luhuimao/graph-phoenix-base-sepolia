@@ -20,7 +20,7 @@ import { DaoRegistry } from "../generated/FlexFreeInEscrowFundAdapterContract/Da
 import { FlexInvestmentPoolExtension } from "../generated/FlexFreeInEscrowFundAdapterContract/FlexInvestmentPoolExtension";
 import {
     FlexFreeInEscrowFundEntity,
-    FlexFundingProposal
+    FlexInvestmentProposal
 } from "../generated/schema"
 
 
@@ -48,17 +48,9 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     if (!entity) {
         entity = new FlexFreeInEscrowFundEntity(event.params.dao.toHexString() + event.params.account.toHexString() + event.params.proposalId.toHexString());
     }
-    // let fundingEnity: FlexFundingProposal | null;
-    // let minfundgoal = BigInt.fromI32(0);
-    // let finalraised = BigInt.fromI32(0);
-    // fundingEnity = FlexFundingProposal.load(event.params.proposalId.toHexString());
-    // if (fundingEnity) {
-    //     minfundgoal = fundingEnity.minFundingAmount;
-    //     finalraised = fundingEnity.totalFund;
-    // }
 
     entity.daoAddr = event.params.dao;
-    entity.fundingProposalId = event.params.proposalId;
+    entity.investmentProposalId = event.params.proposalId;
     entity.account = event.params.account;
 
     entity.token = event.params.token;
@@ -82,7 +74,5 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
             entity.myConfirmedDepositAmount = rel.value.minus(event.params.amount);
 
     }
-    // entity.myConfirmedDepositAmount = fundingPoolExtContr.balanceOf(event.params.proposalId, event.params.account)
-
     entity.save();
 }

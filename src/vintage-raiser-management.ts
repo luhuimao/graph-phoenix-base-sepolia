@@ -13,20 +13,20 @@ import {
     ProposalCreated
 } from "../generated/VintageRaiserManagementContract/VintageRaiserManagementContract"
 import {
-    VintageRaiserMangementProposal,
+    VintageGovernorManagementProposal,
     VintageProposalVoteInfo
 } from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
-    let entity = VintageRaiserMangementProposal.load(event.params.proposalId.toHexString())
+    let entity = VintageGovernorManagementProposal.load(event.params.proposalId.toHexString())
     const contract = VintageRaiserManagementContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
-        entity = new VintageRaiserMangementProposal(event.params.proposalId.toHexString())
+        entity = new VintageGovernorManagementProposal(event.params.proposalId.toHexString())
 
         // Entity fields can be set using simple assignments
     }
@@ -39,7 +39,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     // entity.proposalIdUTF8String = ethers.toUtf8String(event.params.proposalId);
     entity.daoAddr = event.params.daoAddr;
     entity.proposer = event.transaction.from;
-    entity.raiserAddress = event.params.account;
+    entity.governorAddress = event.params.account;
     entity.creationTime = event.params.creationTime;
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.stopVoteTime = event.params.stopVoteTime;
@@ -62,7 +62,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 export function handleProposalProcessed(event: ProposalProcessed): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
-    let entity = VintageRaiserMangementProposal.load(event.params.proposalId.toHexString())
+    let entity = VintageGovernorManagementProposal.load(event.params.proposalId.toHexString())
     // BigInt and BigDecimal math are supported
     if (entity) {   // Entity fields can be set based on event parameters
         entity.state = BigInt.fromI32(event.params.state);

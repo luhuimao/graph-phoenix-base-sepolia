@@ -18,7 +18,7 @@ import {
 import { VintageVestingERC721, Transfer } from "../generated/VintageVestingERC721/VintageVestingERC721";
 import {
     VintageVestEntity, VintageUserVestInfo, VintageVestingClaimedActivityEntity,
-    VintageFundingProposalInfo
+    VintageInvestmentProposalInfo
 } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
@@ -55,13 +55,13 @@ export function handleCreateVesting(event: CreateVesting): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    let vintageFundingProposalEntity = VintageFundingProposalInfo.load(event.params.proposalId.toHexString())
+    let vintageFundingProposalEntity = VintageInvestmentProposalInfo.load(event.params.proposalId.toHexString())
 
     let userVestInfo = VintageUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!userVestInfo) {
         userVestInfo = new VintageUserVestInfo(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
         userVestInfo.daoAddr = vintageFundingProposalEntity ? vintageFundingProposalEntity.daoAddress : Bytes.fromHexString("0x");
-        userVestInfo.fundingProposalId = event.params.proposalId;
+        userVestInfo.investmentProposalId = event.params.proposalId;
         userVestInfo.recipient = event.params.recipient;
         userVestInfo.vestingStartTime = event.params.start;
         userVestInfo.vestingCliffEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingCliffEndTime : BigInt.fromI32(0);

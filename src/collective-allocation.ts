@@ -14,7 +14,7 @@ import {
     DaoRegistry
 } from "../generated/VintageAllocationAdapterContract/DaoRegistry";
 import {
-    CollectiveFundingProposalEntity,
+    CollectiveInvestmentProposalEntity,
     CollectiveVestingEligibleUsers,
     CollectiveUserVestInfo
 } from "../generated/schema"
@@ -41,7 +41,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
     entity.save()
 
 
-    let vintageFundingProposalEntity = CollectiveFundingProposalEntity.load(event.params.proposalId.toHexString())
+    let vintageFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
     if (vintageFundingProposalEntity) {
         const vestingStartTime = vintageFundingProposalEntity.vestingStartTime;
         const vestingCliffEndTime = vintageFundingProposalEntity.cliffEndTime;
@@ -54,7 +54,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
         for (var i = 0; i < entity.lps.length; i++) {
             let vintageUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + entity.lps[i]);
             vintageUserVestInfo.daoAddr = event.params.daoAddr;
-            vintageUserVestInfo.fundingProposalId = event.params.proposalId;
+            vintageUserVestInfo.investmentProposalId = event.params.proposalId;
             vintageUserVestInfo.recipient = Bytes.fromHexString(entity.lps[i]);
             // let vestInfo = allocContract.vestingInfos(
             //     event.params.daoAddr,
@@ -91,7 +91,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             if (!vintageUserVestInfo) {
                 vintageUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + managementFeeAddr.toHexString());
                 vintageUserVestInfo.daoAddr = event.params.daoAddr;
-                vintageUserVestInfo.fundingProposalId = event.params.proposalId;
+                vintageUserVestInfo.investmentProposalId = event.params.proposalId;
                 vintageUserVestInfo.recipient = managementFeeAddr;
                 vintageUserVestInfo.vestingStartTime = vestingStartTime;
                 vintageUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
@@ -120,7 +120,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             if (!vintageUserVestInfo) {
                 vintageUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + vintageFundingProposalEntity.proposer.toHexString());
                 vintageUserVestInfo.daoAddr = event.params.daoAddr;
-                vintageUserVestInfo.fundingProposalId = event.params.proposalId;
+                vintageUserVestInfo.investmentProposalId = event.params.proposalId;
                 vintageUserVestInfo.recipient = vintageFundingProposalEntity.proposer;
                 vintageUserVestInfo.vestingStartTime = vestingStartTime;
                 vintageUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;

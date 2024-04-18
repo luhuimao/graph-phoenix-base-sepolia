@@ -6,13 +6,13 @@ import {
     StartVoting
 } from "../generated/ColletiveFundingProposalAdapterContract/ColletiveFundingProposalAdapterContract"
 import {
-    CollectiveFundingProposalEntity,
+    CollectiveInvestmentProposalEntity,
     CollectiveProposalVoteInfo
 } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
 export function handleProposalCreated(event: ProposalCreated): void {
-    let entity = new CollectiveFundingProposalEntity(event.params.proposalId.toHexString());
+    let entity = new CollectiveInvestmentProposalEntity(event.params.proposalId.toHexString());
     const contract = ColletiveFundingProposalAdapterContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     if (!rel.reverted) {
@@ -24,7 +24,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
         entity.executeBlockNum = rel.value.getExecuteBlockNum()
 
-        entity.fundingAmount = rel.value.getFundingInfo().fundingAmount
+        entity.investmentAmount = rel.value.getFundingInfo().fundingAmount
         entity.receiver = rel.value.getFundingInfo().receiver
         entity.token = rel.value.getFundingInfo().token
         entity.totalAmount = rel.value.getFundingInfo().totalAmount
@@ -48,7 +48,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 }
 
 export function handlerProposalProcessed(event: ProposalExecuted): void {
-    let entity = CollectiveFundingProposalEntity.load(event.params.proposalId.toHexString());
+    let entity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString());
     const contract = ColletiveFundingProposalAdapterContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
 
@@ -70,7 +70,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
 }
 
 export function handlerStartVoting(event: StartVoting): void {
-    let entity = CollectiveFundingProposalEntity.load(event.params.proposalId.toHexString());
+    let entity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString());
     const contract = ColletiveFundingProposalAdapterContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     if (!rel.reverted && entity) {
