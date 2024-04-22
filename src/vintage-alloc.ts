@@ -73,7 +73,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             vintageUserVestInfo.totalAmount = paybackAmount;
             vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
             vintageUserVestInfo.created = false;
-
+            vintageUserVestInfo.tokenAddress= vintageFundingProposalEntity.paybackToken;
             vintageUserVestInfo.save();
         }
         const daoCont = DaoRegistry.bind(event.params.daoAddr);
@@ -101,6 +101,8 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
                 vintageUserVestInfo.totalAmount = vestInfo.getTokenAmount();
                 vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
                 vintageUserVestInfo.created = false;
+                vintageUserVestInfo.tokenAddress= vintageFundingProposalEntity.paybackToken;
+
                 vintageUserVestInfo.save();
             } else {
                 vintageUserVestInfo.totalAmount = vintageUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
@@ -130,7 +132,9 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
                 vintageUserVestInfo.totalAmount = vestInfo.getTokenAmount();
                 vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
                 vintageUserVestInfo.created = false;
+                vintageUserVestInfo.tokenAddress= vintageFundingProposalEntity.paybackToken;
                 vintageUserVestInfo.save();
+                
             } else {
                 vintageUserVestInfo.totalAmount = vintageUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
                 vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();

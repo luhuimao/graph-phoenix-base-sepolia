@@ -378,6 +378,7 @@ type FlexUserVestInfo @entity{
   vestingEndTime: BigInt! # uint256
   totalAmount: BigInt! # uint256
   created: Boolean!
+  tokenAddress: Bytes!
 }
 
 type FlexDaoStatistic @entity{
@@ -647,6 +648,7 @@ type VintageUserVestInfo @entity{
   totalAmount: BigInt! # uint256
   totalAmountFromWei: String!
   created: Boolean!
+  tokenAddress: Bytes!
 }
 
 type VintageInvestorAtivity @entity{

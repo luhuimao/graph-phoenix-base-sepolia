@@ -7,7 +7,7 @@
  * @LastEditTime: 2023-08-17 14:47:51
  */
 
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     FlexVesting,
     CancelVesting,
@@ -80,6 +80,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         flexUserVestInfo.vestingInterval = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.vestingInterval : BigInt.fromI32(0);
         flexUserVestInfo.vestingEndTime = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.vestingEndTime : BigInt.fromI32(0);
         flexUserVestInfo.totalAmount = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.paybackTokenAmount : BigInt.fromI32(0);
+        flexUserVestInfo.tokenAddress= flexInvestmentProposalEntity ? flexInvestmentProposalEntity.paybackTokenAddr: Bytes.empty();
     }
     flexUserVestInfo.created = true;
     flexUserVestInfo.save();

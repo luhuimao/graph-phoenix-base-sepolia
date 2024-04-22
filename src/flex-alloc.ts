@@ -70,7 +70,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             flexUserVestInfo.vestingEndTime = vestingEndTime;
             flexUserVestInfo.totalAmount = paybackAmount;
             flexUserVestInfo.created = false;
-
+            flexUserVestInfo.tokenAddress=flexInvstmentProposalEntity.paybackTokenAddr;
             flexUserVestInfo.save();
         }
 
@@ -96,6 +96,8 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
                 flexUserVestInfo.vestingEndTime = vestingEndTime;
                 flexUserVestInfo.totalAmount = vestInfo.getTokenAmount();
                 flexUserVestInfo.created = false;
+                flexUserVestInfo.tokenAddress=flexInvstmentProposalEntity.paybackTokenAddr;
+
                 flexUserVestInfo.save();
             } else {
                 flexUserVestInfo.totalAmount = flexUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
@@ -123,6 +125,8 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
                 flexUserVestInfo.vestingEndTime = vestingEndTime;
                 flexUserVestInfo.totalAmount = proposerVestInfo.getTokenAmount();
                 flexUserVestInfo.created = false;
+                flexUserVestInfo.tokenAddress=flexInvstmentProposalEntity.paybackTokenAddr;
+
                 flexUserVestInfo.save();
             } else {
                 flexUserVestInfo.totalAmount = flexUserVestInfo.totalAmount.plus(proposerVestInfo.getTokenAmount());
