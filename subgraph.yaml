@@ -163,9 +163,9 @@ dataSources:
     name: VintageVesting
     network: base-sepolia
     source:
-      address: "0xB6581e98fAA6AF462577fa6cbc72d1C513eF45c6"
+      address: "0xE160C497A4eF48de6022604fD42340E9c2128454"
       abi: VintageVesting
-      startBlock: 8525579
+      startBlock: 9338184
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -379,9 +379,9 @@ dataSources:
     name: FlexVesting
     network: base-sepolia
     source:
-      address: "0x641eaf535c531bB9aCD468c399e604c28675737B"
+      address: "0x147C0597dC5E10A6a9D9426D91466F71347e53ea"
       abi: FlexVesting
-      startBlock: 8179666
+      startBlock: 9338086
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -578,9 +578,9 @@ dataSources:
     name: VintageVestingERC721
     network: base-sepolia
     source:
-      address: "0x207513Ce3bd9E798F817655DaD18E828Cab67623"
+      address: "0x94435dC96Ba2F23e83b62909c07352031d4D425B"
       abi: VintageVestingERC721
-      startBlock: 6313427
+      startBlock: 9338193
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -601,9 +601,9 @@ dataSources:
     name: FlexVestingERC721
     network: base-sepolia
     source:
-      address: "0x77b50eE4Ac1BcE1B1514Ad52D578dDA784626442"
+      address: "0xFaeB671057d93EfEdabD026181BbC933b0EbaC87"
       abi: FlexVestingERC721
-      startBlock: 6313282
+      startBlock: 9338095
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
