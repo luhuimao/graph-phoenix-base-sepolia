@@ -118,6 +118,8 @@ dataSources:
           file: ./abis/VintageFundingPoolAdapterContract.json
         - name: VintageFundingPoolExtension
           file: ./abis/VintageFundingPoolExtension.json
+        - name: VintageRaiserManagementContract
+          file: ./abis/VintageRaiserManagementContract.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -163,9 +165,9 @@ dataSources:
     name: VintageVesting
     network: base-sepolia
     source:
-      address: "0xE160C497A4eF48de6022604fD42340E9c2128454"
+      address: "0x7dd8e41164C2eEAC7E2BdAbb53ed10816e240f6C"
       abi: VintageVesting
-      startBlock: 9338184
+      startBlock: 9680991
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -263,9 +265,9 @@ dataSources:
     name: VintageDaoSetAdapterContract
     network: base-sepolia
     source:
-      address: "0xD26545F5F63c735787f4350349815d7720b87EC2"
+      address: "0xE5D5AEa259fe4B135e2D4a4f9F4B82d733Ee67b8"
       abi: VintageDaoSetAdapterContract
-      startBlock: 6313473
+      startBlock: 9339238
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -352,9 +354,9 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xE3aC90d9aC6ed9074de8CaabF234E5E0a1c308Bc"
+      address: "0xc3030F81Fc20F198244b2AB68434296B78E8A9fD"
       abi: FlexFundingAdapterContract
-      startBlock: 6313019
+      startBlock: 9350347
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -369,6 +371,10 @@ dataSources:
           file: ./abis/DaoRegistry.json
         - name: FlexInvestmentPoolAdapterContract
           file: ./abis/FlexInvestmentPoolAdapterContract.json
+        - name: FlexInvestmentPoolExtension
+          file: ./abis/FlexInvestmentPoolExtension.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address)
           handler: handleProposalCreated
@@ -379,9 +385,9 @@ dataSources:
     name: FlexVesting
     network: base-sepolia
     source:
-      address: "0x147C0597dC5E10A6a9D9426D91466F71347e53ea"
+      address: "0x0b371C3c1E21Ad2b1E164d99265843fc41a201Be"
       abi: FlexVesting
-      startBlock: 9338086
+      startBlock: 9680986
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -493,7 +499,7 @@ dataSources:
     name: FlexAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x1aE9f36d51bec89360201FF7233E328ec1bd9757"
+      address: "0x4979a4748EF5ac5d78BE730B06e1eCd9a3617db2"
       abi: FlexAllocationAdapterContract
       startBlock: 7617453
     mapping:

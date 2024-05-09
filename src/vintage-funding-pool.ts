@@ -373,6 +373,8 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             VintageDaoStatisticsEntity.fundedVentures = BigInt.fromI64(0);
             VintageDaoStatisticsEntity.members = BigInt.fromI64(0);
             VintageDaoStatisticsEntity.daoAddr = event.params.dao;
+            VintageDaoStatisticsEntity.investors=[];
+            VintageDaoStatisticsEntity.governors=[];
         }
         VintageDaoStatisticsEntity.fundRaised = VintageDaoStatisticsEntity.fundRaised.plus(event.params.fundRaisedAmount);
         VintageDaoStatisticsEntity.fundRaisedFromWei = VintageDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();

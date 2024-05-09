@@ -12,7 +12,8 @@ import {
     FlexFundingAdapterContract,
     ProposalCreated,
     ProposalExecuted
-} from "../generated/FlexFundingAdapterContract/FlexFundingAdapterContract"
+} from "../generated/FlexFundingAdapterContract/FlexFundingAdapterContract";
+import { FlexInvestmentPoolExtension } from "../generated/FlexFundingAdapterContract/FlexInvestmentPoolExtension";
 import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry";
 // import { DaoFactory } from "../generated/DaoFactory/DaoFactory";
 import { FlexInvestmentPoolAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
@@ -122,7 +123,8 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
     let proposalInfo = flexFundingContract.Proposals((event.params.daoAddress),
         event.params.proposalId);
     const daoContract = DaoRegistry.bind(event.params.daoAddress);
-
+    const fundingPoolExtContrAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0xb12a3847d47fefceb164b75823af125f9aa82b76938df0ddf08c04cd314ba37c"));
+    const fundingPoolExtContr = FlexInvestmentPoolExtension.bind(fundingPoolExtContrAddress);
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (entity) {
@@ -171,17 +173,16 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 FlexDaoStatisticsEntity.members = BigInt.fromI64(0);
                 FlexDaoStatisticsEntity.daoAddr = event.params.daoAddress;
             }
-            FlexDaoStatisticsEntity.fundInvested = FlexDaoStatisticsEntity.fundInvested.plus(entity.totalFund);
+            const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
+            if (!rel.reverted) {
+                FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
+            }
+
+            FlexDaoStatisticsEntity.fundInvested = FlexDaoStatisticsEntity.fundInvested.plus(entity.ultimateInvestedFund);
             FlexDaoStatisticsEntity.fundInvestedFromWei = FlexDaoStatisticsEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
             FlexDaoStatisticsEntity.fundedVentures = FlexDaoStatisticsEntity.fundedVentures.plus(BigInt.fromI32(1));
 
-            const flexFundingPoolAdaptAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x2207fd6117465cefcba0abc867150698c0464aa41a293ec29ca01b67a6350c3c"));
-            const flexFundingPoolAdapt = FlexInvestmentPoolAdapterContract.bind(flexFundingPoolAdaptAddr);
-
-            const raiseAmount = flexFundingPoolAdapt.getTotalFundByProposalId(event.params.daoAddress, event.params.proposalId);
-
-
-            FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(raiseAmount);
+            FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(entity.totalFund);
             FlexDaoStatisticsEntity.fundRaisedFromWei = FlexDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
 
             FlexDaoStatisticsEntity.save();

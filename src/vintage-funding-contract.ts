@@ -16,6 +16,7 @@ import { VintageFundRaiseAdapterContract } from "../generated/VintageFundRaiseAd
 import { VintageFundingPoolAdapterContract } from "../generated/VintageFundingAdapterContract/VintageFundingPoolAdapterContract";
 import { DaoRegistry } from "../generated/VintageFundingAdapterContract/DaoRegistry";
 import { VintageFundingPoolExtension } from "../generated/VintageFundingAdapterContract/VintageFundingPoolExtension";
+import {VintageRaiserManagementContract} from "../generated/VintageFundingAdapterContract/VintageRaiserManagementContract";
 import {
     VintageInvestmentProposalInfo,
     VintageFundRoundToFundEstablishmentProposalId,
@@ -127,6 +128,8 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                 VintageDaoStatisticsEntity.fundedVentures = BigInt.fromI64(0);
                 VintageDaoStatisticsEntity.members = BigInt.fromI64(0);
                 VintageDaoStatisticsEntity.daoAddr = event.params.daoAddr;
+                VintageDaoStatisticsEntity.investors=[];
+                VintageDaoStatisticsEntity.governors=[];
             }
             VintageDaoStatisticsEntity.fundInvested = VintageDaoStatisticsEntity.fundInvested.plus(proposalEntity.investmentAmount);
             VintageDaoStatisticsEntity.fundInvestedFromWei = VintageDaoStatisticsEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
@@ -174,7 +177,48 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
             const investors = fundingPoolAdapt.try_getFundInvestors(event.params.daoAddr, currentFundRound);
             if (!investors.reverted && investors.value.length > 0) {
                 // log.error("investors: {}", [investors.value.toString()]);
+                let VintageDaoStatisticsEntity = VintageDaoStatistic.load(event.params.daoAddr.toHexString());
+                if (VintageDaoStatisticsEntity) {
+                    const governorContrAddr= daoContract.getAdapterAddress(Bytes.fromHexString("0xd90e10040720d66c9412cb511e3dbb6ba51669248a7495e763d44ab426893efa"));
+                    const governorContr=VintageRaiserManagementContract.bind(governorContrAddr);
 
+                    let tem: string[] = [];
+                    let tem1: string[] = [];
+                    if (VintageDaoStatisticsEntity.investors.length > 0) {
+                        for (var j = 0; j <  VintageDaoStatisticsEntity.investors.length; j++) {
+                            tem.push(VintageDaoStatisticsEntity.investors[j])
+                        }
+                    }
+                    if (VintageDaoStatisticsEntity.governors.length > 0) {
+                        for (var l = 0; l <  VintageDaoStatisticsEntity.governors.length; l++) {
+                            tem1.push(VintageDaoStatisticsEntity.governors[l])
+                        }
+                    }
+
+                    if (investors.value.length > 0) {
+                        for (var k = 0; k < investors.value.length; k++) {
+                            if(!contains(tem, investors.value[k].toHexString())){
+                                tem.push(investors.value[k].toHexString());
+                            }
+                        }
+                    }
+                    const governors = governorContr.getAllGovernor(event.params.daoAddr);
+
+                    if (governors.length > 0) {
+                        for (var h = 0; h < governors.length; h++) {
+                            if(!contains(tem1, governors[h].toHexString())){
+                                tem1.push(governors[h].toHexString());
+                            }
+                        }
+                    }
+
+                    VintageDaoStatisticsEntity.investors = tem;
+                    VintageDaoStatisticsEntity.governors = tem1;
+                    VintageDaoStatisticsEntity.members = BigInt.fromI32( VintageDaoStatisticsEntity.investors.length)
+                    .plus(BigInt.fromI32( VintageDaoStatisticsEntity.governors.length));
+
+                    VintageDaoStatisticsEntity.save();
+                }
                 for (var i = 0; i < investors.value.length; i++) {
                     const bal1 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.investmentToken), proposalInfo.getExecuteBlockNum().minus(BigInt.fromI32(1)));
                     const bal2 = fundingPoolAdapt.balanceOf(event.params.daoAddr, investors.value[i]);
@@ -221,3 +265,13 @@ export function handleStartVote(event: handleStartVoteEvent): void {
     }
 }
 
+function contains(investors: string[], account: string): boolean {
+    const index = investors.indexOf(account);
+    if (index !== -1) return true;
+    return false;
+}
+
+function remove(investors: string[], account: string): void {
+    const index = investors.indexOf(account);
+    if (index !== -1) investors.splice(index, 1);
+}

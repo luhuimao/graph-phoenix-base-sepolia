@@ -709,6 +709,8 @@ type VintageDaoStatistic @entity{
   fundInvestedFromWei: String!
   fundedVentures: BigInt! # uint256
   members: BigInt! # uint256
+  investors: [String!]!
+  governors: [String!]!
 }
 
 type VintageVestEntity @entity {
