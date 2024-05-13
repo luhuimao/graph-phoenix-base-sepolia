@@ -9,7 +9,7 @@
 // import { BigInt } from "@graphprotocol/graph-ts"
 // import { EnsResolver } from "ethers"
 // import { EventLog } from "ethers/types/contract"
-import { BigInt, Bytes, bigDecimal, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, bigDecimal, log } from "@graphprotocol/graph-ts";
 import {
     VintageFundingPoolAdapterContract,
     Deposit,
@@ -20,6 +20,7 @@ import {
 } from "../generated/VintageFundingPoolAdapterContract/VintageFundingPoolAdapterContract";
 import { VintageFundRaiseAdapterContract } from "../generated/VintageFundRaiseAdapterContract/VintageFundRaiseAdapterContract";
 import { DaoRegistry } from "../generated/VintageFundingPoolAdapterContract/DaoRegistry";
+import { VintageFundingPoolExtension } from "../generated/VintageFundingPoolAdapterContract/VintageFundingPoolExtension";
 import {
     VintageRedempteEntity,
     VintageInvestorBalance,
@@ -176,7 +177,7 @@ export function handleWithDraw(event: WithDraw): void {
                         escrowFundEntity.myRedemptionAmount = BigInt.fromI32(0);
                         escrowFundEntity.fundRaisedSucceed = false;
                         escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
-                        escrowFundEntity.myConfirmedDepositAmount=BigInt.fromI32(0);
+                        escrowFundEntity.myConfirmedDepositAmount = BigInt.fromI32(0);
                     }
                     escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
                     escrowFundEntity.save();
@@ -215,7 +216,7 @@ export function handleWithDraw(event: WithDraw): void {
                         escrowFundEntity.myRedemptionAmount = BigInt.fromI32(0);
                         escrowFundEntity.fundRaisedSucceed = true;
                         escrowFundEntity.succeedFundRound = BigInt.fromI32(0);
-                        escrowFundEntity.myConfirmedDepositAmount=BigInt.fromI32(0);
+                        escrowFundEntity.myConfirmedDepositAmount = BigInt.fromI32(0);
                     }
                     escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
 
@@ -320,6 +321,8 @@ export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
 export function handleProcessFundRaise(event: ProcessFundRaise): void {
     const fundingPoolAdapt = VintageFundingPoolAdapterContract.bind(event.address);
     const daoContract = DaoRegistry.bind(event.params.dao);
+    const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
+    const fundingPoolExtContr = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
     const fundRaisedState = fundingPoolAdapt.daoFundRaisingStates(event.params.dao);
     let successedFundCounter = VintageSuccessedFundCounter.load(event.params.dao.toString());
     if (!successedFundCounter) {
@@ -335,7 +338,7 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         if (newFundEntity) {
             newFundEntity.totalFund = totoalRaised;
             newFundEntity.totalFundFromWei = newFundEntity.totalFund.div(BigInt.fromI64(10 ** 18)).toString();
-            newFundEntity.executeBlockNum=event.block.number;
+            newFundEntity.executeBlockNum = event.block.number;
             newFundEntity.save();
         }
 
@@ -373,10 +376,22 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             VintageDaoStatisticsEntity.fundedVentures = BigInt.fromI64(0);
             VintageDaoStatisticsEntity.members = BigInt.fromI64(0);
             VintageDaoStatisticsEntity.daoAddr = event.params.dao;
-            VintageDaoStatisticsEntity.investors=[];
-            VintageDaoStatisticsEntity.governors=[];
+            VintageDaoStatisticsEntity.investors = [];
+            VintageDaoStatisticsEntity.governors = [];
+            VintageDaoStatisticsEntity.membersArr = [];
         }
-        VintageDaoStatisticsEntity.fundRaised = VintageDaoStatisticsEntity.fundRaised.plus(event.params.fundRaisedAmount);
+        if (daoContract.getConfiguration(Bytes.fromHexString("0xbe07eea886ce63e8ab49ef6fd986e9dea247fbb31da43dd1df3e153cc548277a")) == BigInt.fromI32(1)) {
+            const fundTokenAddr = daoContract.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
+            const rel = fundingPoolExtContr.try_getPriorAmount(
+                Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd")),
+                fundTokenAddr,
+                event.block.number.minus(BigInt.fromI32(1))
+            );
+            if (!rel.reverted)
+                VintageDaoStatisticsEntity.fundRaised = rel.value;
+        } else {
+            VintageDaoStatisticsEntity.fundRaised = VintageDaoStatisticsEntity.fundRaised.plus(event.params.fundRaisedAmount);
+        }
         VintageDaoStatisticsEntity.fundRaisedFromWei = VintageDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
         VintageDaoStatisticsEntity.save();
         fundRoundEntity.save();

@@ -130,9 +130,9 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
 
-        let flexFundingContract = FlexFundingAdapterContract.bind(event.address);
-        let proposalInfo = flexFundingContract.Proposals((event.params.daoAddress),
-            event.params.proposalId);
+        // let flexFundingContract = FlexFundingAdapterContract.bind(event.address);
+        // let proposalInfo = flexFundingContract.Proposals((event.params.daoAddress),
+        //     event.params.proposalId);
 
         entity.paybackTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
         entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
@@ -173,16 +173,29 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 FlexDaoStatisticsEntity.members = BigInt.fromI64(0);
                 FlexDaoStatisticsEntity.daoAddr = event.params.daoAddress;
             }
-            const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
-            if (!rel.reverted) {
-                FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
-            }
+            // const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
+            // if (!rel.reverted) {
+            //     FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
+            // }
+
+            FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(entity.investors.length));
 
             FlexDaoStatisticsEntity.fundInvested = FlexDaoStatisticsEntity.fundInvested.plus(entity.ultimateInvestedFund);
             FlexDaoStatisticsEntity.fundInvestedFromWei = FlexDaoStatisticsEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
             FlexDaoStatisticsEntity.fundedVentures = FlexDaoStatisticsEntity.fundedVentures.plus(BigInt.fromI32(1));
 
-            FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(entity.totalFund);
+            const totalBeforeExe = fundingPoolExtContr.getPriorAmount(
+                event.params.proposalId,
+                Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000baBe")),
+                event.block.number.minus(BigInt.fromI32(1)));
+
+
+            if (proposalInfo.getFundRaiseInfo().fundRaiseType == 1) {
+                FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(totalBeforeExe);
+            } else {
+                FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(entity.totalFund);
+
+            }
             FlexDaoStatisticsEntity.fundRaisedFromWei = FlexDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
 
             FlexDaoStatisticsEntity.save();

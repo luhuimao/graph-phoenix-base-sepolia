@@ -149,6 +149,8 @@ dataSources:
           file: ./abis/DaoRegistry.json
         - name: VintageFundRaiseAdapterContract
           file: ./abis/VintageFundRaiseAdapterContract.json
+        - name: VintageFundingPoolExtension
+          file: ./abis/VintageFundingPoolExtension.json
       eventHandlers:
         - event: Deposit(address,uint256,address)
           handler: handleDeposit

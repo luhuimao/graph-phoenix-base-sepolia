@@ -16,7 +16,7 @@ import { VintageFundRaiseAdapterContract } from "../generated/VintageFundRaiseAd
 import { VintageFundingPoolAdapterContract } from "../generated/VintageFundingAdapterContract/VintageFundingPoolAdapterContract";
 import { DaoRegistry } from "../generated/VintageFundingAdapterContract/DaoRegistry";
 import { VintageFundingPoolExtension } from "../generated/VintageFundingAdapterContract/VintageFundingPoolExtension";
-import {VintageRaiserManagementContract} from "../generated/VintageFundingAdapterContract/VintageRaiserManagementContract";
+import { VintageRaiserManagementContract } from "../generated/VintageFundingAdapterContract/VintageRaiserManagementContract";
 import {
     VintageInvestmentProposalInfo,
     VintageFundRoundToFundEstablishmentProposalId,
@@ -89,7 +89,7 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
 
     const currentFundRound = fundRaiseContract.createdFundCounter(event.params.daoAddr);
     const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
-    if(roundProposalIdEntity)entity.fundEstablishmentProposalId= roundProposalIdEntity.proposalId;else{entity.fundEstablishmentProposalId=Bytes.empty();}
+    if (roundProposalIdEntity) entity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId; else { entity.fundEstablishmentProposalId = Bytes.empty(); }
     entity.save()
 }
 
@@ -128,8 +128,9 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                 VintageDaoStatisticsEntity.fundedVentures = BigInt.fromI64(0);
                 VintageDaoStatisticsEntity.members = BigInt.fromI64(0);
                 VintageDaoStatisticsEntity.daoAddr = event.params.daoAddr;
-                VintageDaoStatisticsEntity.investors=[];
-                VintageDaoStatisticsEntity.governors=[];
+                VintageDaoStatisticsEntity.investors = [];
+                VintageDaoStatisticsEntity.governors = [];
+                VintageDaoStatisticsEntity.membersArr = [];
             }
             VintageDaoStatisticsEntity.fundInvested = VintageDaoStatisticsEntity.fundInvested.plus(proposalEntity.investmentAmount);
             VintageDaoStatisticsEntity.fundInvestedFromWei = VintageDaoStatisticsEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
@@ -179,43 +180,55 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                 // log.error("investors: {}", [investors.value.toString()]);
                 let VintageDaoStatisticsEntity = VintageDaoStatistic.load(event.params.daoAddr.toHexString());
                 if (VintageDaoStatisticsEntity) {
-                    const governorContrAddr= daoContract.getAdapterAddress(Bytes.fromHexString("0xd90e10040720d66c9412cb511e3dbb6ba51669248a7495e763d44ab426893efa"));
-                    const governorContr=VintageRaiserManagementContract.bind(governorContrAddr);
+                    const governorContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xd90e10040720d66c9412cb511e3dbb6ba51669248a7495e763d44ab426893efa"));
+                    const governorContr = VintageRaiserManagementContract.bind(governorContrAddr);
 
                     let tem: string[] = [];
                     let tem1: string[] = [];
+                    let tem2: string[] = [];
                     if (VintageDaoStatisticsEntity.investors.length > 0) {
-                        for (var j = 0; j <  VintageDaoStatisticsEntity.investors.length; j++) {
+                        for (var j = 0; j < VintageDaoStatisticsEntity.investors.length; j++) {
                             tem.push(VintageDaoStatisticsEntity.investors[j])
                         }
                     }
                     if (VintageDaoStatisticsEntity.governors.length > 0) {
-                        for (var l = 0; l <  VintageDaoStatisticsEntity.governors.length; l++) {
+                        for (var l = 0; l < VintageDaoStatisticsEntity.governors.length; l++) {
                             tem1.push(VintageDaoStatisticsEntity.governors[l])
                         }
                     }
 
                     if (investors.value.length > 0) {
                         for (var k = 0; k < investors.value.length; k++) {
-                            if(!contains(tem, investors.value[k].toHexString())){
+                            if (!contains(tem, investors.value[k].toHexString())) {
                                 tem.push(investors.value[k].toHexString());
                             }
                         }
                     }
+                    VintageDaoStatisticsEntity.investors = tem;
+
                     const governors = governorContr.getAllGovernor(event.params.daoAddr);
 
                     if (governors.length > 0) {
                         for (var h = 0; h < governors.length; h++) {
-                            if(!contains(tem1, governors[h].toHexString())){
+                            if (!contains(tem1, governors[h].toHexString()))
                                 tem1.push(governors[h].toHexString());
-                            }
                         }
                     }
 
-                    VintageDaoStatisticsEntity.investors = tem;
                     VintageDaoStatisticsEntity.governors = tem1;
-                    VintageDaoStatisticsEntity.members = BigInt.fromI32( VintageDaoStatisticsEntity.investors.length)
-                    .plus(BigInt.fromI32( VintageDaoStatisticsEntity.governors.length));
+
+                    for (var a = 0; a < VintageDaoStatisticsEntity.investors.length; a++) {
+                        tem2.push(VintageDaoStatisticsEntity.investors[a]);
+                    }
+
+                    for (var s = 0; s < VintageDaoStatisticsEntity.governors.length; s++) {
+                        if (!contains(tem2, VintageDaoStatisticsEntity.governors[s]))
+                            tem2.push(VintageDaoStatisticsEntity.governors[s])
+                    }
+
+                    VintageDaoStatisticsEntity.membersArr = tem2;
+
+                    VintageDaoStatisticsEntity.members = BigInt.fromI32(VintageDaoStatisticsEntity.membersArr.length);
 
                     VintageDaoStatisticsEntity.save();
                 }
