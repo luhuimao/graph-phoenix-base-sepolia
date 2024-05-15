@@ -34,6 +34,25 @@ type FlexDaoEntity @entity(immutable: true){
   flexDaosetProposal: [FlexDaosetProposal!] @derivedFrom(field: "flexDaoEntity")
 }
 
+type VintageDaoEntity @entity(immutable: true){
+  id: ID!
+  daoAddr: Bytes! # address
+  daoName: String!
+  creator: Bytes! # address
+  createTimeStamp: BigInt!
+  createDateTime: String!
+  vintageFundEstablishmentProposal: [VintageFundEstablishmentProposal!] @derivedFrom(field: "vintageDaoEntity")
+  vintageGovernorManagementProposal: [VintageGovernorManagementProposal!] @derivedFrom(field: "vintageDaoEntity")
+  vintageInvestmentProposalInfo: [VintageInvestmentProposalInfo!] @derivedFrom(field: "vintageDaoEntity")
+  vintageDaoSetProposal: [VintageDaoSetProposal!] @derivedFrom(field: "vintageDaoEntity")
+  vintageDaoInvestorCapacity: VintageDaoInvestorCapacityEntity
+  vintageInvestorMembership: VintageInvestorMembershipEntity
+  vintageGovernorMembership: VintageGovernorMembershipEntity
+  vintageVotingConfigInfo: VintageVotingInfoEntity
+  vintageDaoFeeInfo: VintageDaoFeeInfoEntity
+  vintageVoting: VintageVoting
+}
+
 type CollectiveDaoEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
@@ -41,7 +60,16 @@ type CollectiveDaoEntity @entity(immutable: true){
   creator: Bytes! # address
   createTimeStamp: BigInt!
   createDateTime: String!
-  collectiveVoting: CollectiveVoting
+  collectiveDaoInvestorCapacityEntity: CollectiveDaoInvestorCapacityEntity
+  collectiveDaoVoteConfigEntity: CollectiveDaoVoteConfigEntity
+  collectiveGovernorMembership: CollectiveDaoGovernorMembershipEntity
+  collectiveDaosetProposal: [CollectiveDaoSetProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveVoting: [CollectiveVoting!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveGovernorManagementProposal: [CollectiveGovernorManagementProposal!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveInvestmentProposal: [CollectiveInvestmentProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveExpenseProposal: [CollectiveExpenseProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveFundRaiseProposal: [CollectiveFundRaiseProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveTopUpProposal: [CollectiveTopUpProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
 }
 
 type DaoEntityCounter @entity{
@@ -432,25 +460,6 @@ type FlexFreeInEscrowFundEntity @entity{
   myAdvanceDepositAmount: BigInt
   myConfirmedDepositAmount: BigInt
   myWithdraw: BigInt
-}
-
-type VintageDaoEntity @entity(immutable: true){
-  id: ID!
-  daoAddr: Bytes! # address
-  daoName: String!
-  creator: Bytes! # address
-  createTimeStamp: BigInt!
-  createDateTime: String!
-  vintageFundEstablishmentProposal: [VintageFundEstablishmentProposal!] @derivedFrom(field: "vintageDaoEntity")
-  vintageGovernorManagementProposal: [VintageGovernorManagementProposal!] @derivedFrom(field: "vintageDaoEntity")
-  vintageInvestmentProposalInfo: [VintageInvestmentProposalInfo!] @derivedFrom(field: "vintageDaoEntity")
-  vintageDaoSetProposal: [VintageDaoSetProposal!] @derivedFrom(field: "vintageDaoEntity")
-  vintageDaoInvestorCapacity: VintageDaoInvestorCapacityEntity
-  vintageInvestorMembership: VintageInvestorMembershipEntity
-  vintageGovernorMembership: VintageGovernorMembershipEntity
-  vintageVotingConfigInfo: VintageVotingInfoEntity
-  vintageDaoFeeInfo: VintageDaoFeeInfoEntity
-  vintageVoting: VintageVoting
 }
 
 type VintageDaoFeeInfoEntity @entity{
@@ -1129,4 +1138,40 @@ type CollectiveVestingEligibleUsers @entity {
   proposalId: Bytes! # bytes32
   proposer: Bytes! # address
   lps: [String!]! # address[]
+}
+
+type CollectiveDaoVoteConfigEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  votingAsset: BigInt
+  weightAlgorithm: BigInt
+  supportType: BigInt
+  quorumType: BigInt
+  support: BigInt
+  quorum: BigInt
+  votingPeriod: BigInt
+  governors: [String!]
+  allocations: [BigInt!]
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveDaoGovernorMembershipEntity @entity {
+  id: ID!
+  daoAddr: Bytes! # address
+  enable: Boolean
+  name: String
+  varifyType: BigInt
+  minHolding: BigInt
+  tokenAddress: Bytes
+  tokenId: BigInt
+  whiteList: [String!]
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveDaoInvestorCapacityEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  enable: Boolean
+  capacityAmount: BigInt
+  collectiveDaoEntity: CollectiveDaoEntity
 }
