@@ -267,9 +267,9 @@ dataSources:
     name: VintageDaoSetAdapterContract
     network: base-sepolia
     source:
-      address: "0xE5D5AEa259fe4B135e2D4a4f9F4B82d733Ee67b8"
+      address: "0x2fC7b1127C29A0F53DA420457e6438fBBc4A8d1b"
       abi: VintageDaoSetAdapterContract
-      startBlock: 9339238
+      startBlock: 10026685
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

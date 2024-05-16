@@ -17,7 +17,8 @@ import {
     CollectiveDaoEntityCounter,
     CollectiveDaoGovernorMembershipEntity,
     CollectiveDaoVoteConfigEntity,
-    CollectiveDaoInvestorCapacityEntity
+    CollectiveDaoInvestorCapacityEntity,
+    CollectiveDaoFeeInfoEntity
 } from "../generated/schema"
 
 export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
@@ -28,6 +29,7 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
     let entity = DaoEntiy.load(event.params.daoAddr.toHexString());
     let collectiveDaoGovernorMembershipEntity = CollectiveDaoGovernorMembershipEntity.load(event.params.daoAddr.toHexString());
     let collectiveDaoVoteConfigEntity = CollectiveDaoVoteConfigEntity.load(event.params.daoAddr.toHexString());
+    let collectiveDaoFeeInfoEntity = CollectiveDaoFeeInfoEntity.load(event.params.daoAddr.toHexString());
     let fcounterEntity = DaoEntityCounter.load(event.address.toHexString());
     let collectiveDaoInvestorCapacityEntity = CollectiveDaoInvestorCapacityEntity.load(event.params.daoAddr.toHexString());
 
@@ -75,6 +77,7 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         collectiveDaoEntity.collectiveDaoInvestorCapacityEntity = event.params.daoAddr.toHexString();
         collectiveDaoEntity.collectiveDaoVoteConfigEntity = event.params.daoAddr.toHexString();
         collectiveDaoEntity.collectiveGovernorMembership = event.params.daoAddr.toHexString();
+        collectiveDaoEntity.collectiveDaoFeeInfoEntity = event.params.daoAddr.toHexString();
         collectiveDaoEntity.save();
 
         counterEntity.count = counterEntity.count.plus(BigInt.fromI32(1));
@@ -91,7 +94,7 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         const COLLECTIVE_GOVERNOR_MEMBERSHIP_TOKEN_ID = daoContract.getConfiguration(Bytes.fromHexString("0x032de4639c5a8edd1ea478b1345b2d031f42ecd2b29442d3080c9ac0545b5f8e"));
         const COLLECTIVE_GOVERNOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0xe8c0cc8a9993875960b545b0c8b4b345a98d03a2c0ddf4b918a5ef119f5ab528"));
 
-       
+
         const whitelist = governorContract.try_getGovernorWhitelist(event.params.daoAddr);
         let tem: string[] = [];
 
@@ -137,6 +140,8 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         const quorum = daoContract.getConfiguration(Bytes.fromHexString("0x0324de13a5a6e302ddb95a9fdf81cc736fc8acee2abe558970daac27395904e7"));
         const supportType = daoContract.getConfiguration(Bytes.fromHexString("0x1aeed2c0ea31fb81f41489b79a1d09374a270e0f9340ace7354cce77586a7d16"));
         const quorumType = daoContract.getConfiguration(Bytes.fromHexString("0e0434138ea29dceb1f2c0ca9b9f923f9d1c32d3d96bab2de9991f140daca712"));
+        const COLLECTIVE_VOTING_GRACE_PERIOD = daoContract.getConfiguration(Bytes.fromHexString("0xb646599143db51c9136a4861a55f7140eab851836e3e1a42ba7804f5356a3655"));
+        const COLLECTIVE_VOTING_EXECUTE_PERIOD = daoContract.getConfiguration(Bytes.fromHexString("0xada09015efb4d45310950167ce9728fe9635e3ef65b062ab8afb0ff348d76cad"));
 
         collectiveDaoVoteConfigEntity.daoAddr = event.params.daoAddr;
         collectiveDaoVoteConfigEntity.collectiveDaoEntity = event.params.daoAddr.toHexString();
@@ -147,9 +152,27 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         collectiveDaoVoteConfigEntity.quorum = quorum;
         collectiveDaoVoteConfigEntity.supportType = supportType;
         collectiveDaoVoteConfigEntity.quorumType = quorumType;
+        collectiveDaoVoteConfigEntity.gracePeriod = COLLECTIVE_VOTING_GRACE_PERIOD;
+        collectiveDaoVoteConfigEntity.executingPeriod = COLLECTIVE_VOTING_EXECUTE_PERIOD;
 
         collectiveDaoVoteConfigEntity.save();
     }
 
+    if (!collectiveDaoFeeInfoEntity) {
+        collectiveDaoFeeInfoEntity = new CollectiveDaoFeeInfoEntity(event.params.daoAddr.toHexString());
+        const COLLECTIVE_REDEMPT_FEE_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0x51cc27e85946200c558b984a0c15cad2122655d647f9c02ebe9529f2a0b25a2f"));
+        const COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0xb035c58a9b643066fc5cd78a708da0456c36221a03ca174ff3b76d4306ff7c6c"));
+        const COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0x558062fa5fcc8623e6c743ab5b51793317989a5a93f03b32a485f94843f77da3"));
+        // const FLEX_MANAGEMENT_FEE_RECEIVE_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0x8987d08c67963e4cacd5e5936c122a968c66853d58299dd822c1942227109839"));
+
+
+        collectiveDaoFeeInfoEntity.daoAddr = event.params.daoAddr;
+        // collectiveDaoFeeInfoEntity.feeReceiver = FLEX_MANAGEMENT_FEE_RECEIVE_ADDRESS;
+        collectiveDaoFeeInfoEntity.collectiveDaoEntity = event.params.daoAddr.toHexString();
+        collectiveDaoFeeInfoEntity.redemptionFeeAmount = COLLECTIVE_REDEMPT_FEE_AMOUNT;
+        collectiveDaoFeeInfoEntity.proposerInvestTokenFeeAmount = COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT;
+        collectiveDaoFeeInfoEntity.proposerPayBackTokenFeeAmount = COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT;
+        collectiveDaoFeeInfoEntity.save();
+    }
 
 }

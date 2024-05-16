@@ -63,6 +63,7 @@ type CollectiveDaoEntity @entity(immutable: true){
   collectiveDaoInvestorCapacityEntity: CollectiveDaoInvestorCapacityEntity
   collectiveDaoVoteConfigEntity: CollectiveDaoVoteConfigEntity
   collectiveGovernorMembership: CollectiveDaoGovernorMembershipEntity
+  collectiveDaoFeeInfoEntity: CollectiveDaoFeeInfoEntity
   collectiveDaosetProposal: [CollectiveDaoSetProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
   collectiveVoting: [CollectiveVoting!] @derivedFrom(field: "collectiveDaoEntity")
   collectiveGovernorManagementProposal: [CollectiveGovernorManagementProposal!] @derivedFrom(field: "collectiveDaoEntity")
@@ -1152,6 +1153,8 @@ type CollectiveDaoVoteConfigEntity @entity{
   votingPeriod: BigInt
   governors: [String!]
   allocations: [BigInt!]
+  gracePeriod: BigInt
+  executingPeriod: BigInt
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -1173,5 +1176,14 @@ type CollectiveDaoInvestorCapacityEntity @entity{
   daoAddr: Bytes! # address
   enable: Boolean
   capacityAmount: BigInt
+  collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveDaoFeeInfoEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  redemptionFeeAmount: BigInt
+  proposerInvestTokenFeeAmount: BigInt
+  proposerPayBackTokenFeeAmount: BigInt
   collectiveDaoEntity: CollectiveDaoEntity
 }
