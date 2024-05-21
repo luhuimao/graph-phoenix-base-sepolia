@@ -522,13 +522,14 @@ dataSources:
         - event: ConfigureDao(uint256,uint256)
           handler: handleConfigureDao
       file: ./src/flex-alloc.ts
+
   - kind: ethereum
-    name: FlexDaoSetAdapterContract
+    name: FlexDaoSetPollingAdapterContract
     network: base-sepolia
     source:
-      address: "0x79FE9DcCb7e0bE8D307cfA2f8887F6697237AD39"
-      abi: FlexDaoSetAdapterContract
-      startBlock: 6313287
+      address: "0xC6EC4D4A1c51018F0a1Fb566ee6cEdFf7344fa47"
+      abi: FlexDaoSetPollingAdapterContract
+      startBlock: 10245627
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -555,10 +556,155 @@ dataSources:
           file: ./abis/FlexPollingVotingContract.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
-          handler: handleProposalCreated
+          handler: handlePollingProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
-          handler: handleProposalProcessed
+          handler: handlePollingProposalProcessed
       file: ./src/flex-daoset-contract.ts
+    
+  - kind: ethereum
+    name: FlexDaoSetVotingAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x83C09Fc577FfF2f5D0De1dd2C27cA04949747b5C"
+      abi: FlexDaoSetVotingAdapterContract
+      startBlock: 10245627
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: FlexDaoSetVotingAdapterContract
+          file: ./abis/FlexDaoSetVotingAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint8)
+          handler: handleVotingProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
+          handler: handleVotingProposalProcessed
+      file: ./src/flex-daoset-contract.ts
+    
+  - kind: ethereum
+    name: FlexDaoSetFeesAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x473EE4F1b3a3C3B6C3625062AEa3E0176A0f59ad"
+      abi: FlexDaoSetFeesAdapterContract
+      startBlock: 10245627
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: FlexDaoSetFeesAdapterContract
+          file: ./abis/FlexDaoSetFeesAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint8)
+          handler: handleFeesProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
+          handler: handleFeesProposalProcessed
+      file: ./src/flex-daoset-contract.ts
+
+  - kind: ethereum
+    name: FlexDaoSetGovernorMembershipAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x783383d339099ec3c6237774B1458E21c4C8Afa4"
+      abi: FlexDaoSetGovernorMembershipAdapterContract
+      startBlock: 10245627
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: FlexDaoSetGovernorMembershipAdapterContract
+          file: ./abis/FlexDaoSetGovernorMembershipAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint8)
+          handler: handleGovernorMembershipProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
+          handler: handleGovernorMembershipProposalProcessed
+      file: ./src/flex-daoset-contract.ts
+
+  - kind: ethereum
+    name: FlexDaoSetInvestorCapAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xDE25B3A519c0527555f4fe9C5f84fB0eAda6091F"
+      abi: FlexDaoSetInvestorCapAdapterContract
+      startBlock: 10245627
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: FlexDaoSetInvestorCapAdapterContract
+          file: ./abis/FlexDaoSetInvestorCapAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint8)
+          handler: handleInvestorCapProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
+          handler: handleInvestorCapProposalProcessed
+      file: ./src/flex-daoset-contract.ts
+
+  - kind: ethereum
+    name: FlexDaoSetInvestorMembershipAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xc3215425b16CCC309F8d96B63e5933A7D2f76f55"
+      abi: FlexDaoSetInvestorMembershipAdapterContract
+      startBlock: 10245627
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: FlexDaoSetInvestorMembershipAdapterContract
+          file: ./abis/FlexDaoSetInvestorMembershipAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint8)
+          handler: handleInvestorMembershipProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
+          handler: handleInvestorMembershipProposalProcessed
+      file: ./src/flex-daoset-contract.ts
+
+  - kind: ethereum
+    name: FlexDaoSetProposerMembershipAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x8F9E4Af9B145cd2999eAD478195D0Fb75B9ed752"
+      abi: FlexDaoSetProposerMembershipAdapterContract
+      startBlock: 10245627
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: FlexDaoSetProposerMembershipAdapterContract
+          file: ./abis/FlexDaoSetProposerMembershipAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint8)
+          handler: handleProposerMembershipProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
+          handler: handleProposerMembershipProposalProcessed
+      file: ./src/flex-daoset-contract.ts
+
   - kind: ethereum
     name: VestingERC721
     network: base-sepolia

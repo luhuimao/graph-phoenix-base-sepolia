@@ -24,9 +24,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.stopVoteTime = rel.value.getStopVoteTime();
         entity.stopVoteTimeString = new Date(entity.stopVoteTime.toI64() * 1000).toISOString();
         entity.state = BigInt.fromI32(rel.value.getState());
-        entity.stateInString = "";
+        entity.stateInString = "Voting";
         entity.type = BigInt.fromI32(rel.value.getPType());
-        entity.typeInString = "";
+        entity.typeInString = rel.value.getPType() == 0 ? "Governor In" : "Governor Out";
         entity.executeHash = Bytes.empty();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
