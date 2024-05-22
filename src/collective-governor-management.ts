@@ -3,7 +3,8 @@ import {
     ColletiveGovernorManagementAdapterContract,
     ProposalCreated,
     ProposalProcessed,
-    GovernorQuit
+    GovernorQuit,
+    StartVoting
 } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveGovernorManagementAdapterContract"
 import {
     CollectiveGovernorManagementProposal,
@@ -54,3 +55,13 @@ export function handlerProposalProcessed(event: ProposalProcessed): void {
 
 
 export function handleGovernorQuit(event: GovernorQuit): void { }
+
+
+export function handlerStartVoting(event: StartVoting): void {
+    let entity = CollectiveGovernorManagementProposal.load(event.params.proposalId.toHexString());
+    if (entity) {
+        entity.state = BigInt.fromI32(event.params.state);
+        entity.stopVoteTime = event.params.stopVoteTime;
+        entity.save();
+    }
+}

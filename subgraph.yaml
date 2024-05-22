@@ -578,6 +578,8 @@ dataSources:
       abis:
         - name: FlexDaoSetVotingAdapterContract
           file: ./abis/FlexDaoSetVotingAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
           handler: handleVotingProposalCreated
@@ -602,6 +604,8 @@ dataSources:
       abis:
         - name: FlexDaoSetFeesAdapterContract
           file: ./abis/FlexDaoSetFeesAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
           handler: handleFeesProposalCreated
@@ -626,6 +630,10 @@ dataSources:
       abis:
         - name: FlexDaoSetGovernorMembershipAdapterContract
           file: ./abis/FlexDaoSetGovernorMembershipAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: StewardManagementContract
+          file: ./abis/StewardManagementContract.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
           handler: handleGovernorMembershipProposalCreated
@@ -650,6 +658,8 @@ dataSources:
       abis:
         - name: FlexDaoSetInvestorCapAdapterContract
           file: ./abis/FlexDaoSetInvestorCapAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
           handler: handleInvestorCapProposalCreated
@@ -674,6 +684,10 @@ dataSources:
       abis:
         - name: FlexDaoSetInvestorMembershipAdapterContract
           file: ./abis/FlexDaoSetInvestorMembershipAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: FlexInvestmentPoolAdapterContract
+          file: ./abis/FlexInvestmentPoolAdapterContract.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
           handler: handleInvestorMembershipProposalCreated
@@ -698,6 +712,10 @@ dataSources:
       abis:
         - name: FlexDaoSetProposerMembershipAdapterContract
           file: ./abis/FlexDaoSetProposerMembershipAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: FlexFundingAdapterContract
+          file: ./abis/FlexFundingAdapterContract.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint8)
           handler: handleProposerMembershipProposalCreated
@@ -907,9 +925,9 @@ dataSources:
     name: ColletiveGovernorManagementAdapterContract
     network: base-sepolia
     source:
-      address: "0x043572b715D78B22BC1BBCAEA8aB6cd57F050adc"
+      address: "0x59352F91e4070F6ECe42A88DEf0aDd81c4c226cd"
       abi: ColletiveGovernorManagementAdapterContract
-      startBlock: 6883039
+      startBlock: 10290377
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -929,6 +947,8 @@ dataSources:
           handler: handleProposalCreated
         - event: ProposalProcessed(address,bytes32,uint8,uint128,uint256,uint256,uint256)
           handler: handlerProposalProcessed
+        - event: StartVoting(address,bytes32,uint8,uint256,uint256)
+          handler: handlerStartVoting
       file: ./src/collective-governor-management.ts
   - kind: ethereum
     name: ColletiveFundRaiseProposalAdapterContract
