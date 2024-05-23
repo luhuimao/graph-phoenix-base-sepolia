@@ -60,6 +60,7 @@ type CollectiveDaoEntity @entity(immutable: true){
   creator: Bytes! # address
   createTimeStamp: BigInt!
   createDateTime: String!
+  investmentCurrency: Bytes! # address
   collectiveDaoInvestorCapacityEntity: CollectiveDaoInvestorCapacityEntity
   collectiveDaoVoteConfigEntity: CollectiveDaoVoteConfigEntity
   collectiveGovernorMembership: CollectiveDaoGovernorMembershipEntity

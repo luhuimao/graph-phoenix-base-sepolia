@@ -356,9 +356,9 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xc3030F81Fc20F198244b2AB68434296B78E8A9fD"
+      address: "0x47CfB2f3eFd073c20D65834Da7cA92dE0958a4f1"
       abi: FlexFundingAdapterContract
-      startBlock: 9350347
+      startBlock: 10297573
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -412,9 +412,9 @@ dataSources:
     name: StewardManagementContract
     network: base-sepolia
     source:
-      address: "0x5A08FbF600862249b2e8DDD6dee069C507527e7b"
+      address: "0xDe613208A2391c1c0BCD24A1354ACbE0057E5169"
       abi: StewardManagementContract
-      startBlock: 6313258
+      startBlock: 10296873
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

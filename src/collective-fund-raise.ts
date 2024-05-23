@@ -6,7 +6,8 @@ import {
 } from "../generated/ColletiveFundRaiseProposalAdapterContract/ColletiveFundRaiseProposalAdapterContract"
 import {
     CollectiveFundRaiseProposalEntity,
-    CollectiveProposalVoteInfo
+    CollectiveProposalVoteInfo,
+    CollectiveDaoEntity
 } from "../generated/schema"
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -95,7 +96,15 @@ export function handlerProposalProcessed(event: proposalExecuted): void {
         entity.state = BigInt.fromI32(event.params.state);
         entity.executeHash = event.transaction.hash;
         entity.save();
+
+        let collectiveDaoEntity = CollectiveDaoEntity.load(event.params.daoAddr.toHexString());
+        if (collectiveDaoEntity) {
+            collectiveDaoEntity.investmentCurrency = entity.acceptTokenAddr;
+            collectiveDaoEntity.save();
+        }
     }
+
+
 
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
 
