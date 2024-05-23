@@ -78,7 +78,11 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         collectiveDaoEntity.collectiveDaoVoteConfigEntity = event.params.daoAddr.toHexString();
         collectiveDaoEntity.collectiveGovernorMembership = event.params.daoAddr.toHexString();
         collectiveDaoEntity.collectiveDaoFeeInfoEntity = event.params.daoAddr.toHexString();
-        collectiveDaoEntity.investmentCurrency= Bytes.empty();
+
+        const FUND_RAISING_CURRENCY_ADDRESS = daoContract.getAddressConfiguration
+            (Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
+
+        collectiveDaoEntity.investmentCurrency = FUND_RAISING_CURRENCY_ADDRESS;
         collectiveDaoEntity.save();
 
         counterEntity.count = counterEntity.count.plus(BigInt.fromI32(1));
