@@ -19,7 +19,8 @@ import {
     CollectiveProposalVoteInfo,
     CollectiveDaoInvestorCapacityEntity,
     CollectiveDaoGovernorMembershipEntity,
-    CollectiveDaoVoteConfigEntity
+    CollectiveDaoVoteConfigEntity,
+    CollectiveDaoFeeInfoEntity
 } from "../generated/schema"
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -36,21 +37,26 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.executeHash = Bytes.empty();
     entity.proposalType = BigInt.fromI32(event.params.pType);
     switch (event.params.pType) {
-        // INVESTOR_CAP,
-        // GOVERNOR_MEMBERSHIP,
-        // INVESTOR_MEMBERSHIP,
-        // VOTING
+        // enum ProposalType {
+        //     INVESTOR_CAP,
+        //     GOVERNOR_MEMBERSHIP,
+        //     PROPOSER_REWARD,
+        //     VOTING,
+        //     FEES
+        // }
         case 0:
             entity.proposalTypeString = "INVESTOR_CAP";
             break;
         case 1: entity.proposalTypeString = "GOVERNOR_MEMBERSHIP";
             break;
-        case 2: entity.proposalTypeString = "INVESTOR_MEMBERSHIP";
+        case 2: entity.proposalTypeString = "PROPOSER_REWARD";
             break;
         case 3: entity.proposalTypeString = "VOTING";
             break;
+        case 4: entity.proposalTypeString = "FEES";
+            break;
         default:
-            entity.proposalTypeString = "";
+            entity.proposalTypeString = "undefined";
             break;
     }
     entity.state = BigInt.fromI32(0);
@@ -117,6 +123,21 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
                         collectiveDaoGovernorMembershipEntity.save();
                     }
                 } break;
+            case 2:
+                proposalState = BigInt.fromI32(daosetContrct.proposerRewardProposals(event.params.daoAddr, event.params.proposalId).getState());
+                if (proposalState == BigInt.fromI32(2)) {
+                    const collectiveDaoFeeInfoEntity = CollectiveDaoFeeInfoEntity.load(event.params.daoAddr.toHexString());
+                    if (collectiveDaoFeeInfoEntity) {
+                        let COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0xb035c58a9b643066fc5cd78a708da0456c36221a03ca174ff3b76d4306ff7c6c"));
+                        let COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0x558062fa5fcc8623e6c743ab5b51793317989a5a93f03b32a485f94843f77da3"));
+
+                        collectiveDaoFeeInfoEntity.proposerPayBackTokenFeeAmount = COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT;
+                        collectiveDaoFeeInfoEntity.proposerInvestTokenFeeAmount = COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT;
+
+                        collectiveDaoFeeInfoEntity.save();
+                    }
+                }
+                break;
             case 3:
                 proposalState = BigInt.fromI32(daosetContrct.votingProposals(event.params.daoAddr, event.params.proposalId).getState());
 
@@ -144,6 +165,19 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
                         collectiveDaoVoteConfigEntity.save();
                     }
                 } break;
+
+            case 4:
+                proposalState = BigInt.fromI32(daosetContrct.feesProposals(event.params.daoAddr, event.params.proposalId).getState());
+                if (proposalState == BigInt.fromI32(2)) {
+                    const collectiveDaoFeeInfoEntity = CollectiveDaoFeeInfoEntity.load(event.params.daoAddr.toHexString());
+                    if (collectiveDaoFeeInfoEntity) {
+                        const COLLECTIVE_REDEMPTION_FEE_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0x51cc27e85946200c558b984a0c15cad2122655d647f9c02ebe9529f2a0b25a2f"));
+
+                        collectiveDaoFeeInfoEntity.redemptionFeeAmount = COLLECTIVE_REDEMPTION_FEE_AMOUNT;
+                        collectiveDaoFeeInfoEntity.save();
+                    }
+                }
+                break;
             default:
                 break;
         }

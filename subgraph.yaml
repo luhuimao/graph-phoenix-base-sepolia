@@ -875,9 +875,9 @@ dataSources:
     name: ColletiveTopUpProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xF25f3875694F3969343c00d8A873A9999eDaB50C"
+      address: "0x78F3da596294145fa5508f9D496c89178807cac9"
       abi: ColletiveTopUpProposalAdapterContract
-      startBlock: 6883250
+      startBlock: 10374358
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -902,9 +902,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0xFddbd0CbF73ce0EbDde700386A0db6f5735A9eEF"
+      address: "0x7c7276962A36C8FcceA34e2338d9649C0B7Bbd9F"
       abi: CollectiveVotingAdapterContract
-      startBlock: 6883250
+      startBlock: 10383565
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1006,9 +1006,9 @@ dataSources:
     name: ColletiveExpenseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x6EaA82ca0BDdD7521F17040e10F5ceC95B05F9c2"
+      address: "0xC42934265D8fE2bcb35ab67cff93259db6c0b280"
       abi: ColletiveExpenseProposalAdapterContract
-      startBlock: 6883257
+      startBlock: 10374358
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1031,9 +1031,9 @@ dataSources:
     name: ColletiveDaoSetProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xB02ff3BA5A6FFf8F3D26693b710bB7c658E6E9F2"
+      address: "0x7bA5f2194768D7C708A0451A18197ECb56f1D2D6"
       abi: ColletiveDaoSetProposalAdapterContract
-      startBlock: 6883024
+      startBlock: 10374358
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
