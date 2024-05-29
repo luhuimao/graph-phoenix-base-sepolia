@@ -1006,22 +1006,9 @@ type CollectiveFundRaiseProposalEntity @entity{
   lpMaxDepositAmountFromWei: String!
   fundRaiseStartTime: BigInt! # uint256
   fundRaiseEndTime: BigInt! # uint256
-  fundTerm: BigInt! # uint256
-  redemptPeriod: BigInt! # uint256
-  redemptDuration: BigInt! # uint256
-  returnDuration: BigInt! # uint256
-  managementFeeRatio: BigInt! # uint256
-  paybackTokenManagementFeeRatio: BigInt! # uint256
-  redepmtFeeRatio: BigInt! # uint256
-  protocolFeeRatio: BigInt! # uint256
-  managementFeeAddress: Bytes! # bytes32
-  fundFromInverstor: BigInt! # uint256
-  projectTokenFromInvestor: BigInt! # uint256
   state: BigInt! # uint256
   creationTime: BigInt! # uint256
   stopVoteTime: BigInt! # uint256
-  fundStartTime: BigInt! # uint256
-  fundEndTime: BigInt! # uint256
   totalFund: BigInt! # uint256
   totalFundFromWei: String!
   fundRaiseType: BigInt # uint256
