@@ -1047,6 +1047,7 @@ type CollectiveInvestmentProposalEntity @entity{
   vestingStartTime: BigInt!
   vestingInterval: BigInt!
   executeHash: Bytes!
+  creationTime: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
