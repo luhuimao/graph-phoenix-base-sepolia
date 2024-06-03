@@ -1102,3 +1102,38 @@ dataSources:
         - event: AllocateToken(address,bytes32,address,address[])
           handler: handleAllocateToken
       file: ./src/collective-allocation.ts
+  - kind: ethereum
+    name: ColletiveFundingPoolAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xC1A11E64a097bce76451CBFf1Bc367D65C4C0a58"
+      abi: ColletiveFundingPoolAdapterContract
+      startBlock: 10808689
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FlexVoting
+        - FlexProposalVoteInfo
+      abis:
+        - name: ColletiveFundingPoolAdapterContract
+          file: ./abis/ColletiveFundingPoolAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: ColletiveFundRaiseProposalAdapterContract
+          file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
+        - name: CollectiveInvestmentPoolExtension
+          file: ./abis/CollectiveInvestmentPoolExtension.json
+      eventHandlers:
+        - event: Deposit(address,uint256,address)
+          handler: handleDeposit
+        - event: WithDraw(address,uint256,address)
+          handler: handleWithDraw
+        - event: RedeptionFeeCharged(address,address,uint256,uint256)
+          handler: handleRedeptionFeeCharged
+        - event: ClearFund(address,uint256,address)
+          handler: handleClearFund
+        - event: ProcessFundRaise(address,uint8,uint256)
+          handler: handleProcessFundRaise       
+      file: ./src/collective-funding-pool.ts

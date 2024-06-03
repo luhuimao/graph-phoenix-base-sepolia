@@ -1176,3 +1176,94 @@ type CollectiveDaoFeeInfoEntity @entity{
   proposerPayBackTokenFeeAmount: BigInt
   collectiveDaoEntity: CollectiveDaoEntity
 }
+
+type CollectiveInvestorActivity @entity{
+  id:ID!
+  txHash:Bytes! 
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # address
+  account:  Bytes! # address
+  type: String!
+  amount: BigInt! # uint256
+  amountFromWei: String!
+  timeStamp: BigInt! # uint256
+  timeString: String!
+}
+
+type CollectiveRedempteEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  timeStamp: BigInt! # uint256
+  redemptAmount: BigInt! # uint256
+  chargedFee: BigInt! # uint256
+  account: Bytes! # address
+  txHash: Bytes! # address
+}
+
+type CollectiveInvestorBalance @entity{
+  id:ID!
+  daoAddr: Bytes! # address
+  account:  Bytes! # address
+  balance: BigInt! # uint256
+  balanceFromWei: String!
+  fundEstablishmentProposalId: Bytes! # bytes32
+  fundId: BigInt! # uint256
+}
+
+type CollectiveDaoStatisticEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundRaised: BigInt! # uint256
+  fundRaisedFromWei: String!
+  fundInvested: BigInt! # uint256
+  fundInvestedFromWei: String!
+  fundedVentures: BigInt! # uint256
+  members: BigInt! # uint256
+  membersArr: [String!]!
+  investors: [String!]!
+  governors: [String!]!
+}
+
+type CollectiveClearFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  timeStamp: BigInt! # uint256
+  amount: BigInt! # uint256
+  executor: Bytes! #address
+  fundEstablishmentProposalId: Bytes! # bytes32
+  createdFundCounter: BigInt! # uint256
+  createdSucceedFundCounter: BigInt! # uint256
+}
+
+type CollectiveEscrowFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundEstablishmentProposalId: Bytes! # bytes32
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  amount: BigInt! # uint256
+  amountFromWei: String!
+  account: Bytes! # address
+  fundRound: BigInt! # uint256
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  minFundGoal: BigInt! # uint256
+  minFundGoalFromWei: String!
+  finalRaised: BigInt! # uint256
+  finalRaisedFromWei: String!
+  fundRaisedSucceed:Boolean!
+  succeedFundRound: BigInt! # uint256
+  myRedemptionAmount: BigInt
+  myInvestmentAmount: BigInt
+  myWithdraw: BigInt!
+  myConfirmedDepositAmount: BigInt!
+  escrowBlockNum: BigInt
+}
+
+type CollectiveSucceedFundCounter @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  counter: BigInt! # uint256
+}
