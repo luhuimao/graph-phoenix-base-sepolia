@@ -25,7 +25,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.stopVoteTime = rel.value.getStopVoteTime();
         entity.stopVoteTimeString = new Date(entity.stopVoteTime.toI64() * 1000).toISOString();
         entity.state = BigInt.fromI32(rel.value.getState());
-        entity.stateInString = "Voting";
+        entity.stateInString = rel.value.getState() == 0 ? "Submitted" : "Voting";
         entity.type = BigInt.fromI32(rel.value.getPType());
         entity.typeInString = rel.value.getPType() == 0 ? "Governor In" : "Governor Out";
         entity.executeHash = Bytes.empty();
@@ -61,6 +61,7 @@ export function handlerStartVoting(event: StartVoting): void {
     let entity = CollectiveGovernorManagementProposal.load(event.params.proposalId.toHexString());
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
+        entity.stateInString = event.params.state == 1 ? "Voting" : "Failed";
         entity.stopVoteTime = event.params.stopVoteTime;
         entity.save();
     }

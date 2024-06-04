@@ -979,9 +979,9 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x819d88Bf08d54A06962FD1E153F4B05baBCeBC5f"
+      address: "0x5639848F020926ea1362A2bbA01c08105E6ceBBf"
       abi: ColletiveFundingProposalAdapterContract
-      startBlock: 6883051
+      startBlock: 10810691
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1058,9 +1058,9 @@ dataSources:
     name: CollectiveVestingAdapterContract
     network: base-sepolia
     source:
-      address: "0x87967aa0CB6676AB5F4Cd4Eb365b513a553DCe78"
+      address: "0x59f13bC4B84C2EbaFaAf565c68e483BEBDd05566"
       abi: CollectiveVestingAdapterContract
-      startBlock: 6883024
+      startBlock: 10810538
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1108,7 +1108,7 @@ dataSources:
     source:
       address: "0xC1A11E64a097bce76451CBFf1Bc367D65C4C0a58"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 10808689
+      startBlock: 6882706
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

@@ -79,6 +79,7 @@ export function handleDeposit(event: Deposit): void {
 
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
+    entity.proposalId = Bytes.empty();
     entity.daoAddr = event.params.daoAddress;
     entity.account = event.params.account;
     entity.type = "deposit";
@@ -230,8 +231,19 @@ export function handleWithDraw(event: WithDraw): void {
     // }
 
 
+    // txHash:Bytes! 
+    // daoAddr: Bytes! # address
+    // proposalId: Bytes! # address
+    // account:  Bytes! # address
+    // type: String!
+    // amount: BigInt! # uint256
+    // amountFromWei: String!
+    // timeStamp: BigInt! # uint256
+    // timeString: String!
+
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
+    entity.proposalId = Bytes.empty();
     entity.daoAddr = event.params.daoAddress;
     entity.account = event.params.account;
     entity.type = "withdraw";
@@ -265,6 +277,16 @@ export function handleClearFund(event: ClearFund): void {
     //     newFundProposalId = roundProposalIdEntity.proposalId;
     // }
     // if (fundRoundStatisticEntity) createdSucceedFundCounter = fundRoundStatisticEntity.fundRound;
+
+    // daoAddr: Bytes! # address
+    // timeStamp: BigInt! # uint256
+    // amount: BigInt! # uint256
+    // executor: Bytes! #address
+    // fundEstablishmentProposalId: Bytes! # bytes32
+    // createdFundCounter: BigInt! # uint256
+    // createdSucceedFundCounter: BigInt! # uint256
+
+
     entity.daoAddr = event.params.daoAddress;
     entity.amount = event.params.escrowAmount;
     entity.executor = event.params.executer;
@@ -388,7 +410,7 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
                 event.block.number.minus(BigInt.fromI32(1))
             );
             if (!rel.reverted)
-            collectiveDaoStatisticEntity.fundRaised = rel.value;
+                collectiveDaoStatisticEntity.fundRaised = rel.value;
         } else {
             collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(event.params.totalRaised);
         }
