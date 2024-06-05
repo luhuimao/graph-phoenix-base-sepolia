@@ -61,10 +61,17 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             //     vintageUserVestInfo.fundingProposalId,
             //     Address.fromBytes(vintageUserVestInfo.recipient)
             // );
-            const paybackAmount = allocContract.getInvestmentRewards(event.params.daoAddr,
+            let paybackAmount = BigInt.zero();;
+            // = allocContract.getInvestmentRewards(event.params.daoAddr,
+            //     Address.fromBytes(vintageUserVestInfo.recipient),
+            //     event.params.proposalId
+            // );
+
+            const rel = allocContract.try_getInvestmentRewards(event.params.daoAddr,
                 Address.fromBytes(vintageUserVestInfo.recipient),
                 event.params.proposalId
             );
+            if (!rel.reverted) paybackAmount = rel.value;
             vintageUserVestInfo.vestingStartTime = vestingStartTime;
             vintageUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
             vintageUserVestInfo.vestingInterval = vestingInterval;

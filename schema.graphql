@@ -980,6 +980,8 @@ type CollectiveGovernorManagementProposal @entity{
   governorAddress: Bytes! # address
   creationTime: BigInt! # uint256
   createTimeString: String!
+  startVoteTime: BigInt!
+  startVoteTimeString: String!
   stopVoteTime: BigInt! # uint256
   stopVoteTimeString: String!
   state: BigInt! # uint256
@@ -987,6 +989,7 @@ type CollectiveGovernorManagementProposal @entity{
   type: BigInt! # uint256
   typeInString: String!
   executeHash: Bytes!
+  depositAmount: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
