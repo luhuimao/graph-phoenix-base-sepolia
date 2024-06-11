@@ -52,35 +52,25 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
 
         //investors
         for (var i = 0; i < entity.lps.length; i++) {
-            let vintageUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + entity.lps[i]);
-            vintageUserVestInfo.daoAddr = event.params.daoAddr;
-            vintageUserVestInfo.investmentProposalId = event.params.proposalId;
-            vintageUserVestInfo.recipient = Bytes.fromHexString(entity.lps[i]);
-            // let vestInfo = allocContract.vestingInfos(
-            //     event.params.daoAddr,
-            //     vintageUserVestInfo.fundingProposalId,
-            //     Address.fromBytes(vintageUserVestInfo.recipient)
-            // );
+            let collectiveUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + entity.lps[i]);
+            collectiveUserVestInfo.daoAddr = event.params.daoAddr;
+            collectiveUserVestInfo.investmentProposalId = event.params.proposalId;
+            collectiveUserVestInfo.recipient = Bytes.fromHexString(entity.lps[i]);
             let paybackAmount = BigInt.zero();;
-            // = allocContract.getInvestmentRewards(event.params.daoAddr,
-            //     Address.fromBytes(vintageUserVestInfo.recipient),
-            //     event.params.proposalId
-            // );
-
             const rel = allocContract.try_getInvestmentRewards(event.params.daoAddr,
-                Address.fromBytes(vintageUserVestInfo.recipient),
+                Address.fromBytes(collectiveUserVestInfo.recipient),
                 event.params.proposalId
             );
             if (!rel.reverted) paybackAmount = rel.value;
-            vintageUserVestInfo.vestingStartTime = vestingStartTime;
-            vintageUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
-            vintageUserVestInfo.vestingInterval = vestingInterval;
-            vintageUserVestInfo.vestingEndTime = vestingEndTime;
-            vintageUserVestInfo.totalAmount = paybackAmount;
-            vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
-            vintageUserVestInfo.created = false;
-
-            vintageUserVestInfo.save();
+            collectiveUserVestInfo.vestingStartTime = vestingStartTime;
+            collectiveUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
+            collectiveUserVestInfo.vestingInterval = vestingInterval;
+            collectiveUserVestInfo.vestingEndTime = vestingEndTime;
+            collectiveUserVestInfo.totalAmount = paybackAmount;
+            collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+            collectiveUserVestInfo.created = false;
+            collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
+            collectiveUserVestInfo.save();
         }
         const daoCont = DaoRegistry.bind(event.params.daoAddr);
         const managementFeeAddr = daoCont.getAddressConfiguration(
@@ -94,24 +84,26 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
         );
         //payback token reward
         if (vestInfo.getTokenAmount().gt(BigInt.fromI32(0))) {
-            let vintageUserVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + managementFeeAddr.toHexString());
-            if (!vintageUserVestInfo) {
-                vintageUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + managementFeeAddr.toHexString());
-                vintageUserVestInfo.daoAddr = event.params.daoAddr;
-                vintageUserVestInfo.investmentProposalId = event.params.proposalId;
-                vintageUserVestInfo.recipient = managementFeeAddr;
-                vintageUserVestInfo.vestingStartTime = vestingStartTime;
-                vintageUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
-                vintageUserVestInfo.vestingInterval = vestingInterval;
-                vintageUserVestInfo.vestingEndTime = vestingEndTime;
-                vintageUserVestInfo.totalAmount = vestInfo.getTokenAmount();
-                vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
-                vintageUserVestInfo.created = false;
-                vintageUserVestInfo.save();
+            let collectiveUserVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + managementFeeAddr.toHexString());
+            if (!collectiveUserVestInfo) {
+                collectiveUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + managementFeeAddr.toHexString());
+                collectiveUserVestInfo.daoAddr = event.params.daoAddr;
+                collectiveUserVestInfo.investmentProposalId = event.params.proposalId;
+                collectiveUserVestInfo.recipient = managementFeeAddr;
+                collectiveUserVestInfo.vestingStartTime = vestingStartTime;
+                collectiveUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
+                collectiveUserVestInfo.vestingInterval = vestingInterval;
+                collectiveUserVestInfo.vestingEndTime = vestingEndTime;
+                collectiveUserVestInfo.totalAmount = vestInfo.getTokenAmount();
+                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.created = false;
+                collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
+
+                collectiveUserVestInfo.save();
             } else {
-                vintageUserVestInfo.totalAmount = vintageUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
-                vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
-                vintageUserVestInfo.save();
+                collectiveUserVestInfo.totalAmount = collectiveUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
+                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.save();
             }
 
         }
@@ -123,24 +115,26 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             Address.fromBytes(vintageFundingProposalEntity.proposer)
         );
         if (vestInfo.getTokenAmount().gt(BigInt.fromI32(0))) {
-            let vintageUserVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + vintageFundingProposalEntity.proposer.toHexString());
-            if (!vintageUserVestInfo) {
-                vintageUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + vintageFundingProposalEntity.proposer.toHexString());
-                vintageUserVestInfo.daoAddr = event.params.daoAddr;
-                vintageUserVestInfo.investmentProposalId = event.params.proposalId;
-                vintageUserVestInfo.recipient = vintageFundingProposalEntity.proposer;
-                vintageUserVestInfo.vestingStartTime = vestingStartTime;
-                vintageUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
-                vintageUserVestInfo.vestingInterval = vestingInterval;
-                vintageUserVestInfo.vestingEndTime = vestingEndTime;
-                vintageUserVestInfo.totalAmount = vestInfo.getTokenAmount();
-                vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
-                vintageUserVestInfo.created = false;
-                vintageUserVestInfo.save();
+            let collectiveUserVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + vintageFundingProposalEntity.proposer.toHexString());
+            if (!collectiveUserVestInfo) {
+                collectiveUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + vintageFundingProposalEntity.proposer.toHexString());
+                collectiveUserVestInfo.daoAddr = event.params.daoAddr;
+                collectiveUserVestInfo.investmentProposalId = event.params.proposalId;
+                collectiveUserVestInfo.recipient = vintageFundingProposalEntity.proposer;
+                collectiveUserVestInfo.vestingStartTime = vestingStartTime;
+                collectiveUserVestInfo.vestingCliffEndTime = vestingCliffEndTime;
+                collectiveUserVestInfo.vestingInterval = vestingInterval;
+                collectiveUserVestInfo.vestingEndTime = vestingEndTime;
+                collectiveUserVestInfo.totalAmount = vestInfo.getTokenAmount();
+                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.created = false;
+                collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
+
+                collectiveUserVestInfo.save();
             } else {
-                vintageUserVestInfo.totalAmount = vintageUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
-                vintageUserVestInfo.totalAmountFromWei = vintageUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
-                vintageUserVestInfo.save();
+                collectiveUserVestInfo.totalAmount = collectiveUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
+                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.save();
             }
         }
     }

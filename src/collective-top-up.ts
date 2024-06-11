@@ -48,4 +48,15 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
     }
 }
 
-export function handleStartVoting(event: StartVoting): void { }
+export function handleStartVoting(event: StartVoting): void {
+    let entity = CollectiveTopUpProposalEntity.load(event.params.proposalId.toHexString());
+    if (entity) {
+        entity.state = BigInt.fromI32(event.params.state);
+        const topupCon = ColletiveTopUpProposalAdapterContract.bind(event.address);
+        const rel = topupCon.try_proposals(event.params.daoAddr, event.params.proposalId);
+        if (!rel.reverted) {
+            entity.stopVoteTime = rel.value.getStopVoteTime();
+        }
+        entity.save();
+    }
+}

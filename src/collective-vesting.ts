@@ -71,6 +71,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         userVestInfo.vestingEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
         userVestInfo.totalAmount = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackAmount : BigInt.fromI32(0);
         userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
+        userVestInfo.tokenAddress= event.params.token;
     }
 
     userVestInfo.created = true;

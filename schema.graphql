@@ -1114,6 +1114,7 @@ type CollectiveUserVestInfo @entity{
   vestingEndTime: BigInt! # uint256
   totalAmount: BigInt! # uint256
   totalAmountFromWei: String!
+  tokenAddress: Bytes!
   created: Boolean!
 }
 

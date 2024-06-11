@@ -29,9 +29,9 @@ dataSources:
     name: VintageFundRaiseAdapterContract
     network: base-sepolia
     source:
-      address: "0x874320C07A247cD6Ca314C03f1e90e7959E9339b"
+      address: "0x9A34b1a5629c5ED5CAA9C033a05f6f2165374eeE"
       abi: VintageFundRaiseAdapterContract
-      startBlock: 6313402
+      startBlock: 10990252
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -75,9 +75,9 @@ dataSources:
     name: VintageRaiserManagementContract
     network: base-sepolia
     source:
-      address: "0x7e0D554725E239F14bF654D69F6c71358d67F2Ba"
+      address: "0x45d7C1d0b0B0ec75Ccb642150803A7D0a6d48D8D"
       abi: VintageRaiserManagementContract
-      startBlock: 6313415
+      startBlock: 10990257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -97,9 +97,9 @@ dataSources:
     name: VintageFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xB40798f82ae5937b7Ab37E37fF9f6Cdc584008C2"
+      address: "0xe40653FA1D7b55799594e48808C8f5bE1258eA2A"
       abi: VintageFundingAdapterContract
-      startBlock: 6313423
+      startBlock: 10990264
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -267,9 +267,9 @@ dataSources:
     name: VintageDaoSetAdapterContract
     network: base-sepolia
     source:
-      address: "0x2fC7b1127C29A0F53DA420457e6438fBBc4A8d1b"
+      address: "0x2E060Dfe742de9C998ef406518aAEc623504122b"
       abi: VintageDaoSetAdapterContract
-      startBlock: 10026685
+      startBlock: 10990267
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
