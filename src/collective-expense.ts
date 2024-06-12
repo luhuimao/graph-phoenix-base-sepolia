@@ -14,6 +14,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     let entity = new CollectiveExpenseProposalEntity(event.params.proposalId.toHexString());
     if (!rel.reverted) {
+
+        entity.daoAddr = event.params.daoAddr;
+        entity.proposalId = event.params.proposalId;
         entity.amount = rel.value.getAmount();
         entity.creationTime = rel.value.getCreationTime();
         entity.receiver = rel.value.getReceiver();
