@@ -29,7 +29,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.state = BigInt.fromI32(rel.value.getState());
         entity.stateInString = rel.value.getState() == 0 ? "Submitted" : "Voting";
         entity.type = BigInt.fromI32(rel.value.getPType());
-        entity.typeInString = rel.value.getPType() == 0 ? "Governor In" : "Governor Out";
+        entity.typeInString = rel.value.getPType() == 0 ? "Member In" : "Member Out";
         entity.executeHash = Bytes.empty();
         entity.depositAmount = rel.value.getDepositAmount();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();

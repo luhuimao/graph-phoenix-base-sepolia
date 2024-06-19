@@ -47,7 +47,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         case 0:
             entity.proposalTypeString = "INVESTOR_CAP";
             break;
-        case 1: entity.proposalTypeString = "GOVERNOR_MEMBERSHIP";
+        case 1: entity.proposalTypeString = "MEMBER_ELIGIBILITY";
             break;
         case 2: entity.proposalTypeString = "PROPOSER_REWARD";
             break;
@@ -100,8 +100,8 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
                         const COLLECTIVE_GOVERNOR_MEMBERSHIP_MINI_HOLDING = daoContract.getConfiguration(Bytes.fromHexString("0x6bdd30ca7a0b5a78cdfd780fd2f234880048cafa893e9ccbc9f82df25cdc717f"));
                         const COLLECTIVE_GOVERNOR_MEMBERSHIP_TOKEN_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0x0567bf43e78d815625031c35adddd5d701cb6b913fbad3b625b4f8c00fdc42aa"));
                         const COLLECTIVE_GOVERNOR_MEMBERSHIP_TOKEN_ID = daoContract.getConfiguration(Bytes.fromHexString("0x032de4639c5a8edd1ea478b1345b2d031f42ecd2b29442d3080c9ac0545b5f8e"));
-                        const COLLECTIVE_GOVERNOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0xe8c0cc8a9993875960b545b0c8b4b345a98d03a2c0ddf4b918a5ef119f5ab528"));
-
+                        // const COLLECTIVE_GOVERNOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0xe8c0cc8a9993875960b545b0c8b4b345a98d03a2c0ddf4b918a5ef119f5ab528"));
+                        const COLLECTIVE_GOVERNOR_MEMBERSHIP_NAME = daosetContrct.governorMembershipProposals(event.params.daoAddr, event.params.proposalId).getName();
 
                         let tem: string[] = [];
                         const whitelist = governorManagementCont.getGovernorWhitelist(event.params.daoAddr)
