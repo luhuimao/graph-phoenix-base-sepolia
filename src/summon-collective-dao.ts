@@ -38,18 +38,20 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         fcounterEntity.count = BigInt.fromI32(0);
     }
 
-    if (!entity) {
-        entity = new DaoEntiy(event.params.daoAddr.toHexString())
-        entity.daoAddr = event.params.daoAddr;
-        entity.daoName = event.params.name;
-        entity.creator = event.params.creator;
+    if (entity) {
+        // entity = new DaoEntiy(event.params.daoAddr.toHexString())
+        // entity.daoAddr = event.params.daoAddr;
+        // entity.daoName = event.params.name;
+        // entity.creator = event.params.creator;
         entity.daoType = "collective";
-        entity.createTimeStamp = event.block.timestamp;
+        // entity.createTimeStamp = event.block.timestamp;
         // entity.createDateTime = new Date(event.block.timestamp.toI64() * 1000).toISOString();
-        entity.createDateTime = new Date(event.block.timestamp.toI64() * 1000).
-            toString();
+        // entity.createDateTime = new Date(event.block.timestamp.toI64() * 1000).
+        //     toString();
 
-        fcounterEntity.count = fcounterEntity.count.plus(BigInt.fromI32(1));
+        entity.save();
+
+        // fcounterEntity.count = fcounterEntity.count.plus(BigInt.fromI32(1));
     }
 
     let collectiveDaoEntity = CollectiveDaoEntity.load(event.params.daoAddr.toHexString());
@@ -61,7 +63,6 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
     }
 
 
-    entity.save()
     fcounterEntity.save();
 
     if (!collectiveDaoEntity) {

@@ -6,9 +6,9 @@ dataSources:
     name: DaoFactory
     network: base-sepolia
     source:
-      address: "0xb45CA57c50B7B0Af9b5004AC4303350388E65170"
+      address: "0x10cb7E6279EE887D96338e8677acb4eE069DF491"
       abi: DaoFactory
-      startBlock: 6313011
+      startBlock: 11807361
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -850,9 +850,9 @@ dataSources:
     name: SummonCollectiveDao
     network: base-sepolia
     source:
-      address: "0xF77Ec77a4F6FCEA80740540a7CEd64758AC3eb1b"
+      address: "0x44acAe49FBAF15b40c3AA583becc2cc53108d5a9"
       abi: SummonCollectiveDao
-      startBlock: 6883264
+      startBlock: 11812088
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -954,9 +954,9 @@ dataSources:
     name: ColletiveFundRaiseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x1DCd97ba627486907673078d2B009f22cdc107eB"
+      address: "0x06E29078F37030B1a534A364378e3d0b1672017e"
       abi: ColletiveFundRaiseProposalAdapterContract
-      startBlock: 11205133
+      startBlock: 11592193
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -979,9 +979,9 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x5eA199e1eFc2933Ca96D920172b34439132194d4"
+      address: "0xA550d672CeB947E5175FD8f71f167f975B04b677"
       abi: ColletiveFundingProposalAdapterContract
-      startBlock: 11205133
+      startBlock: 11807365
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1106,9 +1106,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x0423c7757Fd34101b1e8cD09b9FD8F130b521AED"
+      address: "0x6A16B307C03f888b1094b7892b7F00B598a41163"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 11420395
+      startBlock: 11812080
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1157,9 +1157,63 @@ dataSources:
           file: ./abis/CollectiveInvestmentPoolExtension.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: ColletiveFundRaiseProposalAdapterContract
+          file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
+        - name: ColletiveFundingPoolAdapterContract
+          file: ./abis/ColletiveFundingPoolAdapterContract.json
       eventHandlers:
         - event: WithDraw(address,address,address,uint256)
           handler: handleWithDraw
         - event:  EscrowFund(address,address,address,uint256)
           handler: handleEscrowFund
       file: ./src/collective-escrow-fund.ts
+  - kind: ethereum
+    name: CollectiveFreeInEscrowFundAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xb57CbfB2b8b1255070D624f1E9408f4E21bee12D"
+      abi: CollectiveFreeInEscrowFundAdapterContract
+      startBlock: 11592197
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - CollectiveFreeInEscrowFundEntity
+      abis:
+        - name: CollectiveFreeInEscrowFundAdapterContract
+          file: ./abis/CollectiveFreeInEscrowFundAdapterContract.json
+        - name: CollectiveInvestmentPoolExtension
+          file: ./abis/CollectiveInvestmentPoolExtension.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: WithDraw(address,bytes32,address,address,uint256)
+          handler: handleWithDraw
+        - event:  EscrowFund(address,bytes32,address,address,uint256)
+          handler: handleEscrowFund
+      file: ./src/collective-free-in-escrow-fund.ts
+  - kind: ethereum
+    name: ColletiveClearFundProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x9c15652E7c6042c3DBfB2d1618DF40Bd8B8E7AF1"
+      abi: ColletiveClearFundProposalAdapterContract
+      startBlock: 11812325
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - CollectiveFreeInEscrowFundEntity
+      abis:
+        - name: ColletiveClearFundProposalAdapterContract
+          file: ./abis/ColletiveClearFundProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32)
+          handler: handleProposalCreated
+        - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
+          handler: handleProposalExecuted
+      file: ./src/collective-clear-fund-proposal.ts

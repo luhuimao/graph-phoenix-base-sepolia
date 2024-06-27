@@ -1271,3 +1271,35 @@ type CollectiveSucceedFundCounter @entity{
   daoAddr: Bytes! # address
   counter: BigInt! # uint256
 }
+
+
+type CollectiveFreeInEscrowFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundEstablishmentProposalId: Bytes! # bytes32
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  amount: BigInt! # uint256
+  amountFromWei: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  escrowBlockNum: BigInt!
+  myAdvanceDepositAmount: BigInt
+  myConfirmedDepositAmount: BigInt
+  myWithdraw: BigInt
+}
+
+type CollectiveClearFundProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes!
+  proposer: Bytes! # address
+  creationTime: BigInt!
+  stopVotingTime: BigInt!
+  state: BigInt!
+  executeTime: BigInt!
+  executeHash: Bytes!
+}

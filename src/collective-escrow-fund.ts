@@ -14,7 +14,9 @@ import {
     EscrowFund as EscrowFundEvent,
     WithDraw as WithDrawEvent,
     CollectiveEscrowFundAdapterContract
-} from "../generated/CollectiveEscrowFundAdapterContract/CollectiveEscrowFundAdapterContract"
+} from "../generated/CollectiveEscrowFundAdapterContract/CollectiveEscrowFundAdapterContract";
+import { ColletiveFundingPoolAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundingPoolAdapterContract";
+import { ColletiveFundRaiseProposalAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundRaiseProposalAdapterContract";
 import { CollectiveInvestmentPoolExtension } from "../generated/CollectiveEscrowFundAdapterContract/CollectiveInvestmentPoolExtension";
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
@@ -43,6 +45,16 @@ export function handleEscrowFund(event: EscrowFundEvent): void {
     const escrowContr = CollectiveEscrowFundAdapterContract.bind(event.address);
     let entity = CollectiveEscrowFundEntity.load(event.params.dao.toHexString() + event.params.account.toHexString());
     const dao = DaoRegistry.bind(event.params.dao);
+
+    // const collectiveFundRaiseProposalAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
+    // const collectiveFundRaiseProposalAdapterContract = ColletiveFundRaiseProposalAdapterContract.bind(collectiveFundRaiseProposalAdapterContractAddr);
+
+    // const fundRaiseProposalId = collectiveFundRaiseProposalAdapterContract.lastProposalIds(event.params.dao);
+    // collectiveFundRaiseProposalAdapterContract.proposals(event.params.dao, fundRaiseProposalId);
+
+    const collectiveFundingPoolAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+    const fundRaiseState = collectiveFundingPoolAdapterContract.fundState(event.params.dao)
     // const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
     // const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
 
@@ -100,7 +112,7 @@ export function handleEscrowFund(event: EscrowFundEvent): void {
     entity.myConfirmedDepositAmount = BigInt.fromI32(0);
     entity.myInvestmentAmount = BigInt.fromI32(0);
     entity.myRedemptionAmount = BigInt.fromI32(0);
-    entity.fundRaisedSucceed = true;
+    entity.fundRaisedSucceed = fundRaiseState == 2 ? true : false;
     entity.succeedFundRound = BigInt.fromI32(0);
     entity.save();
 }
