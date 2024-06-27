@@ -6,7 +6,7 @@
         * @LastEditors: huhuimao
             * @LastEditTime: 2023 - 10 - 16 14: 28: 21
                 */
-import { BigInt, Bytes, Address, log, bigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address, log, bigInt, Entity } from "@graphprotocol/graph-ts"
 import {
     ColletiveClearFundProposalAdapterContract,
     ProposalCreated,
@@ -30,9 +30,6 @@ export function handleProposalCreated(event: ProposalCreated): void {
     if (!entity) {
         entity = new CollectiveClearFundProposalEntity(event.params.proposalId.toHexString())
     }
-
-
-
     entity.daoAddr = event.params.daoAddr;
     entity.proposalId = event.params.proposalId;
     entity.creationTime = event.block.timestamp;
@@ -41,6 +38,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.state = BigInt.fromI32(0);
     entity.executeTime = BigInt.fromI32(0);
     entity.executeHash = Bytes.empty();
+    entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
 }
 
