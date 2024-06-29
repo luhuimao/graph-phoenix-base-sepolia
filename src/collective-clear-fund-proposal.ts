@@ -13,6 +13,9 @@ import {
     ProposalProcessed
 } from "../generated/ColletiveClearFundProposalAdapterContract/ColletiveClearFundProposalAdapterContract";
 import { DaoRegistry } from "../generated/ColletiveClearFundProposalAdapterContract/DaoRegistry";
+import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveClearFundProposalAdapterContract/ColletiveFundingPoolAdapterContract";
+import { ColletiveFundRaiseProposalAdapterContract } from "../generated/ColletiveClearFundProposalAdapterContract/ColletiveFundRaiseProposalAdapterContract";
+import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveClearFundProposalAdapterContract/CollectiveInvestmentPoolExtension";
 import {
     CollectiveClearFundProposalEntity,
     CollectiveProposalVoteInfo
@@ -24,7 +27,17 @@ export function handleProposalCreated(event: ProposalCreated): void {
     const colletiveClearFundProposalAdapterContract = ColletiveClearFundProposalAdapterContract.bind(event.address);
     const rel = colletiveClearFundProposalAdapterContract.try_proposals(event.params.daoAddr, event.params.proposalId);
 
+    const daoContract = DaoRegistry.bind(event.params.daoAddr);
+    const collectiveFundRaiseProposalAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
 
+    const collectiveInvestmentPoolExtensionAddr = daoContract.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
+    const collectiveInvestmentPoolExtension = CollectiveInvestmentPoolExtension.bind(collectiveInvestmentPoolExtensionAddr);
+    const collectiveFundRaiseProposalAdapterContract = ColletiveFundRaiseProposalAdapterContract.bind(collectiveFundRaiseProposalAdapterContractAddr);
+    const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+    const fundRaiseProposalID = collectiveFundRaiseProposalAdapterContract.lastProposalIds(event.params.daoAddr)
+    const fundRaisedAmount = collectiveFundingPoolAdapterContract.fundRaisedByProposalId(event.params.daoAddr, fundRaiseProposalID)
+    const fundRaiseToken = collectiveInvestmentPoolExtension.getFundRaisingTokenAddress();
     let stopVotingTime: BigInt = BigInt.fromI32(0);
     if (!rel.reverted) stopVotingTime = rel.value.getStopVoteTime();
     if (!entity) {
@@ -38,6 +51,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.state = BigInt.fromI32(0);
     entity.executeTime = BigInt.fromI32(0);
     entity.executeHash = Bytes.empty();
+    entity.amount = fundRaisedAmount;
+    entity.currencyAddr = fundRaiseToken;
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
 }

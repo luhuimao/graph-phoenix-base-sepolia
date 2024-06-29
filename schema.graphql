@@ -72,6 +72,7 @@ type CollectiveDaoEntity @entity(immutable: true){
   collectiveExpenseProposal: [CollectiveExpenseProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
   collectiveFundRaiseProposal: [CollectiveFundRaiseProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
   collectiveTopUpProposal: [CollectiveTopUpProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveClearFundProposalEntity: [CollectiveClearFundProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
 }
 
 type DaoEntityCounter @entity{
@@ -1302,5 +1303,7 @@ type CollectiveClearFundProposalEntity @entity{
   state: BigInt!
   executeTime: BigInt!
   executeHash: Bytes!
+  amount: BigInt!
+  currencyAddr: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
