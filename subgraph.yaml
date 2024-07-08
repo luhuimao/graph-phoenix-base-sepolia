@@ -1106,9 +1106,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x7B26666B30d1F9b5fE104E81eF4eeFdfEE6cD5Df"
+      address: "0x840d19Cc1fa4787eaF69eC8197C34944aA4A092C"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 11850674
+      startBlock: 12101947
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1197,9 +1197,9 @@ dataSources:
     name: ColletiveClearFundProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x9c15652E7c6042c3DBfB2d1618DF40Bd8B8E7AF1"
+      address: "0x7506a5eeA609cE10Da83f241f34653E7d337F8Ea"
       abi: ColletiveClearFundProposalAdapterContract
-      startBlock: 11812325
+      startBlock: 12316481
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1223,3 +1223,35 @@ dataSources:
         - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
           handler: handleProposalExecuted
       file: ./src/collective-clear-fund-proposal.ts
+  - kind: ethereum
+    name: CollectiveRedemptionFeeEscrowAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x1d23Ab3159AC209382FB85BD9515F4dce4df13B8"
+      abi: CollectiveRedemptionFeeEscrowAdapterContract
+      startBlock: 12194517
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - CollectiveFreeInEscrowFundEntity
+      abis:
+        - name: CollectiveRedemptionFeeEscrowAdapterContract
+          file: ./abis/CollectiveRedemptionFeeEscrowAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: ColletiveFundingPoolAdapterContract
+          file: ./abis/ColletiveFundingPoolAdapterContract.json
+        - name: ColletiveFundRaiseProposalAdapterContract
+          file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
+        - name: CollectiveInvestmentPoolExtension
+          file: ./abis/CollectiveInvestmentPoolExtension.json
+        - name: ColletiveGovernorManagementAdapterContract
+          file: ./abis/ColletiveGovernorManagementAdapterContract.json
+      eventHandlers:
+        - event: EscrowFund(address,address,uint256)
+          handler: handleEscrowFund
+        - event:  Withdraw(address,address,uint256)
+          handler: handleWithdraw
+      file: ./src/collective-redemption-fee.ts

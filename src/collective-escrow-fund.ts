@@ -9,7 +9,7 @@
 // import { BigInt } from "@graphprotocol/graph-ts"
 // import { EnsResolver } from "ethers"
 // import { EventLog } from "ethers/types/contract"
-import { BigInt, Bytes, bigInt } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, bigInt, Address } from "@graphprotocol/graph-ts";
 import {
     EscrowFund as EscrowFundEvent,
     WithDraw as WithDrawEvent,
@@ -46,6 +46,8 @@ export function handleEscrowFund(event: EscrowFundEvent): void {
     let entity = CollectiveEscrowFundEntity.load(event.params.dao.toHexString() + event.params.account.toHexString());
     const dao = DaoRegistry.bind(event.params.dao);
 
+    const FUND_RAISING_TARGET = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
+
     // const collectiveFundRaiseProposalAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
     // const collectiveFundRaiseProposalAdapterContract = ColletiveFundRaiseProposalAdapterContract.bind(collectiveFundRaiseProposalAdapterContractAddr);
 
@@ -54,65 +56,56 @@ export function handleEscrowFund(event: EscrowFundEvent): void {
 
     const collectiveFundingPoolAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
     const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
-    const fundRaiseState = collectiveFundingPoolAdapterContract.fundState(event.params.dao)
-    // const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
-    // const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
 
-    // daoAddr: Bytes! # address
-    // fundEstablishmentProposalId: Bytes! # bytes32
-    // token: Bytes! # address
-    // createTimeStamp: BigInt! # uint256
-    // createDateTime: String!
-    // amount: BigInt! # uint256
-    // amountFromWei: String!
-    // account: Bytes! # address
-    // fundRound: BigInt! # uint256
-    // withdrawTimeStamp: BigInt! # uint256
-    // withdrawDateTime: String!
-    // withdrawTxHash: Bytes! # address
-    // minFundGoal: BigInt! # uint256
-    // minFundGoalFromWei: String!
-    // finalRaised: BigInt! # uint256
-    // finalRaisedFromWei: String!
-    // fundRaisedSucceed: Boolean!
-    // succeedFundRound: BigInt! # uint256
-    // myRedemptionAmount: BigInt
-    // myInvestmentAmount: BigInt
-    // myWithdraw: BigInt!
-    // myConfirmedDepositAmount: BigInt!
-    // escrowBlockNum: BigInt
+
+
+    // const fundRaiseState = collectiveFundingPoolAdapterContract.fundState(event.params.dao)
+    const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
+    const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
+
+    const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
+    const poolAmount = collectiveFundingPoolExt.getPriorAmount(
+        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
+        raiseTokenAddr,
+        event.block.number.minus(BigInt.fromI32(1)));
+    const accumulateRaiseAmount = collectiveFundingPoolAdapterContract.try_accumulateRaiseAmount(event.params.dao);
+
+
+    const raisedAmount = poolAmount.minus(accumulateRaiseAmount.reverted ? BigInt.zero() : accumulateRaiseAmount.value);
+    const fundRaiseTarget = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
 
 
     if (!entity) {
         entity = new CollectiveEscrowFundEntity(event.params.dao.toHexString() + event.params.account.toHexString());
+        entity.myWithdraw = BigInt.fromI32(0);
+        entity.daoAddr = event.params.dao;
+        entity.account = event.params.account;
+        entity.createTimeStamp = event.block.timestamp;
+        entity.createDateTime = new Date(entity.createTimeStamp.toI64() * 1000).toISOString();
+        entity.withdrawTimeStamp = BigInt.fromI32(0);
+        entity.withdrawDateTime = "0";
+        entity.amount = BigInt.fromI32(0);
+        entity.withdrawTxHash = Bytes.empty();
     }
 
-    entity.myWithdraw = BigInt.fromI32(0);
-    entity.daoAddr = event.params.dao;
-    entity.account = event.params.account;
-    entity.createTimeStamp = event.block.timestamp;
-    entity.createDateTime = new Date(entity.createTimeStamp.toI64() * 1000).toISOString();
     entity.fundEstablishmentProposalId = Bytes.empty();
     entity.fundRound = BigInt.fromI32(0);
     entity.token = event.params.token;
-    entity.withdrawTimeStamp = BigInt.fromI32(0);
-    entity.withdrawDateTime = "0";
     const rel = escrowContr.try_escrowFunds(event.params.dao, event.params.token, event.params.account);
-    entity.amount = BigInt.fromI32(0);
     if (!rel.reverted) entity.amount = rel.value;
     entity.amountFromWei = entity.amount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.withdrawTxHash = Bytes.empty();
-    entity.minFundGoal = BigInt.fromI32(0);
+
+    entity.minFundGoal = FUND_RAISING_TARGET;
     entity.minFundGoalFromWei = entity.minFundGoal.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.finalRaised = BigInt.fromI32(0);
+    entity.finalRaised = poolAmount;
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.succeedFundRound = BigInt.fromI32(0);
     entity.escrowBlockNum = event.block.number;
-    // let rel = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, newFundExeBlockNum.plus(BigInt.fromI32(1)));
-    entity.myConfirmedDepositAmount = BigInt.fromI32(0);
+    let confirmedAmount = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
+    entity.myConfirmedDepositAmount = confirmedAmount.reverted ? BigInt.fromI32(0) : confirmedAmount.value;
     entity.myInvestmentAmount = BigInt.fromI32(0);
     entity.myRedemptionAmount = BigInt.fromI32(0);
-    entity.fundRaisedSucceed = fundRaiseState == 2 ? true : false;
+    entity.fundRaisedSucceed = raisedAmount >= fundRaiseTarget ? true : false;
     entity.succeedFundRound = BigInt.fromI32(0);
     entity.save();
 }

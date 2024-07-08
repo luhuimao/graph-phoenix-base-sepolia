@@ -345,6 +345,12 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddress);
     const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
     const fundingPoolExtContr = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
+
+    // const collectiveNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
+    // const collectiveNewFundCont = ColletiveFundRaiseProposalAdapterContract.bind(collectiveNewFundContAddr);
+    // const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress)
+    // let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
+
     const fundRaisedState = fundingPoolAdapt.fundState(event.params.daoAddress);
     let successedFundCounter = CollectiveSucceedFundCounter.load(event.params.daoAddress.toString());
     if (!successedFundCounter) {
@@ -377,6 +383,7 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     // log.debug("fundRaisedState {}", [fundRaisedState.toString()]);
     if (fundRaisedState == 2) {
         successedFundCounter.counter = successedFundCounter.counter.plus(BigInt.fromI32(1));
+
 
         // let fundRoundEntity = new VintageFundRoundStatistic(event.params.daoAddress.toString() + event.params.fundRound.toString());
         // fundRoundEntity.daoAddr = event.params.daoAddress;

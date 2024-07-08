@@ -1024,6 +1024,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   priorityDepositAmount: BigInt
   priorityDepositWhiteList: [String!]
   executeHash: Bytes!
+  fundRaiseState: String
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 
@@ -1057,6 +1058,7 @@ type CollectiveInvestmentProposalEntity @entity{
 
 type CollectiveExpenseProposalEntity @entity{
   id: ID!
+  proposer: Bytes! # address
   daoAddr: Bytes! # address
   proposalId: Bytes! # bytes32
   amount: BigInt!
@@ -1306,4 +1308,30 @@ type CollectiveClearFundProposalEntity @entity{
   amount: BigInt!
   currencyAddr: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
+}
+
+type CollectiveRedemptionFeeEscrowEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  tokenAddr: Bytes! # address
+  amount : BigInt!
+}
+
+type CollectiveMemberRedemptionFeeEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  tokenAddr: Bytes! # address
+  amount : BigInt!
+  account: Bytes! # address
+}
+
+type CollectiveRedemptionFeeClaimedEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  tokenAddr: Bytes! # address
+  amount : BigInt!
+  timeStamp: BigInt!
+  account: Bytes! # address
+  timeString: String
+  txHash: Bytes!
 }

@@ -25,6 +25,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.tokenAddress = rel.value.getTokenAddress();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.executeHash = Bytes.empty();
+        entity.proposer = event.transaction.from;
         entity.save();
     }
 }
