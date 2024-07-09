@@ -36,7 +36,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
     const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
     const fundRaiseProposalID = collectiveFundRaiseProposalAdapterContract.lastProposalIds(event.params.daoAddr)
-    const fundRaisedAmount = collectiveFundingPoolAdapterContract.try_fundRaisedByProposalId(event.params.daoAddr, fundRaiseProposalID)
+    const fundRaisedAmount = collectiveFundingPoolAdapterContract.poolBalance(event.params.daoAddr)
     const fundRaiseToken = collectiveInvestmentPoolExtension.getFundRaisingTokenAddress();
     let stopVotingTime: BigInt = BigInt.fromI32(0);
     if (!rel.reverted) stopVotingTime = rel.value.getStopVoteTime();
@@ -51,7 +51,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.state = BigInt.fromI32(0);
     entity.executeTime = BigInt.fromI32(0);
     entity.executeHash = Bytes.empty();
-    entity.amount = !fundRaisedAmount.reverted ? fundRaisedAmount.value : BigInt.fromI32(0);
+    entity.amount = fundRaisedAmount;
     entity.currencyAddr = fundRaiseToken;
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     entity.save();

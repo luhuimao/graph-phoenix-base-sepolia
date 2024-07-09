@@ -1106,9 +1106,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x840d19Cc1fa4787eaF69eC8197C34944aA4A092C"
+      address: "0x6Ed56ebbef9084D5d6C486aE335F0AC468Cb4B5e"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 12101947
+      startBlock: 12329410
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

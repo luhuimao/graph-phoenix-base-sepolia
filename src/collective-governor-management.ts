@@ -42,6 +42,7 @@ export function handlerProposalProcessed(event: ProposalProcessed): void {
     let entity = CollectiveGovernorManagementProposal.load(event.params.proposalId.toHexString());
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
+        entity.stateInString = event.params.state == 3 ? "Succeed" : "Failed";
         entity.executeHash = event.transaction.hash;
         entity.save();
     }
