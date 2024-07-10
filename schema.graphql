@@ -32,6 +32,7 @@ type FlexDaoEntity @entity(immutable: true){
   flexPollVoting: [FlexPollVoting!] @derivedFrom(field: "flexDaoEntity")
   flexVoting: [FlexVoting!] @derivedFrom(field: "flexDaoEntity")
   flexDaosetProposal: [FlexDaosetProposal!] @derivedFrom(field: "flexDaoEntity")
+  flexGovernorVotingAssetAllocationProposal:[FLexGovernorVotingAssetAllocationProposalEntity!] @derivedFrom(field: "flexDaoEntity")
 }
 
 type VintageDaoEntity @entity(immutable: true){
@@ -463,6 +464,22 @@ type FlexFreeInEscrowFundEntity @entity{
   myAdvanceDepositAmount: BigInt
   myConfirmedDepositAmount: BigInt
   myWithdraw: BigInt
+}
+
+type FLexGovernorVotingAssetAllocationProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # bytes32
+  proposer: Bytes! # address
+  state: BigInt! # uint256
+  creationTime: BigInt! # uint256
+  createTimeString: String!
+  stopVoteTime: BigInt! # uint256
+  stopVoteTimeString:  String!
+  executeHash: Bytes!
+  flexDaoEntity: FlexDaoEntity
+  governors: [String!]
+  allocations: [BigInt!]
 }
 
 type VintageDaoFeeInfoEntity @entity{
