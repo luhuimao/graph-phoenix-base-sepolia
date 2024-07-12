@@ -52,6 +52,7 @@ type VintageDaoEntity @entity(immutable: true){
   vintageVotingConfigInfo: VintageVotingInfoEntity
   vintageDaoFeeInfo: VintageDaoFeeInfoEntity
   vintageVoting: VintageVoting
+  vintageGovernorVotingAssetAllocationProposalEntity:[VintageGovernorVotingAssetAllocationProposalEntity!] @derivedFrom(field: "vintageDaoEntity")
 }
 
 type CollectiveDaoEntity @entity(immutable: true){
@@ -947,6 +948,22 @@ type VintageVestingClaimedActivityEntity @entity{
   account: Bytes! # address
   txHash: Bytes!
   claimedAmount: BigInt!
+}
+
+type VintageGovernorVotingAssetAllocationProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # bytes32
+  proposer: Bytes! # address
+  state: BigInt! # uint256
+  creationTime: BigInt! # uint256
+  createTimeString: String!
+  stopVoteTime: BigInt! # uint256
+  stopVoteTimeString:  String!
+  executeHash: Bytes!
+  vintageDaoEntity: VintageDaoEntity
+  governors: [String!]
+  allocations: [BigInt!]
 }
 
 type CollectiveTopUpProposalEntity @entity{

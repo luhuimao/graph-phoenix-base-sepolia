@@ -8,21 +8,21 @@
  */
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
-    FlexGovernorVotingAssetAllocationProposalAdapterContract,
+    VintageGovernorVotingAssetAllocationProposalAdapterContract,
     ProposalProcessed,
     ProposalCreated
-} from "../generated/FlexGovernorVotingAssetAllocationProposalAdapterContract/FlexGovernorVotingAssetAllocationProposalAdapterContract"
-import { FLexGovernorVotingAssetAllocationProposalEntity, FlexProposalVoteInfo } from "../generated/schema";
+} from "../generated/VintageGovernorVotingAssetAllocationProposalAdapterContract/VintageGovernorVotingAssetAllocationProposalAdapterContract"
+import { VintageGovernorVotingAssetAllocationProposalEntity, VintageProposalVoteInfo } from "../generated/schema";
 
 export function handleProposalCreated(event: ProposalCreated): void {
-    let entity = new FLexGovernorVotingAssetAllocationProposalEntity(event.params.proposalId.toHexString());
+    let entity = new VintageGovernorVotingAssetAllocationProposalEntity(event.params.proposalId.toHexString());
 
     entity.daoAddr = event.params.daoAddr;
     entity.proposalId = event.params.proposalId;
     entity.proposer = event.transaction.from;
     entity.state = BigInt.zero();
     entity.executeHash = Bytes.empty();
-    entity.flexDaoEntity = event.params.daoAddr.toHexString();
+    entity.vintageDaoEntity = event.params.daoAddr.toHexString();
     entity.creationTime = event.block.timestamp;
     entity.createTimeString = new Date(entity.creationTime.toI64() * 1000).toISOString();
     entity.stopVoteTime = event.params.stopVoteTime;
@@ -49,7 +49,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {
-    let entity = FLexGovernorVotingAssetAllocationProposalEntity.load(event.params.proposalId.toHexString());
+    let entity = VintageGovernorVotingAssetAllocationProposalEntity.load(event.params.proposalId.toHexString());
 
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
@@ -58,7 +58,7 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
         entity.save();
     }
 
-    let voteInfoEntity = FlexProposalVoteInfo.load(event.params.proposalId.toHexString());
+    let voteInfoEntity = VintageProposalVoteInfo.load(event.params.proposalId.toHexString());
     if (voteInfoEntity) {
         voteInfoEntity.totalWeights = event.params.allVotingWeight;
         voteInfoEntity.save();
