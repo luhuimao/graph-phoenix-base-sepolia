@@ -481,6 +481,7 @@ type FLexGovernorVotingAssetAllocationProposalEntity @entity{
   flexDaoEntity: FlexDaoEntity
   governors: [String!]
   allocations: [BigInt!]
+  typeInString: String!
 }
 
 type VintageDaoFeeInfoEntity @entity{
@@ -964,6 +965,7 @@ type VintageGovernorVotingAssetAllocationProposalEntity @entity{
   vintageDaoEntity: VintageDaoEntity
   governors: [String!]
   allocations: [BigInt!]
+  typeInString: String!
 }
 
 type CollectiveTopUpProposalEntity @entity{

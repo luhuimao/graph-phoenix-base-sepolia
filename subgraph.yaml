@@ -980,7 +980,7 @@ dataSources:
     name: ColletiveGovernorManagementAdapterContract
     network: base-sepolia
     source:
-      address: "0xE971d7f5213819A9a9D389478b1AFcc83Be2b2F4"
+      address: "0x81dD1b569630FE88203D424D10e3F542429b53E4"
       abi: ColletiveGovernorManagementAdapterContract
       startBlock: 11417422
     mapping:
@@ -1161,7 +1161,7 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x5B59422D9790AF00eC8B9F1b3De424e833D3b321"
+      address: "0xc0B1D6B987e055c16d0a21FA83A1629C4240A8F3"
       abi: ColletiveFundingPoolAdapterContract
       startBlock: 12329410
     mapping:
@@ -1282,7 +1282,7 @@ dataSources:
     name: CollectiveRedemptionFeeEscrowAdapterContract
     network: base-sepolia
     source:
-      address: "0x1d23Ab3159AC209382FB85BD9515F4dce4df13B8"
+      address: "0x780330E019F443DF64C7055Eee36AE0646302EDa"
       abi: CollectiveRedemptionFeeEscrowAdapterContract
       startBlock: 12194517
     mapping:
