@@ -979,6 +979,7 @@ type CollectiveTopUpProposalEntity @entity{
   creationTime: BigInt!
   stopVoteTime: BigInt!
   executeHash: Bytes!
+  votingPowerToBeAllocated: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -1027,6 +1028,7 @@ type CollectiveGovernorManagementProposal @entity{
   typeInString: String!
   executeHash: Bytes!
   depositAmount: BigInt!
+  votingPowerToBeAllocated: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
@@ -1304,6 +1306,65 @@ type CollectiveEscrowFundEntity @entity{
   myConfirmedDepositAmount: BigInt!
   escrowBlockNum: BigInt
 }
+
+type CollectiveEscrowLiquidationFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  liquidationId: BigInt!
+  myWithdrawAmount: BigInt!
+  myRefundable: BigInt!
+  escrowBlockNum: BigInt!
+}
+
+type CollectiveEscrowFailedFundRaisingFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  fundRaisingId: BigInt!
+  finalRaised: BigInt! # uint256
+  finalRaisedFromWei: String!
+  minFundGoal: BigInt! # uint256
+  minFundGoalFromWei: String!
+  myAdvanceDepositAmount: BigInt!
+  myWithdrawAmount: BigInt!
+  myRefundable: BigInt!
+  escrowBlockNum: BigInt!
+}
+
+type CollectiveEscrowOverRaisedFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  amount: BigInt! # uint256
+  amountFromWei: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  fundRaisingId: BigInt!
+  myAdvanceDepositAmount: BigInt!
+  myConfirmedDepositAmount: BigInt!
+  myWithdrawAmount: BigInt!
+  myRefundable: BigInt!
+  escrowBlockNum: BigInt!
+}
+
+
 
 type CollectiveSucceedFundCounter @entity{
   id: ID!

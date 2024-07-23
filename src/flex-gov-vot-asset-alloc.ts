@@ -44,7 +44,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         }
     }
     entity.allocations = tem1;
-    entity.typeInString = "Governor Voting Asset Allocation";
+    entity.typeInString = "Voting Asset Allocation";
     entity.save();
 }
 

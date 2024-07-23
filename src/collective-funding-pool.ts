@@ -14,7 +14,7 @@ import {
     ColletiveFundingPoolAdapterContract,
     Deposit,
     WithDraw,
-    RedeptionFeeCharged,
+    DistributeRedemptionFee,
     ClearFund,
     ProcessFundRaise
 } from "../generated/ColletiveFundingPoolAdapterContract/ColletiveFundingPoolAdapterContract";
@@ -297,23 +297,23 @@ export function handleClearFund(event: ClearFund): void {
     entity.save();
 }
 
-export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
+export function handleRedeptionFeeCharged(event: DistributeRedemptionFee): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
-    let entity = CollectiveRedempteEntity.load(event.transaction.hash.toHex())
+    // let entity = CollectiveRedempteEntity.load(event.transaction.hash.toHex())
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
-    if (!entity) {
-        entity = new CollectiveRedempteEntity(event.transaction.hash.toHex())
-    }
+    // if (!entity) {
+    //     entity = new CollectiveRedempteEntity(event.transaction.hash.toHex())
+    // }
 
-    entity.daoAddr = event.params.daoAddress;
-    entity.chargedFee = event.params.redemptionFee;
-    entity.redemptAmount = event.params.amount;
-    entity.account = event.params.account;
-    entity.timeStamp = event.block.timestamp;
-    entity.txHash = event.transaction.hash;
-    entity.save();
+    // entity.daoAddr = event.params.daoAddress;
+    // entity.chargedFee = event.params.receivedAmount;
+    // entity.redemptAmount = event.params.amount;
+    // entity.account = event.params.account;
+    // entity.timeStamp = event.block.timestamp;
+    // entity.txHash = event.transaction.hash;
+    // entity.save();
 
     // const daoContract = DaoRegistry.bind(event.params.dao);
     // const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));

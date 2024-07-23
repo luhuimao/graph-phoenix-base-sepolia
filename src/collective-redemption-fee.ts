@@ -79,7 +79,7 @@ export function handleEscrowFund(event: EscrowFund): void {
 }
 
 export function handleWithdraw(event: Withdraw): void {
-    let entity = new CollectiveRedemptionFeeClaimedEntity(event.params.dao.toHexString() + event.transaction.from.toHexString() + event.params.tokenAddr.toHexString());
+    let entity = new CollectiveRedemptionFeeClaimedEntity(event.transaction.hash.toHexString());
 
     entity.account = event.transaction.from;
     entity.amount = event.params.amount

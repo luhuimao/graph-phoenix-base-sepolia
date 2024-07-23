@@ -1,4 +1,4 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 import {
     ColletiveTopUpProposalAdapterContract,
     ProposalCreated,
@@ -9,8 +9,18 @@ import {
     CollectiveTopUpProposalEntity,
     CollectiveProposalVoteInfo
 } from "../generated/schema"
-
+import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
+import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
+import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveFundingPoolAdapterContract";
 export function handleProposalCreated(event: ProposalCreated): void {
+
+    const daoContract = DaoRegistry.bind(event.params.daoAddr);
+
+    const collectiveVotingAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x907642cbfe4e58ddd14eaa320923fbe4c29721dd0950ae4cb3b2626e292791ae"));
+    const collectiveVotingAdapterContract = CollectiveVotingAdapterContract.bind(collectiveVotingAdapterContractAddr);
+    const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+
 
     let entity = new CollectiveTopUpProposalEntity(event.params.proposalId.toHexString());
     const topupCon = ColletiveTopUpProposalAdapterContract.bind(event.address);
@@ -27,6 +37,17 @@ export function handleProposalCreated(event: ProposalCreated): void {
     }
     entity.executeHash = Bytes.empty();
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
+    const bal = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, Address.fromBytes(entity.account));
+
+    const votingPowerToBeAllocated = collectiveVotingAdapterContract.try_getVotingWeightByDepositAmount(
+        event.params.daoAddr,
+        Address.fromBytes(entity.account),
+        entity.amount.plus(bal)
+    )
+
+
+    entity.votingPowerToBeAllocated = votingPowerToBeAllocated.reverted ? BigInt.zero() : votingPowerToBeAllocated.value;
+
     entity.save();
 }
 

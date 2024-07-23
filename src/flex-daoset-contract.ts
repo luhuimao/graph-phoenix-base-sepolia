@@ -102,7 +102,7 @@ export function handlePollingProposalCreated(event: PollingProposalCreated): voi
     entity.save();
 }
 
-export function handleVotingProposalCreated(event: PollingProposalCreated): void {
+export function handleVotingProposalCreated(event: VotingProposalCreated): void {
     let entity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
@@ -130,7 +130,7 @@ export function handleVotingProposalCreated(event: PollingProposalCreated): void
     entity.save();
 }
 
-export function handleFeesProposalCreated(event: PollingProposalCreated): void {
+export function handleFeesProposalCreated(event: FeesProposalCreated): void {
     let entity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
@@ -158,7 +158,7 @@ export function handleFeesProposalCreated(event: PollingProposalCreated): void {
     entity.save();
 }
 
-export function handleGovernorMembershipProposalCreated(event: PollingProposalCreated): void {
+export function handleGovernorMembershipProposalCreated(event: GovernorMembershipProposalCreated): void {
     let entity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
@@ -186,7 +186,7 @@ export function handleGovernorMembershipProposalCreated(event: PollingProposalCr
     entity.save();
 }
 
-export function handleInvestorCapProposalCreated(event: PollingProposalCreated): void {
+export function handleInvestorCapProposalCreated(event: InvestorCapProposalCreated): void {
     let entity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
@@ -214,7 +214,7 @@ export function handleInvestorCapProposalCreated(event: PollingProposalCreated):
     entity.save();
 }
 
-export function handleInvestorMembershipProposalCreated(event: PollingProposalCreated): void {
+export function handleInvestorMembershipProposalCreated(event: InvestorMembershipProposalCreated): void {
     let entity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
@@ -242,7 +242,7 @@ export function handleInvestorMembershipProposalCreated(event: PollingProposalCr
     entity.save();
 }
 
-export function handleProposerMembershipProposalCreated(event: PollingProposalCreated): void {
+export function handleProposerMembershipProposalCreated(event: ProposerMembershipProposalCreated): void {
     let entity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {
