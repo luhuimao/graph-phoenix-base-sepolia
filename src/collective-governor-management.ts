@@ -46,7 +46,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.executeHash = Bytes.empty();
         entity.depositAmount = rel.value.getDepositAmount();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
-
+        entity.votingPowerToBeAllocated = BigInt.zero();
         // 0. quantity 1. log2 2. 1 voter 1 vote
         // const votingWeightedType = daoContract.getConfiguration(Bytes.fromHexString("0xd093d4a34a12a221b19c0a6689d5449f1346aa769d15cca4e9782c36fda9339a"));
 

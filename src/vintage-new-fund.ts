@@ -6,7 +6,7 @@
  * @LastEditors: huhuimao
  * @LastEditTime: 2023-10-16 14:25:56
  */
-import { BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 import {
     VintageFundRaiseAdapterContract,
     ProposalCreated,
@@ -84,13 +84,14 @@ export function handleProposalCreated(event: ProposalCreated): void {
             entity.priorityDepositWhiteList = tem;
         }
         entity.vintageDaoEntity = event.params.daoAddr.toHexString();
-        entity.executeBlockNum= BigInt.fromI32(0);
+        entity.executeBlockNum = BigInt.fromI32(0);
         entity.executeHash = Bytes.empty();
         entity.save()
 
         const erc20 = ERC20.bind(Address.fromBytes(entity.acceptTokenAddr));
         let fundRaiseEntity = new VintageFundRaiseEntity(event.params.proposalId.toHexString());
-        fundRaiseEntity.tokenSymbol = erc20.symbol();
+        const sym = erc20.try_symbol();
+        fundRaiseEntity.tokenSymbol = sym.reverted ? "" : sym.value;
         fundRaiseEntity.daoAddr = event.params.daoAddr;
         fundRaiseEntity.fundRaiseProposalId = event.params.proposalId;
         fundRaiseEntity.tokenName = erc20.name();
