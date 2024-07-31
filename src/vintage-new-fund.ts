@@ -86,6 +86,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.vintageDaoEntity = event.params.daoAddr.toHexString();
         entity.executeBlockNum = BigInt.fromI32(0);
         entity.executeHash = Bytes.empty();
+        entity.redemptionFeeReceiver = proposalInfo.getFeeInfo().redemptionFeeReceiver;
         entity.save()
 
         const erc20 = ERC20.bind(Address.fromBytes(entity.acceptTokenAddr));
@@ -94,7 +95,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
         fundRaiseEntity.tokenSymbol = sym.reverted ? "" : sym.value;
         fundRaiseEntity.daoAddr = event.params.daoAddr;
         fundRaiseEntity.fundRaiseProposalId = event.params.proposalId;
-        fundRaiseEntity.tokenName = erc20.name();
+        const ercname = erc20.try_name();
+        fundRaiseEntity.tokenName = ercname.reverted ? "" : ercname.value;
         fundRaiseEntity.fundNumber = " ";
         fundRaiseEntity.raisedAmount = BigInt.fromI32(0);
         fundRaiseEntity.raisedAmountFromWei = "0";

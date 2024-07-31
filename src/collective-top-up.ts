@@ -18,8 +18,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
     const collectiveVotingAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x907642cbfe4e58ddd14eaa320923fbe4c29721dd0950ae4cb3b2626e292791ae"));
     const collectiveVotingAdapterContract = CollectiveVotingAdapterContract.bind(collectiveVotingAdapterContractAddr);
-    const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
-    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+    // const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    // const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
 
 
     let entity = new CollectiveTopUpProposalEntity(event.params.proposalId.toHexString());
@@ -37,12 +37,11 @@ export function handleProposalCreated(event: ProposalCreated): void {
     }
     entity.executeHash = Bytes.empty();
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
-    const bal = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, Address.fromBytes(entity.account));
+    // const bal = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, Address.fromBytes(entity.account));
 
     const votingPowerToBeAllocated = collectiveVotingAdapterContract.try_getVotingWeightByDepositAmount(
         event.params.daoAddr,
-        Address.fromBytes(entity.account),
-        entity.amount.plus(bal)
+        entity.amount
     )
 
 

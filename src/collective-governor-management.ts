@@ -21,8 +21,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
 
-    const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
-    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+    // const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    // const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
 
     const collectiveVotingAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x907642cbfe4e58ddd14eaa320923fbe4c29721dd0950ae4cb3b2626e292791ae"));
     const collectiveVotingAdapterContract = CollectiveVotingAdapterContract.bind(collectiveVotingAdapterContractAddr);
@@ -52,15 +52,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
         // const bal = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, event.params.account);
 
-        if (entity.typeInString == "Member In") {
+        if (entity.type == BigInt.zero()) {
             const votingPowerToBeAllocated = collectiveVotingAdapterContract.try_getVotingWeightByDepositAmount(
                 event.params.daoAddr,
-                event.params.account,
                 entity.depositAmount
             )
             entity.votingPowerToBeAllocated = votingPowerToBeAllocated.reverted ? BigInt.zero() : votingPowerToBeAllocated.value;
-
-
         }
         entity.save();
     }

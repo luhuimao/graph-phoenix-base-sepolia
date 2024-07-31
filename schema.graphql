@@ -590,6 +590,7 @@ type VintageFundEstablishmentProposal @entity{
   priorityDepositWhiteList: [String!]
   executeBlockNum: BigInt!
   executeHash: Bytes!
+  redemptionFeeReceiver: Bytes!
   vintageDaoEntity: VintageDaoEntity
 }
 
