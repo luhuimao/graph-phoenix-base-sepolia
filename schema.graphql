@@ -1092,6 +1092,7 @@ type CollectiveInvestmentProposalEntity @entity{
   vestingInterval: BigInt!
   executeHash: Bytes!
   creationTime: BigInt!
+  vestingNFTEnable: Boolean!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 

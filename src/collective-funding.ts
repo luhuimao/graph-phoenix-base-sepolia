@@ -7,6 +7,7 @@ import {
 } from "../generated/ColletiveFundingProposalAdapterContract/ColletiveFundingProposalAdapterContract"
 import {
     CollectiveInvestmentProposalEntity,
+    CollectiveDaoStatisticEntity,
     CollectiveProposalVoteInfo
 } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
@@ -40,6 +41,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.vestingInterval = rel.value.getVestingInfo().vestingInterval
         entity.executeHash = Bytes.empty();
         entity.creationTime = event.block.timestamp;
+        entity.vestingNFTEnable = rel.value.getVestingInfo().nftEnable;
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
     }
@@ -55,6 +57,17 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
         entity.executeBlockNum = rel.value.getExecuteBlockNum();
         entity.executeHash = event.transaction.hash;
         entity.save();
+
+        if (entity.state == BigInt.fromI32(3)) {
+            let collectiveDaoStatisticEntity = CollectiveDaoStatisticEntity.load(event.params.daoAddr.toHexString());
+            if (collectiveDaoStatisticEntity) {
+                collectiveDaoStatisticEntity.fundInvested = collectiveDaoStatisticEntity.fundInvested.plus(entity.totalAmount);
+                collectiveDaoStatisticEntity.fundInvestedFromWei = collectiveDaoStatisticEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveDaoStatisticEntity.fundedVentures = collectiveDaoStatisticEntity.fundedVentures.plus(BigInt.fromI32(1));
+                
+                collectiveDaoStatisticEntity.save();
+            }
+        }
     }
 
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
