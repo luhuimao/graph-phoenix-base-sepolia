@@ -484,6 +484,17 @@ type FLexGovernorVotingAssetAllocationProposalEntity @entity{
   typeInString: String!
 }
 
+type FlexInvestorPortfoliosEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  account : Bytes!
+  investedAmount: BigInt!
+  investedAmountFromWei: String
+  investmentProposalId: Bytes!
+  timeStamp: BigInt!
+  investmentCurrency: Bytes! # address
+}
+
 type VintageDaoFeeInfoEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
@@ -969,6 +980,17 @@ type VintageGovernorVotingAssetAllocationProposalEntity @entity{
   typeInString: String!
 }
 
+type VintageInvestorPortfoliosEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  account : Bytes!
+  investedAmount: BigInt!
+  investedAmountFromWei: String
+  investmentProposalId: Bytes!
+  timeStamp: BigInt!
+  investmentCurrency: Bytes! # address
+}
+
 type CollectiveTopUpProposalEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
@@ -1433,4 +1455,15 @@ type CollectiveRedemptionFeeClaimedEntity @entity{
   account: Bytes! # address
   timeString: String
   txHash: Bytes!
+}
+
+type CollectiveInvestorPortfoliosEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  account : Bytes!
+  investedAmount: BigInt!
+  investedAmountFromWei: String
+  investmentProposalId: Bytes!
+  timeStamp: BigInt!
+  investmentCurrency: Bytes! # address
 }

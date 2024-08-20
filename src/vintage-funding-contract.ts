@@ -26,7 +26,8 @@ import {
     VintageFundRaiseEntity,
     VintageEscrowFundEntity,
     VintageInvestorInvestmentEntity,
-    VintageSuccessedFundCounter
+    VintageSuccessedFundCounter,
+    VintageInvestorPortfoliosEntity
 } from "../generated/schema"
 import { bigInt, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
 
@@ -256,6 +257,18 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                         investorInvestmentEntity.investedAmount = investorInvestmentEntity.investedAmount.plus(investedAmount);
                         investorInvestmentEntity.save();
                     }
+
+
+                    let p = new VintageInvestorPortfoliosEntity(event.params.proposalID.toHexString() + investors.value[i].toHexString());
+                    p.account = investors.value[i];
+                    p.daoAddr = event.params.daoAddr;
+                    p.timeStamp = event.block.timestamp;
+                    p.investmentCurrency = proposalEntity.investmentToken;
+                    p.investmentProposalId = event.params.proposalID;
+                    p.investedAmount = !bal1.reverted ? bal1.value.minus(bal2) : BigInt.zero();
+                    p.investedAmountFromWei = p.investedAmount.div(BigInt.fromI32(10 ** 18)).toString();
+
+                    p.save();
                 }
 
             }

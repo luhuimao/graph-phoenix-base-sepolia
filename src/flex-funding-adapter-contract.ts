@@ -18,7 +18,7 @@ import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry
 // import { DaoFactory } from "../generated/DaoFactory/DaoFactory";
 import { FlexInvestmentPoolAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
 
-import { FlexInvestmentProposal, FlexDaoStatistic } from "../generated/schema"
+import { FlexInvestmentProposal, FlexDaoStatistic, FlexInvestorPortfoliosEntity } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -173,10 +173,33 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 FlexDaoStatisticsEntity.members = BigInt.fromI64(0);
                 FlexDaoStatisticsEntity.daoAddr = event.params.daoAddress;
             }
-            // const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
-            // if (!rel.reverted) {
-            //     FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
-            // }
+            const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
+            if (!rel.reverted) {
+                FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
+
+                for (let j = 0; j < rel.value.length; j++) {
+                    let p = new FlexInvestorPortfoliosEntity(event.params.proposalId.toHexString() + rel.value[j].toHexString());
+                    p.account = rel.value[j];
+                    p.daoAddr = event.params.daoAddress;
+                    p.timeStamp = event.block.timestamp;
+                    p.investmentProposalId = event.params.proposalId;
+                    p.investmentCurrency = entity.tokenAddress;
+
+                    const bal1 = fundingPoolExtContr.balanceOf(event.params.proposalId, rel.value[j]);
+                    const bal2 = fundingPoolExtContr.try_getPriorAmount(event.params.proposalId,
+                        rel.value[j],
+                        event.block.number.minus(BigInt.fromI32(1)));
+
+
+                    const myInvestedAmount = !bal2.reverted ? bal2.value.minus(bal1) : BigInt.zero();
+                    p.investedAmount = myInvestedAmount;
+                    p.investedAmountFromWei = p.investedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    p.save();
+                }
+
+            }
+
+
 
             FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(entity.investors.length));
 

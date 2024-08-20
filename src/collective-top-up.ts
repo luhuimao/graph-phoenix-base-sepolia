@@ -7,7 +7,8 @@ import {
 } from "../generated/ColletiveTopUpProposalAdapterContract/ColletiveTopUpProposalAdapterContract"
 import {
     CollectiveTopUpProposalEntity,
-    CollectiveProposalVoteInfo
+    CollectiveProposalVoteInfo,
+    CollectiveDaoStatisticEntity
 } from "../generated/schema"
 import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
 import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
@@ -56,6 +57,16 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
         entity.state = BigInt.fromI32(event.params.state);
         entity.executeHash = event.transaction.hash;
         entity.save();
+
+        if (entity.state == BigInt.fromI32(3)) {
+            let statist = CollectiveDaoStatisticEntity.load(event.params.daoAddr.toHexString());
+            if (statist) {
+                statist.fundRaised = statist.fundRaised.plus(entity.amount);
+                statist.fundRaisedFromWei = statist.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
+
+                statist.save();
+            }
+        }
     }
 
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
