@@ -602,6 +602,7 @@ type VintageFundEstablishmentProposal @entity{
   executeBlockNum: BigInt!
   executeHash: Bytes!
   redemptionFeeReceiver: Bytes!
+  fundRaiseId: BigInt!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -1086,6 +1087,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   priorityDepositWhiteList: [String!]
   executeHash: Bytes!
   fundRaiseState: String
+  fundRaiseId: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 

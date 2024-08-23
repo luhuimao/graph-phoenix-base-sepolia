@@ -409,18 +409,25 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             collectiveDaoStatisticEntity.governors = [];
             collectiveDaoStatisticEntity.membersArr = [];
         }
-        if (daoContract.getConfiguration(Bytes.fromHexString("0xbe07eea886ce63e8ab49ef6fd986e9dea247fbb31da43dd1df3e153cc548277a")) == BigInt.fromI32(1)) {
-            const fundTokenAddr = daoContract.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
-            const rel = fundingPoolExtContr.try_getPriorAmount(
-                Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd")),
-                fundTokenAddr,
-                event.block.number.minus(BigInt.fromI32(1))
-            );
-            if (!rel.reverted)
-                collectiveDaoStatisticEntity.fundRaised = rel.value;
-        } else {
-            collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(event.params.totalRaised);
-        }
+        // if (daoContract.getConfiguration(Bytes.fromHexString("0xbe07eea886ce63e8ab49ef6fd986e9dea247fbb31da43dd1df3e153cc548277a")) == BigInt.fromI32(1)) {
+        //     const fundTokenAddr = daoContract.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
+        //     const rel = fundingPoolExtContr.try_getPriorAmount(
+        //         Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd")),
+        //         fundTokenAddr,
+        //         event.block.number.minus(BigInt.fromI32(1))
+        //     );
+        //     if (!rel.reverted)
+        //         collectiveDaoStatisticEntity.fundRaised = rel.value;
+        // } else {
+        //     collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(event.params.totalRaised);
+        // }
+
+        // const fundTokenAddr = daoContract.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
+        const poolBal = fundingPoolAdapt.poolBalance(
+            event.params.daoAddress
+            // Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd"))
+        );
+        collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(poolBal);
         collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
         collectiveDaoStatisticEntity.save();
         // fundRoundEntity.save();

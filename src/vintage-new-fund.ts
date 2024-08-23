@@ -13,6 +13,7 @@ import {
     proposalExecuted
 } from "../generated/VintageFundRaiseAdapterContract/VintageFundRaiseAdapterContract"
 import { ERC20 } from "../generated/VintageFundRaiseAdapterContract/ERC20";
+import { DaoRegistry } from "../generated/VintageFundRaiseAdapterContract/DaoRegistry";
 import {
     VintageFundEstablishmentProposal,
     VintageProposalVoteInfo,
@@ -29,6 +30,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     if (!entity) {
         entity = new VintageFundEstablishmentProposal(event.params.proposalId.toHexString())
     }
+    const daoContr = DaoRegistry.bind(event.params.daoAddr);
 
     let vintageFundRaiseContract = VintageFundRaiseAdapterContract.bind(event.address);
     let proposalInfo = vintageFundRaiseContract.Proposals(event.params.daoAddr,
@@ -87,6 +89,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.executeBlockNum = BigInt.fromI32(0);
         entity.executeHash = Bytes.empty();
         entity.redemptionFeeReceiver = proposalInfo.getFeeInfo().redemptionFeeReceiver;
+        entity.fundRaiseId = daoContr.getCurrentFundEstablishmentProposalId();
         entity.save()
 
         const erc20 = ERC20.bind(Address.fromBytes(entity.acceptTokenAddr));

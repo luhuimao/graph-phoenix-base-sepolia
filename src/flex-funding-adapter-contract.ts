@@ -6,7 +6,7 @@
  * @LastEditors: huhuimao
  * @LastEditTime: 2023-10-07 13:35:12
  */
-import { BigInt, Bytes, Address, bigInt } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, Address, bigInt, } from "@graphprotocol/graph-ts";
 // import { toUtf8 } from "web3-utils";
 import {
     FlexFundingAdapterContract,
@@ -174,20 +174,21 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 FlexDaoStatisticsEntity.daoAddr = event.params.daoAddress;
             }
             const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
-            if (!rel.reverted) {
-                FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
+            if (entity.investors.length > 0) {
+                // FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
 
-                for (let j = 0; j < rel.value.length; j++) {
-                    let p = new FlexInvestorPortfoliosEntity(event.params.proposalId.toHexString() + rel.value[j].toHexString());
-                    p.account = rel.value[j];
+                for (let j = 0; j < entity.investors.length; j++) {
+                    const investor = entity.investors[j];
+                    let p = new FlexInvestorPortfoliosEntity(event.params.proposalId.toHexString() + investor);
+                    p.account = Bytes.fromHexString(investor);
                     p.daoAddr = event.params.daoAddress;
                     p.timeStamp = event.block.timestamp;
                     p.investmentProposalId = event.params.proposalId;
                     p.investmentCurrency = entity.tokenAddress;
 
-                    const bal1 = fundingPoolExtContr.balanceOf(event.params.proposalId, rel.value[j]);
+                    const bal1 = fundingPoolExtContr.balanceOf(event.params.proposalId, Address.fromBytes(Bytes.fromHexString(investor)));
                     const bal2 = fundingPoolExtContr.try_getPriorAmount(event.params.proposalId,
-                        rel.value[j],
+                        Address.fromBytes(Bytes.fromHexString(investor)),
                         event.block.number.minus(BigInt.fromI32(1)));
 
 
@@ -198,8 +199,6 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 }
 
             }
-
-
 
             FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(entity.investors.length));
 

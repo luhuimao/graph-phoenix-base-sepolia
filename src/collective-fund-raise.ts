@@ -3,7 +3,8 @@ import {
     ColletiveFundRaiseProposalAdapterContract,
     ProposalCreated,
     proposalExecuted
-} from "../generated/ColletiveFundRaiseProposalAdapterContract/ColletiveFundRaiseProposalAdapterContract"
+} from "../generated/ColletiveFundRaiseProposalAdapterContract/ColletiveFundRaiseProposalAdapterContract";
+import { DaoRegistry } from "../generated/ColletiveFundRaiseProposalAdapterContract/DaoRegistry"
 import {
     CollectiveFundRaiseProposalEntity,
     CollectiveProposalVoteInfo,
@@ -13,6 +14,7 @@ import {
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new CollectiveFundRaiseProposalEntity(event.params.proposalId.toHexString());
     const contract = ColletiveFundRaiseProposalAdapterContract.bind(event.address);
+    const daoContract = DaoRegistry.bind(event.params.daoAddr);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     if (!rel.reverted) {
         entity.acceptTokenAddr = rel.value.getFundInfo().tokenAddress;
@@ -51,6 +53,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.proposer = event.transaction.from;
         entity.proposalId = event.params.proposalId;
         entity.executeHash = Bytes.empty();
+        entity.fundRaiseId = daoContract.getCurrentFundEstablishmentProposalId();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
     }
