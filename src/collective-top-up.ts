@@ -58,14 +58,26 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
         entity.executeHash = event.transaction.hash;
         entity.save();
 
-        if (entity.state == BigInt.fromI32(3)) {
-            let statist = CollectiveDaoStatisticEntity.load(event.params.daoAddr.toHexString());
-            if (statist) {
-                statist.fundRaised = statist.fundRaised.plus(entity.amount);
-                statist.fundRaisedFromWei = statist.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
+        if (event.params.state == 3) {
+            let collectiveDaoStatisticEntity = CollectiveDaoStatisticEntity.load(event.params.daoAddr.toHexString());
+            if (!collectiveDaoStatisticEntity) {
+                collectiveDaoStatisticEntity = new CollectiveDaoStatisticEntity(event.params.daoAddr.toHexString());
 
-                statist.save();
+                collectiveDaoStatisticEntity.fundRaised = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.fundRaisedFromWei = "0";
+                collectiveDaoStatisticEntity.fundInvestedFromWei = "0";
+                collectiveDaoStatisticEntity.fundInvested = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.fundedVentures = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.members = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.daoAddr = event.params.daoAddr;
+                collectiveDaoStatisticEntity.investors = [];
+                collectiveDaoStatisticEntity.governors = [];
+                collectiveDaoStatisticEntity.membersArr = [];
             }
+
+            collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(entity.amount);
+            collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
+            collectiveDaoStatisticEntity.save();
         }
     }
 

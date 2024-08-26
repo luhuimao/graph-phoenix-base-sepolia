@@ -83,6 +83,11 @@ export function handleFlexDaoCreated(event: FlexDaoCreated): void {
     flexDaoEntity.flexDaoInvestorCapacity = event.params.daoAddr.toHexString();
     flexDaoEntity.flexDaoPollingInfo = event.params.daoAddr.toHexString();
     flexDaoEntity.flexDaoFeeInfo = event.params.daoAddr.toHexString();
+
+    const RICE_REWARD_RECEIVER = daoContract.getAddressConfiguration
+      (Bytes.fromHexString("0xc77068975ba2254bd67080aa196783f213ee682a15d902d03f33782130cf737d"));
+
+    flexDaoEntity.riceReceiver = RICE_REWARD_RECEIVER;
     flexDaoEntity.save();
 
     counterEntity.count = counterEntity.count.plus(BigInt.fromI32(1));

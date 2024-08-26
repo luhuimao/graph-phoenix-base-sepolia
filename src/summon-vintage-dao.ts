@@ -67,6 +67,11 @@ export function handleVintageDaoCreated(event: VintageDaoCreated): void {
         vintageDaoEntity.vintageVotingConfigInfo = event.params.daoAddr.toHexString();
         vintageDaoEntity.vintageDaoFeeInfo = event.params.daoAddr.toHexString();
         vintageDaoEntity.vintageVoting = event.params.daoAddr.toHexString();
+
+        const RICE_REWARD_RECEIVER = daoContract.getAddressConfiguration
+            (Bytes.fromHexString("0xc77068975ba2254bd67080aa196783f213ee682a15d902d03f33782130cf737d"));
+
+        vintageDaoEntity.riceReceiver = RICE_REWARD_RECEIVER;
         vintageDaoEntity.save();
 
         counterEntity.count = counterEntity.count.plus(BigInt.fromI32(1));

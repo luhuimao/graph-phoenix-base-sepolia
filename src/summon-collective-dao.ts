@@ -83,6 +83,10 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
         const FUND_RAISING_CURRENCY_ADDRESS = daoContract.getAddressConfiguration
             (Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
 
+        const RICE_REWARD_RECEIVER = daoContract.getAddressConfiguration
+            (Bytes.fromHexString("0xc77068975ba2254bd67080aa196783f213ee682a15d902d03f33782130cf737d"));
+
+        collectiveDaoEntity.riceReceiver = RICE_REWARD_RECEIVER;
         collectiveDaoEntity.investmentCurrency = FUND_RAISING_CURRENCY_ADDRESS;
         collectiveDaoEntity.save();
 

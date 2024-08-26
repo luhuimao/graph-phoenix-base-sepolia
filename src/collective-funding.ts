@@ -70,40 +70,52 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
         entity.executeHash = event.transaction.hash;
         entity.save();
 
-        if (entity.state == BigInt.fromI32(3)) {
+        if (rel.value.getState() == 3) {
             let collectiveDaoStatisticEntity = CollectiveDaoStatisticEntity.load(event.params.daoAddr.toHexString());
-            if (collectiveDaoStatisticEntity) {
-                collectiveDaoStatisticEntity.fundInvested = collectiveDaoStatisticEntity.fundInvested.plus(entity.totalAmount);
-                collectiveDaoStatisticEntity.fundInvestedFromWei = collectiveDaoStatisticEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
-                collectiveDaoStatisticEntity.fundedVentures = collectiveDaoStatisticEntity.fundedVentures.plus(BigInt.fromI32(1));
+            if (!collectiveDaoStatisticEntity) {
+                collectiveDaoStatisticEntity = new CollectiveDaoStatisticEntity(event.params.daoAddr.toHexString());
 
-                collectiveDaoStatisticEntity.save();
+                collectiveDaoStatisticEntity.fundRaised = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.fundRaisedFromWei = "0";
+                collectiveDaoStatisticEntity.fundInvestedFromWei = "0";
+                collectiveDaoStatisticEntity.fundInvested = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.fundedVentures = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.members = BigInt.fromI64(0);
+                collectiveDaoStatisticEntity.daoAddr = event.params.daoAddr;
+                collectiveDaoStatisticEntity.investors = [];
+                collectiveDaoStatisticEntity.governors = [];
+                collectiveDaoStatisticEntity.membersArr = [];
+            }
+            collectiveDaoStatisticEntity.fundInvested = collectiveDaoStatisticEntity.fundInvested.plus(entity.investmentAmount);
+            collectiveDaoStatisticEntity.fundInvestedFromWei = collectiveDaoStatisticEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
+            collectiveDaoStatisticEntity.fundedVentures = collectiveDaoStatisticEntity.fundedVentures.plus(BigInt.fromI32(1));
 
-                const members = daoContr.try_getAllSteward();
-                if (!members.reverted && members.value.length > 0) {
-                    for (var i = 0; i < members.value.length; i++) {
-                        let portfolio = new CollectiveInvestorPortfoliosEntity(event.params.proposalId.toHexString() + members.value[i].toHexString());
-                        portfolio.daoAddr = event.params.daoAddr;
-                        portfolio.account = members.value[i];
-                        portfolio.investmentProposalId = event.params.proposalId;
-                        portfolio.timeStamp = event.block.timestamp;
-                        portfolio.investmentCurrency = entity.token;
-                        
-                        const bal1 = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, members.value[i]);
-                        const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
-                        const bal2 = collectiveFundingPoolExt.try_getPriorAmount(
-                            members.value[i],
-                            raiseTokenAddr,
-                            event.block.number.minus(BigInt.fromI32(1)));
+            collectiveDaoStatisticEntity.save();
+            
+            const members = daoContr.try_getAllSteward();
+            if (!members.reverted && members.value.length > 0) {
+                for (var i = 0; i < members.value.length; i++) {
+                    let portfolio = new CollectiveInvestorPortfoliosEntity(event.params.proposalId.toHexString() + members.value[i].toHexString());
+                    portfolio.daoAddr = event.params.daoAddr;
+                    portfolio.account = members.value[i];
+                    portfolio.investmentProposalId = event.params.proposalId;
+                    portfolio.timeStamp = event.block.timestamp;
+                    portfolio.investmentCurrency = entity.token;
 
-                        const myInvestedAmount = !bal2.reverted ? bal2.value.minus(bal1) : BigInt.zero();
+                    const bal1 = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, members.value[i]);
+                    const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
+                    const bal2 = collectiveFundingPoolExt.try_getPriorAmount(
+                        members.value[i],
+                        raiseTokenAddr,
+                        event.block.number.minus(BigInt.fromI32(1)));
 
-                        portfolio.investedAmount = myInvestedAmount;
-                        portfolio.investedAmountFromWei = portfolio.investedAmount.div(BigInt.fromI64(10 ** 18)).toString();
-                        portfolio.save();
-                    }
+                    const myInvestedAmount = !bal2.reverted ? bal2.value.minus(bal1) : BigInt.zero();
 
+                    portfolio.investedAmount = myInvestedAmount;
+                    portfolio.investedAmountFromWei = portfolio.investedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    portfolio.save();
                 }
+
             }
         }
     }

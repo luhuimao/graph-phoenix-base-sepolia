@@ -18,6 +18,7 @@ type FlexDaoEntity @entity(immutable: true){
   creator: Bytes! # address
   createTimeStamp: BigInt!
   createDateTime: String!
+  riceReceiver: Bytes!
   flexDaoVoteConfig: FlexDaoVoteConfigEntity
   flexDaoPollVoterMembership: FlexDaoPollVoterMembershipEntity
   flexDaoPriorityMembership: FlexDaoPriorityMembershipEntity
@@ -42,6 +43,7 @@ type VintageDaoEntity @entity(immutable: true){
   creator: Bytes! # address
   createTimeStamp: BigInt!
   createDateTime: String!
+  riceReceiver: Bytes!
   vintageFundEstablishmentProposal: [VintageFundEstablishmentProposal!] @derivedFrom(field: "vintageDaoEntity")
   vintageGovernorManagementProposal: [VintageGovernorManagementProposal!] @derivedFrom(field: "vintageDaoEntity")
   vintageInvestmentProposalInfo: [VintageInvestmentProposalInfo!] @derivedFrom(field: "vintageDaoEntity")
@@ -63,6 +65,7 @@ type CollectiveDaoEntity @entity(immutable: true){
   createTimeStamp: BigInt!
   createDateTime: String!
   investmentCurrency: Bytes! # address
+  riceReceiver: Bytes!
   collectiveDaoInvestorCapacityEntity: CollectiveDaoInvestorCapacityEntity
   collectiveDaoVoteConfigEntity: CollectiveDaoVoteConfigEntity
   collectiveGovernorMembership: CollectiveDaoGovernorMembershipEntity

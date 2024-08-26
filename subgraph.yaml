@@ -324,9 +324,9 @@ dataSources:
     name: SummonDao
     network: base-sepolia
     source:
-      address: "0xCB718Bb0DB4395Bf5bC6A7Ec3C33C258A398Eca6"
+      address: "0x58804cfa15228F36a5bF14ecf04608fa23214ce1"
       abi: SummonDao
-      startBlock: 6313304
+      startBlock: 14318228
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -359,9 +359,9 @@ dataSources:
     name: SummonVintageDao
     network: base-sepolia
     source:
-      address: "0xDaAa8378034F13341852B795627F9082A824A565"
+      address: "0x8a3F90dcd9726f014064106cCdaF86741111C99f"
       abi: SummonVintageDao
-      startBlock: 6313445
+      startBlock: 14318228
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -907,9 +907,9 @@ dataSources:
     name: SummonCollectiveDao
     network: base-sepolia
     source:
-      address: "0x44acAe49FBAF15b40c3AA583becc2cc53108d5a9"
+      address: "0x99C0895940b534575aC13F4Ad3E8758538d51310"
       abi: SummonCollectiveDao
-      startBlock: 11812088
+      startBlock: 14318228
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
