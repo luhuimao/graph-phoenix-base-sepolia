@@ -48,6 +48,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.creationTime = event.block.timestamp;
         entity.vestingNFTEnable = rel.value.getVestingInfo().nftEnable;
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
+        entity.proposalExecuteTimestamp = BigInt.zero();
         entity.save();
     }
 }
@@ -68,6 +69,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
         entity.state = BigInt.fromI32(rel.value.getState());
         entity.executeBlockNum = rel.value.getExecuteBlockNum();
         entity.executeHash = event.transaction.hash;
+        entity.proposalExecuteTimestamp = event.block.timestamp;
         entity.save();
 
         if (rel.value.getState() == 3) {
@@ -91,7 +93,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
             collectiveDaoStatisticEntity.fundedVentures = collectiveDaoStatisticEntity.fundedVentures.plus(BigInt.fromI32(1));
 
             collectiveDaoStatisticEntity.save();
-            
+
             const members = daoContr.try_getAllSteward();
             if (!members.reverted && members.value.length > 0) {
                 for (var i = 0; i < members.value.length; i++) {

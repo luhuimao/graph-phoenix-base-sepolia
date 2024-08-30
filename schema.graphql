@@ -34,6 +34,7 @@ type FlexDaoEntity @entity(immutable: true){
   flexVoting: [FlexVoting!] @derivedFrom(field: "flexDaoEntity")
   flexDaosetProposal: [FlexDaosetProposal!] @derivedFrom(field: "flexDaoEntity")
   flexGovernorVotingAssetAllocationProposal:[FLexGovernorVotingAssetAllocationProposalEntity!] @derivedFrom(field: "flexDaoEntity")
+  flexSetRiceReceiverProposalEntity: [FlexSetRiceReceiverProposalEntity!] @derivedFrom(field: "flexDaoEntity")
 }
 
 type VintageDaoEntity @entity(immutable: true){
@@ -55,6 +56,7 @@ type VintageDaoEntity @entity(immutable: true){
   vintageDaoFeeInfo: VintageDaoFeeInfoEntity
   vintageVoting: VintageVoting
   vintageGovernorVotingAssetAllocationProposalEntity:[VintageGovernorVotingAssetAllocationProposalEntity!] @derivedFrom(field: "vintageDaoEntity")
+  vintageSetRiceReceiverProposalEntity: [VintageSetRiceReceiverProposalEntity!] @derivedFrom(field: "vintageDaoEntity")
 }
 
 type CollectiveDaoEntity @entity(immutable: true){
@@ -78,6 +80,7 @@ type CollectiveDaoEntity @entity(immutable: true){
   collectiveFundRaiseProposal: [CollectiveFundRaiseProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
   collectiveTopUpProposal: [CollectiveTopUpProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
   collectiveClearFundProposalEntity: [CollectiveClearFundProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
+  collectiveSetRiceReceiverProposalEntity: [CollectiveSetRiceReceiverProposalEntity!] @derivedFrom(field: "collectiveDaoEntity")
 }
 
 type DaoEntityCounter @entity{
@@ -497,6 +500,24 @@ type FlexInvestorPortfoliosEntity @entity{
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
 }
+
+type FlexSetRiceReceiverProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes!
+  proposer: Bytes!
+  creationTime: BigInt! # uint256
+  createTimeString: String!
+  stopVoteTime: BigInt! # uint256
+  stopVoteTimeString: String!
+  state: BigInt! # uint256
+  stateInString: String!
+  executeHash: Bytes!
+  executeTime: BigInt!
+  riceReceiver: Bytes!
+  flexDaoEntity: FlexDaoEntity
+}
+
 
 type VintageDaoFeeInfoEntity @entity{
   id: ID!
@@ -995,6 +1016,23 @@ type VintageInvestorPortfoliosEntity @entity{
   investmentCurrency: Bytes! # address
 }
 
+type VintageSetRiceReceiverProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposer: Bytes! # address
+  proposalId: Bytes!
+  creationTime: BigInt! # uint256
+  createTimeString: String!
+  stopVoteTime: BigInt! # uint256
+  stopVoteTimeString: String!
+  state: BigInt! # uint256
+  stateInString: String!
+  executeHash: Bytes!
+  executeTime: BigInt!
+  riceReceiver: Bytes!
+  vintageDaoEntity: VintageDaoEntity
+}
+
 type CollectiveTopUpProposalEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
@@ -1104,6 +1142,7 @@ type CollectiveInvestmentProposalEntity @entity{
   paybackToken: Bytes! # address
   price: BigInt!
   executeBlockNum: BigInt!
+  proposalExecuteTimestamp: BigInt!
   investmentAmount: BigInt!
   receiver: Bytes! # address
   token: Bytes! # address
@@ -1471,4 +1510,18 @@ type CollectiveInvestorPortfoliosEntity @entity{
   investmentProposalId: Bytes!
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
+}
+
+type CollectiveSetRiceReceiverProposalEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes!
+  proposer: Bytes! # address
+  creationTime: BigInt!
+  stopVotingTime: BigInt!
+  state: BigInt!
+  executeTime: BigInt!
+  executeHash: Bytes!
+  riceReceiver: Bytes!
+  collectiveDaoEntity: CollectiveDaoEntity
 }

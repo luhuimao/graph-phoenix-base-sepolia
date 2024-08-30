@@ -6,9 +6,9 @@ dataSources:
     name: DaoFactory
     network: base-sepolia
     source:
-      address: "0xf55FCf3A69195940299dFBCfF39E2C42387ea9Cb"
+      address: "0x6F0643bc2Fc62103f24DF49876d35Fab5FfE7208"
       abi: DaoFactory
-      startBlock: 12447902
+      startBlock: 14527461
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -269,9 +269,9 @@ dataSources:
     name: VintageDaoSetAdapterContract
     network: base-sepolia
     source:
-      address: "0x2E060Dfe742de9C998ef406518aAEc623504122b"
+      address: "0x11b619094E9c54934938EEa6763baF52866E9e3e"
       abi: VintageDaoSetAdapterContract
-      startBlock: 10990267
+      startBlock: 14527554
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -319,6 +319,31 @@ dataSources:
         - event: ProposalProcessed(address,bytes32,uint8,uint128,uint256,uint256,uint256)
           handler: handleProposalProcessed
       file: ./src/vintage-gov-vot-asset-alloc.ts
+  - kind: ethereum
+    name: VintageSetRiceReceiverProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x6fC11492412F5e93902b80e9bE852A78Ba2EBBAd"
+      abi: VintageSetRiceReceiverProposalAdapterContract
+      startBlock: 14527474
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: VintageSetRiceReceiverProposalAdapterContract
+          file: ./abis/VintageSetRiceReceiverProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,address,uint256,uint256)
+          handler: handleProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
+          handler: handleProposalProcessed
+      file: ./src/vintage-set-rice-receiver.ts
 
   - kind: ethereum
     name: SummonDao
@@ -385,9 +410,9 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0x47CfB2f3eFd073c20D65834Da7cA92dE0958a4f1"
+      address: "0x698694c44Df580429C20876a02B6bac0fE63F5A8"
       abi: FlexFundingAdapterContract
-      startBlock: 10297573
+      startBlock: 14614157
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -728,9 +753,9 @@ dataSources:
     name: FlexDaoSetProposerMembershipAdapterContract
     network: base-sepolia
     source:
-      address: "0x535DD20769CcfB7FDeDdAE86fB49dc8717a16fB9"
+      address: "0x030E8331c46191aBF02120dfd1717d5009d31f11"
       abi: FlexDaoSetProposerMembershipAdapterContract
-      startBlock: 12663538
+      startBlock: 14614446
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -876,6 +901,33 @@ dataSources:
         - event: WithDraw(address,bytes32,address,address,uint256)
           handler: handleWithdraw
       file: ./src/flex-free-in-escrow.ts
+
+  - kind: ethereum
+    name: FlexSetRiceReceiverProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0x67db7c011Af1c2a9A919b1A28fF99F65B5eFbD30"
+      abi: FlexSetRiceReceiverProposalAdapterContract
+      startBlock: 14527685
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+        - name: FlexSetRiceReceiverProposalAdapterContract
+          file: ./abis/FlexSetRiceReceiverProposalAdapterContract.json
+      eventHandlers:
+        - event:  ProposalCreated(address,bytes32,uint256)
+          handler: handleProposalCreated
+        - event: ProposalProcessed(address,bytes32,uint8,uint128,uint256,uint256,uint256)
+          handler: handleProposalProcessed
+      file: ./src/flex-set-rice-receiver.ts
+
   - kind: ethereum
     name: Vesting
     network: base-sepolia
@@ -1334,3 +1386,28 @@ dataSources:
         - event:  Withdraw(address,address,uint256)
           handler: handleWithdraw
       file: ./src/collective-redemption-fee.ts
+
+  - kind: ethereum
+    name: colletiveSetRiceReceiverProposalAdapterContract
+    network: base-sepolia
+    source:
+      address: "0xacA6c14bC5f4ba3E00a8455aE47ADe31FE713f2c"
+      abi: colletiveSetRiceReceiverProposalAdapterContract
+      startBlock: 14527478
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - CollectiveFreeInEscrowFundEntity
+      abis:
+        - name: colletiveSetRiceReceiverProposalAdapterContract
+          file: ./abis/colletiveSetRiceReceiverProposalAdapterContract.json
+        - name: DaoRegistry
+          file: ./abis/DaoRegistry.json
+      eventHandlers:
+        - event: ProposalCreated(address,bytes32)
+          handler: handleProposalCreated
+        - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
+          handler: handleProposalProcessed
+      file: ./src/collective-rice-receiver.ts

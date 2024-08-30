@@ -346,10 +346,10 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
     const fundingPoolExtContr = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
 
-    // const collectiveNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
-    // const collectiveNewFundCont = ColletiveFundRaiseProposalAdapterContract.bind(collectiveNewFundContAddr);
-    // const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress)
-    // let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
+    const collectiveNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
+    const collectiveNewFundCont = ColletiveFundRaiseProposalAdapterContract.bind(collectiveNewFundContAddr);
+    const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress)
+    let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
 
     const fundRaisedState = fundingPoolAdapt.fundState(event.params.daoAddress);
     let successedFundCounter = CollectiveSucceedFundCounter.load(event.params.daoAddress.toString());
@@ -423,11 +423,12 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         // }
 
         // const fundTokenAddr = daoContract.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
-        const poolBal = fundingPoolAdapt.poolBalance(
-            event.params.daoAddress
-            // Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd"))
-        );
-        collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(poolBal);
+        // const poolBal = fundingPoolAdapt.poolBalance(
+        //     event.params.daoAddress
+        //     // Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd"))
+        // );
+        const fundRaisedAmount = fundingPoolAdapt.fundRaisedByProposalId(event.params.daoAddress, fundRaiseProposalId);
+        collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(fundRaisedAmount);
         collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
         collectiveDaoStatisticEntity.save();
         // fundRoundEntity.save();
