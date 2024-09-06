@@ -11,7 +11,7 @@ type DaoEntiy @entity{
   createDateTime: String!
 }
 
-type FlexDaoEntity @entity(immutable: true){
+type FlexDaoEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   daoName: String!
@@ -37,7 +37,7 @@ type FlexDaoEntity @entity(immutable: true){
   flexSetRiceReceiverProposalEntity: [FlexSetRiceReceiverProposalEntity!] @derivedFrom(field: "flexDaoEntity")
 }
 
-type VintageDaoEntity @entity(immutable: true){
+type VintageDaoEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   daoName: String!
@@ -59,7 +59,7 @@ type VintageDaoEntity @entity(immutable: true){
   vintageSetRiceReceiverProposalEntity: [VintageSetRiceReceiverProposalEntity!] @derivedFrom(field: "vintageDaoEntity")
 }
 
-type CollectiveDaoEntity @entity(immutable: true){
+type CollectiveDaoEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   daoName: String!

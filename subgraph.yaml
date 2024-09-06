@@ -410,7 +410,7 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0x698694c44Df580429C20876a02B6bac0fE63F5A8"
+      address: "0x15C67e4Ebf3145c53A763ff046bD1739F150a698"
       abi: FlexFundingAdapterContract
       startBlock: 14614157
     mapping:
@@ -530,9 +530,9 @@ dataSources:
     name: FlexInvestmentPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x676CdD840f812e73be161026d02c1e23A5688297"
+      address: "0x5641A5dbD7Af74Ac9A2A4105F017696b0ef3a980"
       abi: FlexInvestmentPoolAdapterContract
-      startBlock: 7617444
+      startBlock: 14826118
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -959,7 +959,7 @@ dataSources:
     name: SummonCollectiveDao
     network: base-sepolia
     source:
-      address: "0x99C0895940b534575aC13F4Ad3E8758538d51310"
+      address: "0x0aD893d6992079DF87E55A02918396F2a25f5821"
       abi: SummonCollectiveDao
       startBlock: 14318228
     mapping:
@@ -1096,7 +1096,7 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x968b7D9ed37D154b48B48748877393090Bc7D53c"
+      address: "0x31D63544B3e9b0DD88ffaF1B4120Bd3a5F3A3Ffd"
       abi: ColletiveFundingProposalAdapterContract
       startBlock: 13321479
     mapping:
@@ -1154,9 +1154,9 @@ dataSources:
     name: ColletiveDaoSetProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xF9078b9245b2081b994bDf64F1FE80dd48aB148c"
+      address: "0x60cE3210Bb7BBf06E539DD855f679215aA5bc83B"
       abi: ColletiveDaoSetProposalAdapterContract
-      startBlock: 11205133
+      startBlock: 14908454
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1229,7 +1229,7 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x6edF88BC4bE9E8adCC78ed0C739aC5a42832a02e"
+      address: "0x208c28b0D98763C60269b52fC6a4438B89C3e114"
       abi: ColletiveFundingPoolAdapterContract
       startBlock: 14143093
     mapping:
@@ -1391,7 +1391,7 @@ dataSources:
     name: colletiveSetRiceReceiverProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xacA6c14bC5f4ba3E00a8455aE47ADe31FE713f2c"
+      address: "0xd24CF3E7f05Cc5D244D6aa4e85551361Cb046f93"
       abi: colletiveSetRiceReceiverProposalAdapterContract
       startBlock: 14527478
     mapping:

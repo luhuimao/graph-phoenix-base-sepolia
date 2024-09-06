@@ -69,6 +69,24 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
 
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
 
+    // event ProposalProcessed(
+    //     address daoAddr,
+    //     bytes32 proposalId,
+    //     ProposalState state,
+    //     uint256 voteResult,
+    //     uint256 allVotingWeight,
+    //     uint256 nbYes,
+    //     uint256 nbNo
+    // );
+    // emit ProposalProcessed(
+    //     address(dao),
+    //     proposalId,
+    //     proposal.state,
+    //     allWeight,
+    //     nbYes,
+    //     nbNo,
+    //     uint256(voteResult)
+    // );
     if (voteInfoEntity) {
         voteInfoEntity.nbYes = event.params.nbYes;
         voteInfoEntity.nbNo = event.params.nbNo;

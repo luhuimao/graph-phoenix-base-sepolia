@@ -16,7 +16,9 @@ import {
 import {
     FlexStewardMangementProposal,
     FlexSetRiceReceiverProposalEntity,
-    FlexProposalVoteInfo
+    FlexProposalVoteInfo,
+    FlexDaosetProposal,
+    FlexDaoEntity
 } from "../generated/schema";
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -38,6 +40,27 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.stateInString = "Voting";
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    let daosetentity = new FlexDaosetProposal(event.params.proposalId.toHexString())
+    daosetentity.daoAddr = event.params.daoAddr;
+    daosetentity.proposalId = event.params.proposalId;
+    daosetentity.proposer = event.transaction.from;
+    daosetentity.executeHash = Bytes.empty();
+    daosetentity.proposalType = BigInt.fromI32(10);
+    // INVESTOR_CAP,
+    // GOVERNOR_MEMBERSHIP,
+    // INVESTOR_MEMBERSHIP,
+    // VOTING,
+    // FEES,
+    // PROPOSER_MEMBERHSIP,
+    // POLL_FOR_INVESTMENT
+
+    daosetentity.proposalTypeString = "RICE_RECEIVER";
+    daosetentity.state = BigInt.fromI32(0);
+    daosetentity.creationTime = event.block.timestamp;
+    daosetentity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
+    daosetentity.flexDaoEntity = event.params.daoAddr.toHexString();
+    daosetentity.save();
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {
@@ -49,6 +72,23 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
         entity.stateInString = event.params.state == 2 ? "Done" : "Failed";
 
         entity.save();
+    }
+    let daosetentity = FlexDaosetProposal.load(event.params.proposalId.toHexString())
+    if (daosetentity) {
+        daosetentity.executeHash = event.transaction.hash;
+        daosetentity.state = BigInt.fromI32(event.params.state);
+        daosetentity.save();
+    }
+
+    if (event.params.state == 2) {
+        let flexDaoEntity = FlexDaoEntity.load(event.params.daoAddr.toHexString());
+        if (flexDaoEntity) {
+            const contract = FlexSetRiceReceiverProposalAdapterContract.bind(event.address);
+            const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
+
+            flexDaoEntity.riceReceiver = !rel.reverted ? rel.value.getRiceReceiver() : flexDaoEntity.riceReceiver;
+            flexDaoEntity.save();
+        }
     }
 
     let voteInfoEntity = FlexProposalVoteInfo.load(event.params.proposalId.toHexString());

@@ -15,12 +15,15 @@ import {
 import { DaoRegistry } from "../generated/ColletiveClearFundProposalAdapterContract/DaoRegistry";
 import {
     CollectiveProposalVoteInfo,
-    CollectiveSetRiceReceiverProposalEntity
+    CollectiveSetRiceReceiverProposalEntity,
+    CollectiveDaoSetProposalEntity,
+    CollectiveDaoEntity
 } from "../generated/schema"
 
 
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new CollectiveSetRiceReceiverProposalEntity(event.params.proposalId.toHexString());
+    let daosetentity = new CollectiveDaoSetProposalEntity(event.params.proposalId.toHexString())
 
     const contract = colletiveSetRiceReceiverProposalAdapterContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
@@ -35,6 +38,17 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.state = !rel.reverted ? BigInt.fromI32(rel.value.getState()) : BigInt.zero();
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    daosetentity.daoAddr = event.params.daoAddr;
+    daosetentity.proposer = event.transaction.from;
+    daosetentity.creationTime = event.block.timestamp;
+    daosetentity.proposalId = event.params.proposalId;
+    daosetentity.executeHash = Bytes.empty();
+    daosetentity.proposalType = BigInt.fromI32(10);
+    daosetentity.proposalTypeString = "RICE_RECEIVER";
+    daosetentity.collectiveDaoEntity = event.params.daoAddr.toHexString();
+    daosetentity.state = BigInt.fromI32(0);
+    daosetentity.save();
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {
@@ -46,6 +60,26 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
         entity.state = BigInt.fromI32(event.params.state);
 
         entity.save();
+    }
+
+    if (event.params.state == 2) {
+        const contract = colletiveSetRiceReceiverProposalAdapterContract.bind(event.address);
+
+        const collectiveDaoEntity = CollectiveDaoEntity.load(event.params.daoAddr.toHexString());
+        if (collectiveDaoEntity) {
+            const contract = colletiveSetRiceReceiverProposalAdapterContract.bind(event.address);
+            const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
+            collectiveDaoEntity.riceReceiver = !rel.reverted ? rel.value.getRiceReceiver() : collectiveDaoEntity.riceReceiver;
+            collectiveDaoEntity.save();
+        }
+
+    }
+
+    let daosetentity = CollectiveDaoSetProposalEntity.load(event.params.proposalId.toHexString())
+    if (daosetentity) {
+        daosetentity.executeHash = event.transaction.hash;
+        daosetentity.state = BigInt.fromI32(event.params.state);
+        daosetentity.save();
     }
 
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
