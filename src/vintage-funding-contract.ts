@@ -27,7 +27,8 @@ import {
     VintageEscrowFundEntity,
     VintageInvestorInvestmentEntity,
     VintageSuccessedFundCounter,
-    VintageInvestorPortfoliosEntity
+    VintageInvestorPortfoliosEntity,
+    InvestmentProposalInvestorEntity
 } from "../generated/schema"
 import { bigInt, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
 
@@ -138,6 +139,20 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
             VintageDaoStatisticsEntity.fundedVentures = VintageDaoStatisticsEntity.fundedVentures.plus(BigInt.fromI32(1));
 
             VintageDaoStatisticsEntity.save();
+
+            const finalInvestors = new InvestmentProposalInvestorEntity(event.params.proposalID.toHexString());
+            finalInvestors.daoAddr = event.params.daoAddr;
+            finalInvestors.proposalId = event.params.proposalID;
+            finalInvestors.mode = "vintage";
+
+            let tem: string[] = [];
+            if (event.params.investors.length > 0) {
+                for (let j = 0; j < event.params.investors.length; j++) {
+                    tem.push(event.params.investors[j].toHexString())
+                }
+            }
+            finalInvestors.investors = tem;
+            finalInvestors.save();
         }
 
         let voteInfoEntity = VintageProposalVoteInfo.load(event.params.proposalID.toHexString());

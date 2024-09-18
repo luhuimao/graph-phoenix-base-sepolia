@@ -18,7 +18,12 @@ import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry
 // import { DaoFactory } from "../generated/DaoFactory/DaoFactory";
 import { FlexInvestmentPoolAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
 
-import { FlexInvestmentProposal, FlexDaoStatistic, FlexInvestorPortfoliosEntity } from "../generated/schema"
+import {
+    FlexInvestmentProposal,
+    FlexDaoStatistic,
+    FlexInvestorPortfoliosEntity,
+    InvestmentProposalInvestorEntity
+} from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -221,6 +226,20 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             FlexDaoStatisticsEntity.fundRaisedFromWei = FlexDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
 
             FlexDaoStatisticsEntity.save();
+
+            const finalInvestors = new InvestmentProposalInvestorEntity(event.params.proposalId.toHexString());
+            finalInvestors.daoAddr = event.params.daoAddress;
+            finalInvestors.proposalId = event.params.proposalId;
+            finalInvestors.mode = "flex";
+
+            let tem: string[] = [];
+            if (event.params.investors.length > 0) {
+                for (let j = 0; j < event.params.investors.length; j++) {
+                    tem.push(event.params.investors[j].toHexString())
+                }
+            }
+            finalInvestors.investors = tem;
+            finalInvestors.save();
         }
 
         entity.save();

@@ -55,11 +55,11 @@ import {
     ProposalProcessed as ProposerMembershipProposalProcessed
 } from "../generated/FlexDaoSetProposerMembershipAdapterContract/FlexDaoSetProposerMembershipAdapterContract";
 
-import { FlexPollingVotingContract } from "../generated/FlexDaoSetAdapterContract/FlexPollingVotingContract";
+import { FlexPollingVotingContract } from "../generated/FlexPollingVotingContract/FlexPollingVotingContract";
 import { DaoRegistry } from "../generated/FlexDaoSetPollingAdapterContract/DaoRegistry";
-import { StewardManagementContract } from "../generated/FlexDaoSetAdapterContract/StewardManagementContract";
-import { FlexInvestmentPoolAdapterContract } from "../generated/FlexDaoSetAdapterContract/FlexInvestmentPoolAdapterContract";
-import { FlexFundingAdapterContract } from "../generated/FlexDaoSetAdapterContract/FlexFundingAdapterContract";
+import { StewardManagementContract } from "../generated/StewardManagementContract/StewardManagementContract";
+import { FlexInvestmentPoolAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
+import { FlexFundingAdapterContract } from "../generated/FlexFundingAdapterContract/FlexFundingAdapterContract";
 
 import {
     FlexDaosetProposal,

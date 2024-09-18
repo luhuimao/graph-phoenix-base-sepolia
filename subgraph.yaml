@@ -99,9 +99,9 @@ dataSources:
     name: VintageFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xe40653FA1D7b55799594e48808C8f5bE1258eA2A"
+      address: "0xC64c77dF7faa16c51E581B3461c77C2Cfd3106F6"
       abi: VintageFundingAdapterContract
-      startBlock: 10990264
+      startBlock: 15430788
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -125,7 +125,7 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32)
           handler: handleProposalCreated
-        - event:   ProposalExecuted(address,bytes32,uint128,uint128,uint128)
+        - event:   ProposalExecuted(address,bytes32,uint128,uint128,uint128,address[])
           handler: handleProposalExecuted
         - event: StartVote(address,bytes32)
           handler: handleStartVote
@@ -410,9 +410,9 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0x15C67e4Ebf3145c53A763ff046bD1739F150a698"
+      address: "0x6E8acc8ecE34B4be998b225510D4c1b53496E36a"
       abi: FlexFundingAdapterContract
-      startBlock: 14614157
+      startBlock: 15047698
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -434,7 +434,7 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address)
           handler: handleProposalCreated
-        - event: ProposalExecuted(address,bytes32,uint8)
+        - event: ProposalExecuted(address,bytes32,uint8,address[])
           handler: handleproposalExecuted
       file: ./src/flex-funding-adapter-contract.ts
   - kind: ethereum
@@ -1096,9 +1096,9 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x31D63544B3e9b0DD88ffaF1B4120Bd3a5F3A3Ffd"
+      address: "0x9127D6715565AB26529fe54b9BBD2dE0A8e8b883"
       abi: ColletiveFundingProposalAdapterContract
-      startBlock: 13321479
+      startBlock: 15047569
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1120,7 +1120,7 @@ dataSources:
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
-        - event: ProposalExecuted(address,bytes32,uint256,uint256,uint256)
+        - event: ProposalExecuted(address,bytes32,uint256,uint256,uint256,address[])
           handler: handlerProposalProcessed
         - event: StartVoting(address,bytes32)
           handler: handlerStartVoting
@@ -1206,9 +1206,9 @@ dataSources:
     name: CollectiveAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x31e162ff835508abEf5C56aC3051C568c86B332f"
+      address: "0x30279E9ef350AE163311f7F4f66e0D6Cb83a4c5c"
       abi: CollectiveAllocationAdapterContract
-      startBlock: 6313431
+      startBlock: 15312608
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1221,6 +1221,8 @@ dataSources:
           file: ./abis/CollectiveAllocationAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: CollectiveInvestmentPoolExtension
+          file: ./abis/CollectiveInvestmentPoolExtension.json
       eventHandlers:
         - event: AllocateToken(address,bytes32,address,address[])
           handler: handleAllocateToken
@@ -1411,3 +1413,52 @@ dataSources:
         - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
           handler: handleProposalProcessed
       file: ./src/collective-rice-receiver.ts
+
+  - kind: ethereum
+    name: InvestmentReceiptERC721
+    network: base-sepolia
+    source:
+      address: "0x0939786Bd63a71eF9B589cBf5012719F87d23f39"
+      abi: InvestmentReceiptERC721
+      startBlock: 15047566
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - CollectiveFreeInEscrowFundEntity
+      abis:
+        - name: InvestmentReceiptERC721
+          file: ./abis/InvestmentReceiptERC721.json
+      eventHandlers:
+        - event: Minted(bytes32,address,uint256)
+          handler: handleMinted
+        - event:  Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/investment-receipt-nft.ts
+
+  - kind: ethereum
+    name: ManualVesting
+    network: base-sepolia
+    source:
+      address: "0xEd307fDE70400595a1b5525d35ae49cEADF71Ba7"
+      abi: Vesting
+      startBlock: 15047566
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: Vesting
+          file: ./abis/ManualVesting.json
+        - name: VestingERC721
+          file: ./abis/VestingERC721.json
+      eventHandlers:
+        - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128)
+          handler: handleCreateVesting
+        - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
+          handler: handleWithdraw
+      file: ./src/manual-vesting.ts

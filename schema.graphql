@@ -1525,3 +1525,61 @@ type CollectiveSetRiceReceiverProposalEntity @entity{
   riceReceiver: Bytes!
   collectiveDaoEntity: CollectiveDaoEntity
 }
+
+type InvestmentReceiptNFTHolderEntity @entity{
+  id: ID!
+  proposalId: Bytes!
+  holders: [String!]!
+}
+
+type InvestmentReceiptNFTTokenIdEntity @entity{
+  id: ID!
+  proposalId: Bytes!
+  tokenIds: [BigInt!]!
+}
+
+type InvestmentReceiptNFTProposalIdEntity @entity{
+  id: ID!
+  proposalIds: [Bytes!]!
+}
+
+type InvestmentReceiptNFTMintersEntity @entity{
+  id: ID!
+  proposalId: Bytes!
+  minters: [String!]!
+}
+
+type InvestmentProposalInvestorEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  mode: String!
+  proposalId: Bytes!
+  investors: [String!]
+}
+
+type ManualVestEntity @entity {
+  id: ID!
+  txHash: Bytes!
+  name: String!
+  description: String!
+  NFTEnalbe: Boolean!
+  creator: Bytes! # address
+  vestId: BigInt! # uint256
+  recipient: Bytes! # address
+  tokenAddress: Bytes! # address
+  erc721Address: Bytes! # address
+  tokenId: BigInt! # uint256
+  startTime: BigInt! # uint256
+  startTimeString:  String!
+  cliffEndTime: BigInt! # uint256
+  cliffEndTimeString: String!
+  endTime: BigInt! # uint256
+  endTimeString: String!
+  interval: BigInt! # uint256
+  totalAmount:  BigInt! # uint256
+  totalAmountFromWei: String!
+  cliffAmount: BigInt! # uint256
+  cliffAmountFromWei: String!
+  claimedAmount: BigInt! # uint256
+  claimedAmountFromWei: String!
+}

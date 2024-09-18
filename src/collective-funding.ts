@@ -13,7 +13,8 @@ import {
     CollectiveInvestmentProposalEntity,
     CollectiveDaoStatisticEntity,
     CollectiveProposalVoteInfo,
-    CollectiveInvestorPortfoliosEntity
+    CollectiveInvestorPortfoliosEntity,
+    InvestmentProposalInvestorEntity
 } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
@@ -119,6 +120,20 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                 }
 
             }
+
+
+            const finalInvestors = new InvestmentProposalInvestorEntity(event.params.proposalId.toHexString());
+            finalInvestors.daoAddr = event.params.daoAddr;
+            finalInvestors.proposalId = event.params.proposalId;
+            finalInvestors.mode = "collective";
+            let tem: string[] = [];
+            if (event.params.investors.length > 0) {
+                for (let j = 0; j < event.params.investors.length; j++) {
+                    tem.push(event.params.investors[j].toHexString())
+                }
+            }
+            finalInvestors.investors = tem;
+            finalInvestors.save();
         }
     }
 

@@ -152,6 +152,7 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
                         const quorum = daoContract.getConfiguration(Bytes.fromHexString("0x0324de13a5a6e302ddb95a9fdf81cc736fc8acee2abe558970daac27395904e7"));
                         const supportType = daoContract.getConfiguration(Bytes.fromHexString("0x1aeed2c0ea31fb81f41489b79a1d09374a270e0f9340ace7354cce77586a7d16"));
                         const quorumType = daoContract.getConfiguration(Bytes.fromHexString("0e0434138ea29dceb1f2c0ca9b9f923f9d1c32d3d96bab2de9991f140daca712"));
+                        const COLLECTIVE_VOTING_GRACE_PERIOD = daoContract.getConfiguration(Bytes.fromHexString("0xb646599143db51c9136a4861a55f7140eab851836e3e1a42ba7804f5356a3655"));
 
                         collectiveDaoVoteConfigEntity.daoAddr = event.params.daoAddr;
                         collectiveDaoVoteConfigEntity.quorum = quorum;
@@ -161,6 +162,7 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
                         collectiveDaoVoteConfigEntity.votingAsset = votingAsset;
                         collectiveDaoVoteConfigEntity.votingPeriod = votingPeriod;
                         collectiveDaoVoteConfigEntity.weightAlgorithm = weightAlgorithm;
+                        collectiveDaoVoteConfigEntity.gracePeriod = COLLECTIVE_VOTING_GRACE_PERIOD;
                         collectiveDaoVoteConfigEntity.collectiveDaoEntity = event.params.daoAddr.toHexString();
                         collectiveDaoVoteConfigEntity.save();
                     }

@@ -25,15 +25,16 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
     if (!entity) {
         entity = new CollectiveVestingEligibleUsers(event.params.proposalId.toHexString())
     }
+    const daoCont = DaoRegistry.bind(event.params.daoAddr);
 
     entity.proposalId = event.params.proposalId
     entity.proposer = event.params.proposer
 
     let tem: string[] = [];
-
-    if (event.params.lps.length > 0) {
-        for (var j = 0; j < event.params.lps.length; j++) {
-            tem.push(event.params.lps[j].toHexString())
+    const rel = daoCont.try_getAllSteward();
+    if (!rel.reverted && rel.value.length > 0) {
+        for (var j = 0; j < rel.value.length; j++) {
+            tem.push(rel.value[j].toHexString())
         }
     }
 
@@ -72,7 +73,6 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
             collectiveUserVestInfo.save();
         }
-        const daoCont = DaoRegistry.bind(event.params.daoAddr);
         const managementFeeAddr = daoCont.getAddressConfiguration(
             Address.fromHexString("0x5460409b9aa4688f80c10b29c3d7ad16025f050f472a6882a45fa7bb9bd12fb1")
         );
