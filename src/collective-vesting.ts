@@ -25,7 +25,7 @@ import {
 
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = CollectiveVestEntity.load(event.params.vestId.toString())
-    const vintageVestingContr = CollectiveVestingAdapterContract.bind(event.address);
+    const colVestingContr = CollectiveVestingAdapterContract.bind(event.address);
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
@@ -41,18 +41,19 @@ export function handleCreateVesting(event: CreateVesting): void {
     entity.startTime = event.params.start
     entity.cliffDuration = event.params.cliffDuration
     entity.stepDuration = event.params.stepDuration
-    entity.steps = event.params.steps
-    entity.totalAmount = vintageVestingContr.vests(event.params.vestId).getTotal();
+    entity.steps = event.params.steps;
+    const vestRel = colVestingContr.try_vests(event.params.vestId);
+    entity.totalAmount = !vestRel.reverted ? vestRel.value.getTotal() : BigInt.zero();
     entity.claimedAmount = BigInt.fromI32(0);
     entity.startTimeString = new Date(event.params.start.toI64() * 1000).toISOString();
     entity.cliffEndTimeString = new Date((event.params.start.toI64() +
         event.params.cliffDuration.toI64()) * 1000).toISOString();
     entity.vestEndTimeString = new Date(
-        vintageVestingContr.vests(event.params.vestId).getTimeInfo().end.toI64() *
-        1000
+        !vestRel.reverted ? vestRel.value.getTimeInfo().end.toI64() *
+            1000 : 0
     ).toISOString();
-    entity.nftToken = vintageVestingContr.vests(event.params.vestId).getNftInfo().nftToken;
-    entity.tokenId = vintageVestingContr.vests(event.params.vestId).getNftInfo().tokenId;
+    entity.nftToken = !vestRel.reverted ? vestRel.value.getNftInfo().nftToken : Bytes.empty();
+    entity.tokenId = !vestRel.reverted ? vestRel.value.getNftInfo().tokenId : BigInt.zero();
 
     // Entities can be written to the store with `.save()`
     entity.save()
@@ -71,7 +72,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         userVestInfo.vestingEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
         userVestInfo.totalAmount = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackAmount : BigInt.fromI32(0);
         userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
-        userVestInfo.tokenAddress= event.params.token;
+        userVestInfo.tokenAddress = event.params.token;
     }
 
     userVestInfo.created = true;

@@ -9,7 +9,7 @@
 
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { Vesting, CreateVesting, Withdraw } from "../generated/ManualVesting/Vesting";
-import { ManualVestEntity } from "../generated/schema"
+import { ManualVestEntity, ManualVestingClaimedActivityEntity } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = ManualVestEntity.load(event.params.vestId.toString())
@@ -58,6 +58,17 @@ export function handleWithdraw(event: Withdraw): void {
         entity.claimedAmountFromWei = entity.claimedAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.save();
     }
+
+    let claimedEntity = ManualVestingClaimedActivityEntity.load(event.transaction.hash.toHexString());
+    if (!claimedEntity) {
+        claimedEntity = new ManualVestingClaimedActivityEntity(event.transaction.hash.toHexString());
+        claimedEntity.account = event.transaction.from;
+        claimedEntity.claimedAmount = event.params.amount;
+        claimedEntity.vestId = event.params.vestId;
+        claimedEntity.txHash = event.transaction.hash;
+        claimedEntity.timeStamp = event.block.timestamp;
+    }
+    claimedEntity.save();
 }
 
 // export function handleERC721Transfer(event: Transfer): void {

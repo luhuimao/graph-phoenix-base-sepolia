@@ -555,9 +555,9 @@ dataSources:
     name: FlexAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x4979a4748EF5ac5d78BE730B06e1eCd9a3617db2"
+      address: "0x619c4619c82B3d9817113AEF1d66e461d0146b03"
       abi: FlexAllocationAdapterContract
-      startBlock: 7617453
+      startBlock: 15471026
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
