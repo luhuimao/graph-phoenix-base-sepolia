@@ -441,9 +441,9 @@ dataSources:
     name: FlexVesting
     network: base-sepolia
     source:
-      address: "0x0b371C3c1E21Ad2b1E164d99265843fc41a201Be"
+      address: "0x7a5D2ccEE130baa35Da1F66EEb4a0c15F563FdA3"
       abi: FlexVesting
-      startBlock: 9680986
+      startBlock: 15514007
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1096,7 +1096,7 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x9127D6715565AB26529fe54b9BBD2dE0A8e8b883"
+      address: "0x946E0b398C2d50Cf992704A8f61Bba98f8069613"
       abi: ColletiveFundingProposalAdapterContract
       startBlock: 15047569
     mapping:
@@ -1181,9 +1181,9 @@ dataSources:
     name: CollectiveVestingAdapterContract
     network: base-sepolia
     source:
-      address: "0x59f13bC4B84C2EbaFaAf565c68e483BEBDd05566"
+      address: "0x39BFE50805dfa290d5911D1d8d703F0e36F1A58D"
       abi: CollectiveVestingAdapterContract
-      startBlock: 10810538
+      startBlock: 15514238
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1206,7 +1206,7 @@ dataSources:
     name: CollectiveAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x30279E9ef350AE163311f7F4f66e0D6Cb83a4c5c"
+      address: "0xE9cc2F7FB1DF9d4D4ca400235133F1F61D002Af8"
       abi: CollectiveAllocationAdapterContract
       startBlock: 15312608
     mapping:
