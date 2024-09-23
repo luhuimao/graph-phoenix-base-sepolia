@@ -233,12 +233,30 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             finalInvestors.mode = "flex";
 
             let tem: string[] = [];
+            let tem1: BigInt[] = [];
+
             if (event.params.investors.length > 0) {
+                const totalInvestedAmount = fundingPoolExtContr.try_getPriorAmount(
+                    event.params.proposalId,
+                    Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000baBe")),
+                    event.block.number.minus(BigInt.fromI32(1))
+                );
                 for (let j = 0; j < event.params.investors.length; j++) {
                     tem.push(event.params.investors[j].toHexString())
+
+                    const myInvestedAmount = fundingPoolExtContr.try_getPriorAmount(
+                        event.params.proposalId,
+                        event.params.investors[j],
+                        event.block.number.minus(BigInt.fromI32(1))
+                    );
+                    const myShare = (!totalInvestedAmount.reverted && !myInvestedAmount.reverted) ?
+                        myInvestedAmount.value.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount.value) : BigInt.zero();
+                    tem1.push(myShare);
                 }
             }
             finalInvestors.investors = tem;
+            finalInvestors.shares = tem1;
+
             finalInvestors.save();
         }
 

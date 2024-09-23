@@ -1556,6 +1556,7 @@ type InvestmentProposalInvestorEntity @entity{
   mode: String!
   proposalId: Bytes!
   investors: [String!]
+  shares: [BigInt!]
 }
 
 type ManualVestEntity @entity {
