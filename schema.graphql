@@ -1537,6 +1537,7 @@ type InvestmentReceiptNFTTokenIdEntity @entity{
   id: ID!
   proposalId: Bytes!
   tokenIds: [BigInt!]!
+  shares: [BigInt!]
 }
 
 type InvestmentReceiptNFTProposalIdEntity @entity{

@@ -9,20 +9,31 @@ import {
 
 export function handleMinted(event: Minted): void {
     let entity = InvestmentReceiptNFTTokenIdEntity.load(event.params.proposalId.toHexString());
+    const investmentReceiptERC721Contr = InvestmentReceiptERC721.bind(event.address);
+    const rel = investmentReceiptERC721Contr.try_tokenIdToInvestmentProposalInfo(event.params.tokenId);
+    const share = !rel.reverted ?
+        rel.value.getMyInvestedAmount().times(BigInt.fromI64(10 ** 18)).div(rel.value.getTotalInvestedAmount()) :
+        BigInt.zero();
+
     let tem: BigInt[] = [];
+    let tem4: BigInt[] = [];
     if (!entity) {
         entity = new InvestmentReceiptNFTTokenIdEntity(event.params.proposalId.toHexString());
         entity.proposalId = event.params.proposalId;
         tem.push(event.params.tokenId);
+        tem4.push(share);
     } else {
         if (entity.tokenIds.length > 0) {
             for (let j = 0; j < entity.tokenIds.length; j++) {
-                tem.push(entity.tokenIds[j])
+                tem.push(entity.tokenIds[j]);
+                tem4.push(entity.shares[j]);
             }
         }
         tem.push(event.params.tokenId);
+        tem4.push(share);
     }
     entity.tokenIds = tem;
+    entity.shares = tem4;
     entity.save();
 
     let holderentity = InvestmentReceiptNFTHolderEntity.load(event.params.proposalId.toHexString());
