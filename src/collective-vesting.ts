@@ -26,6 +26,8 @@ import {
 export function handleCreateVesting(event: CreateVesting): void {
     let entity = CollectiveVestEntity.load(event.params.vestId.toString())
     const colVestingContr = CollectiveVestingAdapterContract.bind(event.address);
+    let vintageFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
+
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
@@ -52,13 +54,12 @@ export function handleCreateVesting(event: CreateVesting): void {
         !vestRel.reverted ? vestRel.value.getTimeInfo().end.toI64() *
             1000 : 0
     ).toISOString();
-    entity.nftToken = !vestRel.reverted ? vestRel.value.getNftInfo().nftToken : Bytes.empty();
+    entity.nftToken = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingNFTAddr : Bytes.empty();
     entity.tokenId = !vestRel.reverted ? vestRel.value.getNftInfo().tokenId : BigInt.zero();
 
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    let vintageFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
 
     let userVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!userVestInfo) {

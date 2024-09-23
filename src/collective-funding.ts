@@ -48,6 +48,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.executeHash = Bytes.empty();
         entity.creationTime = event.block.timestamp;
         entity.vestingNFTEnable = rel.value.getVestingInfo().nftEnable;
+        entity.vestingNFTAddr = rel.value.getVestingInfo().erc721;
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.proposalExecuteTimestamp = BigInt.zero();
         entity.save();
