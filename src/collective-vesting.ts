@@ -7,12 +7,10 @@
  * @LastEditTime: 2023-08-09 15:38:08
  */
 
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, log } from "@graphprotocol/graph-ts"
 import {
     CollectiveVestingAdapterContract,
-    CancelVesting,
     CreateVesting,
-    LogUpdateOwner,
     Withdraw
 } from "../generated/CollectiveVestingAdapterContract/CollectiveVestingAdapterContract";
 import { VintageVestingERC721, Transfer } from "../generated/VintageVestingERC721/VintageVestingERC721";
@@ -24,9 +22,10 @@ import {
 } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
+    log.error("vestId: {}", [event.params.vestId.toString()]);
     let entity = CollectiveVestEntity.load(event.params.vestId.toString())
     const colVestingContr = CollectiveVestingAdapterContract.bind(event.address);
-    let vintageFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
+    let collectiveFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
 
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
@@ -54,7 +53,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         !vestRel.reverted ? vestRel.value.getTimeInfo().end.toI64() *
             1000 : 0
     ).toISOString();
-    entity.nftToken = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingNFTAddr : Bytes.empty();
+    entity.nftToken = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingNFTAddr : Bytes.empty();
     entity.tokenId = !vestRel.reverted ? vestRel.value.getNftInfo().tokenId : BigInt.zero();
 
     // Entities can be written to the store with `.save()`
@@ -64,14 +63,14 @@ export function handleCreateVesting(event: CreateVesting): void {
     let userVestInfo = CollectiveUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!userVestInfo) {
         userVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
-        userVestInfo.daoAddr = vintageFundingProposalEntity ? vintageFundingProposalEntity.daoAddr : Bytes.fromHexString("0x");
+        userVestInfo.daoAddr = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.daoAddr : Bytes.fromHexString("0x");
         userVestInfo.investmentProposalId = event.params.proposalId;
         userVestInfo.recipient = event.params.recipient;
         userVestInfo.vestingStartTime = event.params.start;
-        userVestInfo.vestingCliffEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.cliffEndTime : BigInt.fromI32(0);
-        userVestInfo.vestingInterval = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
-        userVestInfo.vestingEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
-        userVestInfo.totalAmount = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackAmount : BigInt.fromI32(0);
+        userVestInfo.vestingCliffEndTime = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.cliffEndTime : BigInt.fromI32(0);
+        userVestInfo.vestingInterval = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
+        userVestInfo.vestingEndTime = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
+        userVestInfo.totalAmount = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.paybackAmount : BigInt.fromI32(0);
         userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
         userVestInfo.tokenAddress = event.params.token;
     }
