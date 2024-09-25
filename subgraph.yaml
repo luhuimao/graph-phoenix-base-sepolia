@@ -1206,9 +1206,9 @@ dataSources:
     name: CollectiveAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0xE9cc2F7FB1DF9d4D4ca400235133F1F61D002Af8"
+      address: "0xDd7E781E24d3DC761A8640Dc63A1630457f47350"
       abi: CollectiveAllocationAdapterContract
-      startBlock: 15312608
+      startBlock: 15702143
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1418,9 +1418,9 @@ dataSources:
     name: InvestmentReceiptERC721
     network: base-sepolia
     source:
-      address: "0x0939786Bd63a71eF9B589cBf5012719F87d23f39"
+      address: "0xD359D1021478C0a71Ab6F98D4726DDeB5E084876"
       abi: InvestmentReceiptERC721
-      startBlock: 15047566
+      startBlock: 15729238
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1441,9 +1441,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0xEd307fDE70400595a1b5525d35ae49cEADF71Ba7"
+      address: "0xF3559d3479C681F6c4A910bebB7a4b70ED2Da5EF"
       abi: Vesting
-      startBlock: 15047566
+      startBlock: 15696451
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
