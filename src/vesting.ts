@@ -134,17 +134,17 @@ export function handleWithdraw(event: Withdraw): void {
 }
 
 export function handleERC721Transfer(event: Transfer): void {
-    const nftContract = VestingERC721.bind(event.address);
-    const tokenId = event.params.id;
-    const newOwner = event.params.to;
+    // const nftContract = VestingERC721.bind(event.address);
+    // const tokenId = event.params.id;
+    // const newOwner = event.params.to;
 
-    const vestintContr = Vesting.bind(nftContract.vestAddress());
-    const vestId = vestintContr.getVestIdByTokenId(event.address, tokenId);
+    // const vestintContr = Vesting.bind(nftContract.vestAddress());
+    // const vestId = vestintContr.getVestIdByTokenId(event.address, tokenId);
 
-    let entity = VestEntity.load(vestId.toString())
-    if (entity) {
-        entity.recipient = newOwner;
-        entity.save();
-    }
+    // let entity = VestEntity.load(vestId.toString())
+    // if (entity) {
+    //     entity.recipient = newOwner;
+    //     entity.save();
+    // }
 
 }

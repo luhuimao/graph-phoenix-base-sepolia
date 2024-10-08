@@ -809,9 +809,9 @@ dataSources:
     name: VestingERC721
     network: base-sepolia
     source:
-      address: "0xa5f7BC17E41600Be9853210CA9f9136577c93CEC"
+      address: "0xf369eDA894d1a95120e6957144d45ea050524178"
       abi: VestingERC721
-      startBlock: 29272389
+      startBlock: 15643198
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -820,14 +820,18 @@ dataSources:
         - AllocateToken
         - ConfigureDao
       abis:
-        - name: Vesting
-          file: ./abis/Vesting.json
+        - name: VintageVesting
+          file: ./abis/VintageVesting.json
+        - name: FlexVesting
+          file: ./abis/FlexVesting.json
+        - name: CollectiveVestingAdapterContract
+          file: ./abis/CollectiveVestingAdapterContract.json
         - name: VestingERC721
           file: ./abis/VestingERC721.json
       eventHandlers:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleERC721Transfer
-      file: ./src/vesting.ts
+      file: ./src/vestingERC721.ts
   - kind: ethereum
     name: VintageVestingERC721
     network: base-sepolia
@@ -984,9 +988,9 @@ dataSources:
     name: ColletiveTopUpProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xCcB0a4450b21407A9e03E142C4b344c1B2657463"
+      address: "0x59AEa8D2eAAfEb135669D472da63753198393C30"
       abi: ColletiveTopUpProposalAdapterContract
-      startBlock: 13321385
+      startBlock: 15824448
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1015,9 +1019,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0x781eA647bFa527Ef4B179042E16cFffa27F1957A"
+      address: "0x7d9eCeE1e93A4FC972CBfB90Ed99Be2bEd5cb754"
       abi: CollectiveVotingAdapterContract
-      startBlock: 12932642
+      startBlock: 15824647
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1038,9 +1042,9 @@ dataSources:
     name: ColletiveGovernorManagementAdapterContract
     network: base-sepolia
     source:
-      address: "0x6cf668Cb88703b264747144cD208dD6730862F10"
+      address: "0x7Ce1a90a160E834F298600bd2a8AbCc94eF3643E"
       abi: ColletiveGovernorManagementAdapterContract
-      startBlock: 13321375
+      startBlock: 15824425
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1071,9 +1075,9 @@ dataSources:
     name: ColletiveFundRaiseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x17Ed4674826d5cE207012E185993c12E914aCe21"
+      address: "0xA724939f2600dca2ed007953e32d3fb2E288896C"
       abi: ColletiveFundRaiseProposalAdapterContract
-      startBlock: 12720531
+      startBlock: 15824445
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1096,9 +1100,9 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x946E0b398C2d50Cf992704A8f61Bba98f8069613"
+      address: "0xF99DaEe159301a2F276753faF2d1bF801Dc7725f"
       abi: ColletiveFundingProposalAdapterContract
-      startBlock: 15047569
+      startBlock: 15824433
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1129,9 +1133,9 @@ dataSources:
     name: ColletiveExpenseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x9a32C5F1008AFe478a28cE2b488Ae18b1cb08BFc"
+      address: "0x779753eE813738B105874FDdd2A57c1F3e796031"
       abi: ColletiveExpenseProposalAdapterContract
-      startBlock: 11205133
+      startBlock: 15824451
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1154,9 +1158,9 @@ dataSources:
     name: ColletiveDaoSetProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x60cE3210Bb7BBf06E539DD855f679215aA5bc83B"
+      address: "0x56139AF32E0C4763f11dD3A83C4359D25fbc54Da"
       abi: ColletiveDaoSetProposalAdapterContract
-      startBlock: 14908454
+      startBlock: 15824430
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1231,9 +1235,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x208c28b0D98763C60269b52fC6a4438B89C3e114"
+      address: "0x48854E13471958b7293b01c6dd150162c4Cd0700"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 14143093
+      startBlock: 15824441
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1330,9 +1334,9 @@ dataSources:
     name: ColletiveClearFundProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xe5747c8Bb8b1dac4E9852c7e084706ee20E6c6A6"
+      address: "0xbB21C1B3D17893FbBe40324141c5655069AE8B8A"
       abi: ColletiveClearFundProposalAdapterContract
-      startBlock: 12316481
+      startBlock: 15824455
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1393,9 +1397,9 @@ dataSources:
     name: colletiveSetRiceReceiverProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xd24CF3E7f05Cc5D244D6aa4e85551361Cb046f93"
+      address: "0x42981e89C3f5c2b129FF6c22eC39855622Cf4cC6"
       abi: colletiveSetRiceReceiverProposalAdapterContract
-      startBlock: 14527478
+      startBlock: 15824459
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1441,9 +1445,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0xF3559d3479C681F6c4A910bebB7a4b70ED2Da5EF"
+      address: "0x5496EF3aE960faAe6d74d7B5dE13a9B7FCd1D092"
       abi: Vesting
-      startBlock: 15696451
+      startBlock: 15780877
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

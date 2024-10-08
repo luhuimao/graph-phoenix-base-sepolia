@@ -77,12 +77,13 @@ export function handleMinted(event: Minted): void {
         minterEntity = new InvestmentReceiptNFTMintersEntity(event.params.proposalId.toHexString());
         minterEntity.proposalId = event.params.proposalId;
         tem3.push(event.params.minter.toHexString())
-    }
-    if (minterEntity.minters.length > 0) {
-        for (let j = 0; j < minterEntity.minters.length; j++) {
-            tem3.push(minterEntity.minters[j])
+    } else {
+        if (minterEntity.minters && minterEntity.minters.length > 0) {
+            for (let j = 0; j < minterEntity.minters.length; j++) {
+                tem3.push(minterEntity.minters[j])
+            }
+            tem3.push(event.params.minter.toHexString());
         }
-        tem3.push(event.params.minter.toHexString());
     }
 
     minterEntity.minters = tem3;
