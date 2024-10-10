@@ -10,9 +10,7 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     FlexVesting,
-    CancelVesting,
     CreateVesting,
-    LogUpdateOwner,
     Withdraw
 } from "../generated/FlexVesting/FlexVesting"
 // import { FlexFundingAdapterContract } from "../generated/FlexVesting/FlexFundingAdapterContract"
@@ -36,6 +34,7 @@ export function handleCreateVesting(event: CreateVesting): void {
     // entity.count = entity.count + BigInt.fromI32(1)
     // Entity fields can be set based on event parameters
     entity.vestId = event.params.vestId
+    
     entity.recipient = event.params.recipient;
     entity.originalRecipient = event.params.recipient;
     entity.proposalId = event.params.proposalId
@@ -61,9 +60,9 @@ export function handleCreateVesting(event: CreateVesting): void {
         1000
     ).toISOString();
 
-    const vestInfo= vestingContract.vests(event.params.vestId);
-    entity.nftToken= vestInfo.getNftInfo().nftToken;
-    entity.tokenId= vestInfo.getNftInfo().tokenId;
+    const vestInfo = vestingContract.vests(event.params.vestId);
+    entity.nftToken = vestInfo.getNftInfo().nftToken;
+    entity.tokenId = vestInfo.getNftInfo().tokenId;
     // Entities can be written to the store with `.save()`
     entity.save()
 
@@ -72,15 +71,15 @@ export function handleCreateVesting(event: CreateVesting): void {
     let flexUserVestInfo = FlexUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!flexUserVestInfo) {
         flexUserVestInfo = new FlexUserVestInfo(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
-        flexUserVestInfo.daoAddr =
-            flexUserVestInfo.investmentProposalId = event.params.proposalId;
+        flexUserVestInfo.daoAddr = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.daoAddress : Bytes.empty();
+        flexUserVestInfo.investmentProposalId = event.params.proposalId;
         flexUserVestInfo.recipient = event.params.recipient;
         flexUserVestInfo.vestingStartTime = event.params.start;
         flexUserVestInfo.vestingCliffEndTime = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.vestingCliffEndTime : BigInt.fromI32(0);
         flexUserVestInfo.vestingInterval = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.vestingInterval : BigInt.fromI32(0);
         flexUserVestInfo.vestingEndTime = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.vestingEndTime : BigInt.fromI32(0);
         flexUserVestInfo.totalAmount = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.paybackTokenAmount : BigInt.fromI32(0);
-        flexUserVestInfo.tokenAddress= flexInvestmentProposalEntity ? flexInvestmentProposalEntity.paybackTokenAddr: Bytes.empty();
+        flexUserVestInfo.tokenAddress = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.paybackTokenAddr : Bytes.empty();
     }
     flexUserVestInfo.created = true;
     flexUserVestInfo.save();

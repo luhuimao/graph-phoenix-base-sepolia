@@ -365,7 +365,6 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         fundRoundEntity.tokenAddress = daoContract.getAddressConfiguration(
             Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027")
         );
-        // fundingPoolAdapt.getFundInvestors(event.params.dao, event.params.fundRound);
         let VintageDaoStatisticsEntity = VintageDaoStatistic.load(event.params.dao.toHexString());
         if (!VintageDaoStatisticsEntity) {
             VintageDaoStatisticsEntity = new VintageDaoStatistic(event.params.dao.toHexString());
@@ -380,19 +379,6 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             VintageDaoStatisticsEntity.governors = [];
             VintageDaoStatisticsEntity.membersArr = [];
         }
-        //VINTAGE_FUNDRAISE_STYLE= free in
-        // if (daoContract.getConfiguration(Bytes.fromHexString("0xbe07eea886ce63e8ab49ef6fd986e9dea247fbb31da43dd1df3e153cc548277a")) == BigInt.fromI32(1)) {
-        //     const fundTokenAddr = daoContract.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"));
-        //     const rel = fundingPoolExtContr.try_getPriorAmount(
-        //         Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000dECd")),
-        //         fundTokenAddr,
-        //         event.block.number.minus(BigInt.fromI32(1))
-        //     );
-        //     if (!rel.reverted)
-        //         VintageDaoStatisticsEntity.fundRaised = rel.value;
-        // } else {
-        //     VintageDaoStatisticsEntity.fundRaised = VintageDaoStatisticsEntity.fundRaised.plus(event.params.fundRaisedAmount);
-        // }
 
         VintageDaoStatisticsEntity.fundRaised = VintageDaoStatisticsEntity.fundRaised.plus(event.params.fundRaisedAmount);
         VintageDaoStatisticsEntity.fundRaisedFromWei = VintageDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
