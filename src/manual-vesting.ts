@@ -8,7 +8,7 @@
  */
 
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
-import { Vesting, CreateVesting, Withdraw } from "../generated/ManualVesting/Vesting";
+import { ManualVesting, CreateVesting, Withdraw, BatchVesting } from "../generated/ManualVesting/ManualVesting";
 import { ManualVestEntity, ManualVestingClaimedActivityEntity } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
@@ -21,7 +21,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         // Entity fields can be set using simple assignments
         // entity.count = BigInt.fromI32(0)
     }
-    let vestingContract = Vesting.bind(event.address);
+    let vestingContract = ManualVesting.bind(event.address);
 
     const vestInfo = vestingContract.vests(event.params.vestId);
     entity.name = vestInfo.getVestInfo().name;
@@ -47,7 +47,7 @@ export function handleCreateVesting(event: CreateVesting): void {
     entity.totalAmountFromWei = entity.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.claimedAmount = BigInt.fromI32(0);
     entity.claimedAmountFromWei = "0";
-
+    entity.blockNumber = event.block.number;
     entity.save()
 }
 
@@ -70,6 +70,47 @@ export function handleWithdraw(event: Withdraw): void {
     }
     claimedEntity.save();
 }
+
+// export function handleBatchVesting(event: BatchVesting): void {
+
+//     const vestingContract = ManualVesting.bind(event.address);
+//     if (event.params.endVestId.ge(event.params.startVestId)) {
+//         for (var i = event.params.startVestId.toI32(); i <= event.params.endVestId.toI32(); i++) {
+//             const vestInfo = vestingContract.vests(BigInt.fromI32(i));
+//             if (vestInfo) {
+//                 let entity = new ManualVestEntity(i.toString())
+
+//                 entity.name = vestInfo.getVestInfo().name;
+//                 entity.description = vestInfo.getVestInfo().description;
+//                 entity.txHash = event.transaction.hash;
+//                 entity.NFTEnalbe = vestInfo.getNftInfo().nftToken == Bytes.empty() ? false : true;
+//                 entity.creator = event.transaction.from;
+//                 entity.vestId = BigInt.fromI32(i);
+//                 entity.recipient = vestInfo.getVestInfo().recipient;
+//                 entity.tokenAddress = vestInfo.getVestInfo().token;
+//                 entity.erc721Address = vestInfo.getNftInfo().nftToken;
+//                 entity.tokenId = vestInfo.getNftInfo().tokenId;
+//                 entity.startTime = vestInfo.getTimeInfo().start;
+//                 entity.startTimeString = new Date(entity.startTime.toI64() * 1000).toISOString();
+//                 entity.cliffEndTime = entity.startTime.plus(vestInfo.getTimeInfo().cliffDuration);
+//                 entity.cliffEndTimeString = new Date(entity.cliffEndTime.toI64() * 1000).toISOString();
+//                 entity.endTime = vestInfo.getTimeInfo().end
+//                 entity.endTimeString = new Date(entity.endTime.toI64() * 1000).toISOString();
+//                 entity.interval = vestInfo.getTimeInfo().stepDuration;
+//                 entity.cliffAmount = vestInfo.getStepInfo().cliffShares;
+//                 entity.cliffAmountFromWei = entity.cliffAmount.div(BigInt.fromI64(10 ** 18)).toString();
+//                 entity.totalAmount = vestInfo.getTotal();
+//                 entity.totalAmountFromWei = entity.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+//                 entity.claimedAmount = BigInt.fromI32(0);
+//                 entity.claimedAmountFromWei = "0";
+//                 entity.blockNumber = event.block.number;
+
+//                 entity.save()
+//             }
+//         }
+
+//     }
+// }
 
 // export function handleERC721Transfer(event: Transfer): void {
 //     const nftContract = VestingERC721.bind(event.address);

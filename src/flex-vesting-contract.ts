@@ -34,7 +34,6 @@ export function handleCreateVesting(event: CreateVesting): void {
     // entity.count = entity.count + BigInt.fromI32(1)
     // Entity fields can be set based on event parameters
     entity.vestId = event.params.vestId
-    
     entity.recipient = event.params.recipient;
     entity.originalRecipient = event.params.recipient;
     entity.proposalId = event.params.proposalId

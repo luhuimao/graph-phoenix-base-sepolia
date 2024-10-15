@@ -149,6 +149,15 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         successedFundCounter.daoAddr = event.params.daoAddress;
         successedFundCounter.counter = BigInt.fromI32(0);
     }
+    let fundRaisedAmount = fundingPoolAdapt.fundRaisedByProposalId(event.params.daoAddress, fundRaiseProposalId);
+
+    if (fundRaiseProposalEntity) {
+        fundRaisedState == 2 ? fundRaiseProposalEntity.state = BigInt.fromI32(3) : fundRaiseProposalEntity.state = BigInt.fromI32(4);
+        fundRaiseProposalEntity.totalFund = fundRaisedAmount;
+        fundRaiseProposalEntity.totalFundFromWei = fundRaisedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        fundRaiseProposalEntity.save();
+    }
+
     const totoalRaised = event.params.totalRaised;
 
     if (fundRaisedState == 2) {
@@ -172,7 +181,6 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         const COLLECTIVE_FUNDRAISE_STYLE = daoContract.getConfiguration(Bytes.fromHexString("0xf301d5aec67a9d816d38f9b645cac1e79a3308ff9803564bbe63a862db82f46b"));
         const FUND_RAISING_MAX = daoContract.getConfiguration(Bytes.fromHexString("0x7e07fb4530796d057ca1d76d83f47aa8629dbb7e942ac28f30ad6f5e9e8d4189"));
 
-        let fundRaisedAmount = fundingPoolAdapt.fundRaisedByProposalId(event.params.daoAddress, fundRaiseProposalId);
         if (COLLECTIVE_FUNDRAISE_STYLE == BigInt.fromI32(1) && fundRaisedAmount > FUND_RAISING_MAX) {//free in 
             fundRaisedAmount = FUND_RAISING_MAX;
         }

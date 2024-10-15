@@ -1075,9 +1075,9 @@ dataSources:
     name: ColletiveFundRaiseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xA724939f2600dca2ed007953e32d3fb2E288896C"
+      address: "0xcA94Abe197ff14737c1e53E7AF270f0E2056ebBb"
       abi: ColletiveFundRaiseProposalAdapterContract
-      startBlock: 15824445
+      startBlock: 16462957
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1235,9 +1235,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x48854E13471958b7293b01c6dd150162c4Cd0700"
+      address: "0x66Ac7DC134b1219d4783a033B62B5DdEF66012B6"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 15824441
+      startBlock: 16462954
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1445,9 +1445,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0x5496EF3aE960faAe6d74d7B5dE13a9B7FCd1D092"
-      abi: Vesting
-      startBlock: 15780877
+      address: "0x5Ec3A0aB6286F2199352AA2dbdB8474faE34EFfA"
+      abi: ManualVesting
+      startBlock: 16574248
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1456,7 +1456,7 @@ dataSources:
         - AllocateToken
         - ConfigureDao
       abis:
-        - name: Vesting
+        - name: ManualVesting
           file: ./abis/ManualVesting.json
         - name: VestingERC721
           file: ./abis/VestingERC721.json
