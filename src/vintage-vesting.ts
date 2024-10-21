@@ -52,10 +52,11 @@ export function handleCreateVesting(event: CreateVesting): void {
     entity.nftToken = vintageVestingContr.vests(event.params.vestId).getNftInfo().nftToken;
     entity.tokenId = vintageVestingContr.vests(event.params.vestId).getNftInfo().tokenId;
 
+    let vintageFundingProposalEntity = VintageInvestmentProposalInfo.load(event.params.proposalId.toHexString())
+    entity.daoAddr = vintageFundingProposalEntity ? vintageFundingProposalEntity.daoAddress : Bytes.fromHexString("0x");
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    let vintageFundingProposalEntity = VintageInvestmentProposalInfo.load(event.params.proposalId.toHexString())
 
     let userVestInfo = VintageUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!userVestInfo) {
@@ -69,7 +70,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         userVestInfo.vestingEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vetingEndTime : BigInt.fromI32(0);
         userVestInfo.totalAmount = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackTokenAmount : BigInt.fromI32(0);
         userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
-        userVestInfo.tokenAddress= vintageFundingProposalEntity?vintageFundingProposalEntity.paybackToken: Bytes.empty();
+        userVestInfo.tokenAddress = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackToken : Bytes.empty();
     }
 
     userVestInfo.created = true;

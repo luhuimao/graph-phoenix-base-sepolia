@@ -55,7 +55,7 @@ export function handleCreateVesting(event: CreateVesting): void {
     ).toISOString();
     entity.nftToken = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingNFTAddr : Bytes.empty();
     entity.tokenId = !vestRel.reverted ? vestRel.value.getNftInfo().tokenId : BigInt.zero();
-
+    entity.daoAddr = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.daoAddr : Bytes.fromHexString("0x");
     // Entities can be written to the store with `.save()`
     entity.save()
 

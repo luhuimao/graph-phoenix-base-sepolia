@@ -315,6 +315,7 @@ type FlexVestEntity @entity {
   originalRecipient: Bytes! # address
   nftToken: Bytes! # address
   tokenId: BigInt! # uint256
+  daoAddr: Bytes! # address
 }
 
 type FlexStewardMangementProposal @entity{
@@ -802,6 +803,7 @@ type VintageVestEntity @entity {
   nftToken: Bytes! # address
   tokenId: BigInt! # uint256
   originalRecipient: Bytes! # address
+  daoAddr: Bytes! # address
 }
 
 type VintageAllocateToken @entity {
@@ -1211,6 +1213,7 @@ type CollectiveVestEntity @entity {
   nftToken: Bytes! # address
   tokenId: BigInt! # uint256
   originalRecipient: Bytes! # address
+  daoAddr: Bytes! # address
 }
 
 type CollectiveUserVestInfo @entity{

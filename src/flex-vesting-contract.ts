@@ -58,14 +58,15 @@ export function handleCreateVesting(event: CreateVesting): void {
         ) *
         1000
     ).toISOString();
+    let flexInvestmentProposalEntity = FlexInvestmentProposal.load(event.params.proposalId.toHexString());
 
     const vestInfo = vestingContract.vests(event.params.vestId);
     entity.nftToken = vestInfo.getNftInfo().nftToken;
     entity.tokenId = vestInfo.getNftInfo().tokenId;
+    entity.daoAddr = flexInvestmentProposalEntity ? flexInvestmentProposalEntity.daoAddress : Bytes.empty();
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    let flexInvestmentProposalEntity = FlexInvestmentProposal.load(event.params.proposalId.toHexString());
 
     let flexUserVestInfo = FlexUserVestInfo.load(entity.proposalId.toHexString() + "-" + entity.recipient.toHexString());
     if (!flexUserVestInfo) {

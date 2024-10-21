@@ -339,6 +339,7 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             newFundEntity.totalFund = totoalRaised;
             newFundEntity.totalFundFromWei = newFundEntity.totalFund.div(BigInt.fromI64(10 ** 18)).toString();
             newFundEntity.executeBlockNum = event.block.number;
+            newFundEntity.state = fundRaisedState == 2 ? BigInt.fromI32(3) : BigInt.fromI32(4);
             newFundEntity.save();
         }
 
