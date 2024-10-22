@@ -292,6 +292,10 @@ type FlexInvestmentProposal @entity{
   investors: [String!]! # address[]
   ultimateInvestedFund: BigInt!
   executeHash: Bytes!
+  managementFeeAmount:   BigInt!
+  managementCarryAmount:  BigInt!
+  proposerFeeAmount:  BigInt!
+  proposerCarryAmount:  BigInt!
   flexDaoEntity: FlexDaoEntity
 }
 

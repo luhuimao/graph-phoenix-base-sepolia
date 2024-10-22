@@ -117,6 +117,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.investors = [];
     entity.executeHash = Bytes.empty();
     entity.ultimateInvestedFund = BigInt.fromI32(0);
+    entity.managementFeeAmount = BigInt.fromI32(0);
+    entity.managementCarryAmount = BigInt.fromI32(0);
+    entity.proposerFeeAmount = BigInt.fromI32(0);
+    entity.proposerCarryAmount = BigInt.fromI32(0);
     entity.flexDaoEntity = event.params.daoAddress.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save();
@@ -156,6 +160,10 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 Bytes.fromHexString("0xda34ff95e06cbf2c9c32a559cd8aadd1a10104596417d62c03db2c1258df83d3")
             );
 
+            const managementCarryAmount = entity.paybackTokenAmount.times(
+                daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))).
+                div(BigInt.fromI64(10 ** 18));
+
             const managementFee = managementFeeType == BigInt.fromI32(0)
                 ? (entity.totalFund.times(
                     managementFeeAmount)
@@ -165,6 +173,13 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 (entity.totalFund.times(
                     proposalInfo.getProposerRewardInfo().cashRewardAmount)).div(BigInt.fromI64(10 ** 18))
                 ;
+            const proposerCarryAmount = entity.paybackTokenAmount.
+                times(proposalInfo.getProposerRewardInfo().tokenRewardAmount).
+                div(BigInt.fromI64(10 ** 18));
+            entity.managementFeeAmount = managementFee;
+            entity.managementCarryAmount = managementCarryAmount;
+            entity.proposerFeeAmount = proposerReward;
+            entity.proposerCarryAmount = proposerCarryAmount;
             entity.ultimateInvestedFund = entity.totalFund.minus(protocolFee.plus(managementFee).plus(proposerReward));
             let FlexDaoStatisticsEntity = FlexDaoStatistic.load(event.params.daoAddress.toHexString());
             if (!FlexDaoStatisticsEntity) {

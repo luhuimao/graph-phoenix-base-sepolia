@@ -16,7 +16,10 @@ import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
     VintageVestEntity,
     FlexVestEntity,
-    CollectiveVestEntity
+    CollectiveVestEntity,
+    FlexUserVestInfo,
+    CollectiveUserVestInfo,
+    VintageUserVestInfo
 } from "../generated/schema"
 
 export function handleERC721Transfer(event: Transfer): void {
@@ -49,8 +52,13 @@ export function handleERC721Transfer(event: Transfer): void {
         const vinVestEntity = VintageVestEntity.load(vinVestId.toString());
         if (vinVestEntity) {
             vinVestEntity.recipient = newOwner;
-
             vinVestEntity.save();
+
+            let userVestInfo = VintageUserVestInfo.load(vinVestEntity.proposalId.toHexString() + "-" + vinVestEntity.originalRecipient.toHexString());
+            if (userVestInfo) {
+                userVestInfo.recipient = newOwner;
+                userVestInfo.save();
+            }
         }
     }
 
@@ -60,6 +68,12 @@ export function handleERC721Transfer(event: Transfer): void {
             flexVestEntity.recipient = newOwner;
 
             flexVestEntity.save();
+
+            let userVestInfo = FlexUserVestInfo.load(flexVestEntity.proposalId.toHexString() + "-" + flexVestEntity.originalRecipient.toHexString());
+            if (userVestInfo) {
+                userVestInfo.recipient = newOwner;
+                userVestInfo.save();
+            }
         }
     }
 
@@ -69,6 +83,12 @@ export function handleERC721Transfer(event: Transfer): void {
             colVestEntity.recipient = newOwner;
 
             colVestEntity.save();
+
+            let userVestInfo = CollectiveUserVestInfo.load(colVestEntity.proposalId.toHexString() + "-" + colVestEntity.originalRecipient.toHexString());
+            if (userVestInfo) {
+                userVestInfo.recipient = newOwner;
+                userVestInfo.save();
+            }
         }
     }
 
