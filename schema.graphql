@@ -632,6 +632,15 @@ type VintageFundEstablishmentProposal @entity{
   executeHash: Bytes!
   redemptionFeeReceiver: Bytes!
   fundRaiseId: BigInt!
+  investorCapEnable: Boolean!
+  investorCapAmount: BigInt!
+  investorEligibilityEnalbe: Boolean!
+  investorEligibilityName: String!
+  investorEligibilityMinAmount : BigInt!
+  investorEligibilityTokenAddress: Bytes!
+  investorEligibilityTokenId : BigInt!
+  investorEligibilityVarifyType :BigInt!
+  investorEligibilityWhiteList : [String!]
   vintageDaoEntity: VintageDaoEntity
 }
 

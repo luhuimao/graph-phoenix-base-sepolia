@@ -14,12 +14,15 @@ import {
 } from "../generated/VintageFundRaiseAdapterContract/VintageFundRaiseAdapterContract"
 import { ERC20 } from "../generated/VintageFundRaiseAdapterContract/ERC20";
 import { DaoRegistry } from "../generated/VintageFundRaiseAdapterContract/DaoRegistry";
+import { VintageFundingPoolAdapterContract } from "../generated/VintageFundRaiseAdapterContract/VintageFundingPoolAdapterContract"
 import {
     VintageFundEstablishmentProposal,
     VintageProposalVoteInfo,
     VintageFundRoundToFundEstablishmentProposalId,
     VintageFundRaiseEntity,
-    VintageDaoFeeInfoEntity
+    VintageDaoFeeInfoEntity,
+    VintageDaoInvestorCapacityEntity,
+    VintageInvestorMembershipEntity
 } from "../generated/schema"
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -90,6 +93,25 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.executeHash = Bytes.empty();
         entity.redemptionFeeReceiver = proposalInfo.getFeeInfo().redemptionFeeReceiver;
         entity.fundRaiseId = daoContr.getCurrentFundEstablishmentProposalId();
+
+        entity.investorCapEnable = proposalInfo.getInvestorCap().enable;
+        entity.investorCapAmount = proposalInfo.getInvestorCap().cap;
+
+        entity.investorEligibilityEnalbe = proposalInfo.getInvestorEligibility().enable;
+        entity.investorEligibilityName = proposalInfo.getInvestorEligibility().name;
+        entity.investorEligibilityMinAmount = proposalInfo.getInvestorEligibility().minAmount;
+        entity.investorEligibilityTokenAddress = proposalInfo.getInvestorEligibility().tokenAddress;
+        entity.investorEligibilityTokenId = proposalInfo.getInvestorEligibility().tokenId;
+        entity.investorEligibilityVarifyType = BigInt.fromI32(proposalInfo.getInvestorEligibility().varifyType);
+
+        let tem: string[] = [];
+
+        if (proposalInfo.getInvestorEligibility().whiteList.length > 0) {
+            for (let j = 0; j < proposalInfo.getInvestorEligibility().whiteList.length; j++) {
+                tem.push(proposalInfo.getInvestorEligibility().whiteList[j].toHexString())
+            }
+        }
+        entity.investorEligibilityWhiteList = tem;
         entity.save()
 
         const erc20 = ERC20.bind(Address.fromBytes(entity.acceptTokenAddr));
@@ -125,6 +147,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
 export function handleProposalExecuted(event: proposalExecuted): void {
     let entity = VintageFundEstablishmentProposal.load(event.params.proposalId.toHexString())
+    const daoContract = DaoRegistry.bind(event.params.daoAddr);
+    const fundingPoolContractAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892"));
+    const fundingPoolAdapt = VintageFundingPoolAdapterContract.bind(fundingPoolContractAddress);
 
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
@@ -157,9 +182,52 @@ export function handleProposalExecuted(event: proposalExecuted): void {
             vintageDaoFeeInfoEntity.proposerReward = entity.fundFromInverstor;
             vintageDaoFeeInfoEntity.redemptionFee = entity.redepmtFeeRatio;
             vintageDaoFeeInfoEntity.save();
+
+
+            const vintageDaoInvestorCapacityEntity = VintageDaoInvestorCapacityEntity.load(event.params.daoAddr.toHexString());
+            if (vintageDaoInvestorCapacityEntity) {
+                const MAX_INVESTORS_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48"));
+                const MAX_INVESTORS = daoContract.getConfiguration(Bytes.fromHexString("0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2"));
+
+                vintageDaoInvestorCapacityEntity.daoAddr = event.params.daoAddr;
+                vintageDaoInvestorCapacityEntity.enable = MAX_INVESTORS_ENABLE == BigInt.fromI32(1) ? true : false;
+                vintageDaoInvestorCapacityEntity.capacityAmount = MAX_INVESTORS;
+                vintageDaoInvestorCapacityEntity.vintageDaoEntity = event.params.daoAddr.toHexString();
+                vintageDaoInvestorCapacityEntity.save();
+            }
+
+            const vintageInvestorMembershipEntity = VintageInvestorMembershipEntity.load(event.params.daoAddr.toHexString());
+            if (vintageInvestorMembershipEntity) {
+                const VINTAGE_INVESTOR_MEMBERSHIP_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x1405d0156cf64c805704fdf6691baebfcfa0d409ea827c231693ff0581b0b777"));
+                const VINTAGE_INVESTOR_MEMBERSHIP_TYPE = daoContract.getConfiguration(Bytes.fromHexString("0x80140cd7e0b1d935bee578a67a41547c82987de8e7d6b3827d411b738110258b"));
+                const VINTAGE_INVESTOR_MEMBERSHIP_MIN_HOLDING = daoContract.getConfiguration(Bytes.fromHexString("0x04ecaf460eb9f82aeb70035e3f24c18a3650fa0da9ddbe7e63d70de659b9b901"));
+                const VINTAGE_INVESTOR_MEMBERSHIP_TOKENID = daoContract.getConfiguration(Bytes.fromHexString("0x6cb5bc3796b0717ca4ff665886c96fb0178d6341366eb7b6c737fe79083b836a"));
+                const VINTAGE_INVESTOR_MEMBERSHIP_TOKEN_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0xe373ab56628c86db3f0e36774c2c5e0393f9272ff5c976bc3f0db2db60cdbc14"));
+                const VINTAGE_INVESTOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0x324dfda0ffcc38c4650b5df076e6f7b4938c2b723873af58b1be5e221dd2cc30"));
+
+                let tem: string[] = [];
+                const whitelist = fundingPoolAdapt.getInvestorMembershipWhiteList(event.params.daoAddr)
+                if (whitelist.length > 0) {
+                    for (let j = 0; j < whitelist.length; j++) {
+                        tem.push(whitelist[j].toHexString())
+                    }
+                }
+
+                vintageInvestorMembershipEntity.daoAddr = event.params.daoAddr;
+                vintageInvestorMembershipEntity.enable = VINTAGE_INVESTOR_MEMBERSHIP_ENABLE == BigInt.fromI32(1) ? true : false;
+                vintageInvestorMembershipEntity.name = VINTAGE_INVESTOR_MEMBERSHIP_NAME;
+                vintageInvestorMembershipEntity.minAmount = VINTAGE_INVESTOR_MEMBERSHIP_MIN_HOLDING;
+                vintageInvestorMembershipEntity.tokenAddress = VINTAGE_INVESTOR_MEMBERSHIP_TOKEN_ADDRESS;
+                vintageInvestorMembershipEntity.tokenId = VINTAGE_INVESTOR_MEMBERSHIP_TOKENID;
+                vintageInvestorMembershipEntity.varifyType = VINTAGE_INVESTOR_MEMBERSHIP_TYPE;
+                vintageInvestorMembershipEntity.whiteList = tem;
+                vintageInvestorMembershipEntity.vintageDaoEntity = event.params.daoAddr.toHexString();
+                vintageInvestorMembershipEntity.save();
+
+            }
+            entity.executeHash = event.transaction.hash;
+            entity.save();
         }
-        entity.executeHash = event.transaction.hash;
-        entity.save();
 
         let fundRaiseEntity = VintageFundRaiseEntity.load(event.params.proposalId.toHexString());
         if (fundRaiseEntity) {
