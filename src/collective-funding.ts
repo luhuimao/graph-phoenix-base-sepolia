@@ -22,6 +22,13 @@ export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new CollectiveInvestmentProposalEntity(event.params.proposalId.toHexString());
     const contract = ColletiveFundingProposalAdapterContract.bind(event.address);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
+    const daoContr = DaoRegistry.bind(event.params.daoAddr);
+    const collectiveFundingPoolAdapterContractAddr = daoContr.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+
+    const COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT = daoContr.getConfiguration(Bytes.fromHexString("0xb035c58a9b643066fc5cd78a708da0456c36221a03ca174ff3b76d4306ff7c6c"));
+    const COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT = daoContr.getConfiguration(Bytes.fromHexString("0x558062fa5fcc8623e6c743ab5b51793317989a5a93f03b32a485f94843f77da3"))
+
     if (!rel.reverted) {
 
         entity.daoAddr = event.params.daoAddr;
@@ -51,6 +58,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.vestingNFTAddr = rel.value.getVestingInfo().erc721;
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.proposalExecuteTimestamp = BigInt.zero();
+        entity.protocolFeeAmount = entity.totalAmount.times(collectiveFundingPoolAdapterContract.protocolFee()).div(BigInt.fromI32(10 ** 18));
+        entity.proposerFeeAmount = entity.totalAmount.times(COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT).div(BigInt.fromI32(10 ** 18));
+        entity.proposerCarryAmount = entity.paybackAmount.times(COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT).div(BigInt.fromI32(10 ** 18));
         entity.save();
     }
 }

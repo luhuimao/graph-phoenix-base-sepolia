@@ -1175,6 +1175,9 @@ type CollectiveInvestmentProposalEntity @entity{
   creationTime: BigInt!
   vestingNFTEnable: Boolean!
   vestingNFTAddr: Bytes! # address
+  proposerFeeAmount:  BigInt!
+  proposerCarryAmount:  BigInt!
+  protocolFeeAmount: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 

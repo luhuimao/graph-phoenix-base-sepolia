@@ -811,9 +811,9 @@ dataSources:
     name: VestingERC721
     network: base-sepolia
     source:
-      address: "0xf369eDA894d1a95120e6957144d45ea050524178"
+      address: "0x1184f8479De2655bc0494D456587754df946763f"
       abi: VestingERC721
-      startBlock: 15643198
+      startBlock: 17292679
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1189,9 +1189,9 @@ dataSources:
     name: CollectiveVestingAdapterContract
     network: base-sepolia
     source:
-      address: "0x39BFE50805dfa290d5911D1d8d703F0e36F1A58D"
+      address: "0xeCDeA64bCb804e1c84D140A904e02099E59BaF31"
       abi: CollectiveVestingAdapterContract
-      startBlock: 15514238
+      startBlock: 17292571
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
