@@ -74,7 +74,8 @@ export function handleWithdraw(event: Withdraw): void {
 }
 
 export function handleNFTTransfer(event: Transfer): void {
-    let vestingContract = ManualVesting.bind(event.address);
+    const manualVestingContrAddr = ManualVestingERC721.bind(event.address).vestContrAddress();
+    let vestingContract = ManualVesting.bind(manualVestingContrAddr);
     const vestId = vestingContract.try_tokenIdToVestId(event.address, event.params.id);
     if (!vestId.reverted) {
         let entity = ManualVestEntity.load(vestId.value.toString())
