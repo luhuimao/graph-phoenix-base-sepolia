@@ -9,6 +9,8 @@
 
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { ManualVesting, CreateVesting, Withdraw, BatchVesting } from "../generated/ManualVesting/ManualVesting";
+import { ManualVestingERC721, Transfer } from "../generated/ManualVestingERC721/ManualVestingERC721";
+
 import { ManualVestEntity, ManualVestingClaimedActivityEntity } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
@@ -69,6 +71,18 @@ export function handleWithdraw(event: Withdraw): void {
         claimedEntity.timeStamp = event.block.timestamp;
     }
     claimedEntity.save();
+}
+
+export function handleNFTTransfer(event: Transfer): void {
+    let vestingContract = ManualVesting.bind(event.address);
+    const vestId = vestingContract.try_tokenIdToVestId(event.address, event.params.id);
+    if (!vestId.reverted) {
+        let entity = ManualVestEntity.load(vestId.value.toString())
+        if (entity) {
+            entity.recipient = event.params.to;
+            entity.save();
+        }
+    }
 }
 
 // export function handleBatchVesting(event: BatchVesting): void {

@@ -1470,3 +1470,26 @@ dataSources:
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
       file: ./src/manual-vesting.ts
+  - kind: ethereum
+    name: ManualVestingERC721
+    network: base-sepolia
+    source:
+      address: "0x8B69885d768DFeFB709d8Bf200D6fc7F317dE1bB"
+      abi: ManualVestingERC721
+      startBlock: 16574248
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AllocateToken
+        - ConfigureDao
+      abis:
+        - name: ManualVesting
+          file: ./abis/ManualVesting.json
+        - name: ManualVestingERC721
+          file: ./abis/ManualVestingERC721.json
+      eventHandlers:
+        - event:  Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleNFTTransfer
+      file: ./src/manual-vesting.ts

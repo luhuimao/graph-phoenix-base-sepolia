@@ -121,6 +121,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.managementCarryAmount = BigInt.fromI32(0);
     entity.proposerFeeAmount = BigInt.fromI32(0);
     entity.proposerCarryAmount = BigInt.fromI32(0);
+    entity.protocolFeeAmount = BigInt.fromI32(0);
     entity.flexDaoEntity = event.params.daoAddress.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save();
@@ -176,10 +177,12 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             const proposerCarryAmount = entity.paybackTokenAmount.
                 times(proposalInfo.getProposerRewardInfo().tokenRewardAmount).
                 div(BigInt.fromI64(10 ** 18));
+
             entity.managementFeeAmount = managementFee;
             entity.managementCarryAmount = managementCarryAmount;
             entity.proposerFeeAmount = proposerReward;
             entity.proposerCarryAmount = proposerCarryAmount;
+            entity.protocolFeeAmount = protocolFee;
             entity.ultimateInvestedFund = entity.totalFund.minus(protocolFee.plus(managementFee).plus(proposerReward));
             let FlexDaoStatisticsEntity = FlexDaoStatistic.load(event.params.daoAddress.toHexString());
             if (!FlexDaoStatisticsEntity) {

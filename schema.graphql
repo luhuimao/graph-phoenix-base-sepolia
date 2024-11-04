@@ -296,6 +296,7 @@ type FlexInvestmentProposal @entity{
   managementCarryAmount:  BigInt!
   proposerFeeAmount:  BigInt!
   proposerCarryAmount:  BigInt!
+  protocolFeeAmount: BigInt!
   flexDaoEntity: FlexDaoEntity
 }
 
