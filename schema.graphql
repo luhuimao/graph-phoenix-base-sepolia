@@ -297,6 +297,22 @@ type FlexInvestmentProposal @entity{
   proposerFeeAmount:  BigInt!
   proposerCarryAmount:  BigInt!
   protocolFeeAmount: BigInt!
+  investorCapAmount: BigInt!
+  investorCapEnable: Boolean!
+  investorEligibilityEnable: Boolean!
+  investorEligibilityMinAmount:BigInt!
+  investorEligibilityName: String!
+  investorEligibilityTokenAddress: Bytes!
+  investorEligibilityTokenId: BigInt!
+  investorEligibilityVerifyType: BigInt!
+  investorEligibilityWhiteList: [String!]
+  pollVoterEligibilityName: String!
+  pollVoterEligibilityType: BigInt!
+  pollVoterEligibilityMiniHoldingAmount:BigInt!
+  pollVoterEligibilityTokenAddress:Bytes!
+  pollVoterEligibilityTokenId:BigInt!
+  pollVoterEligibilityWhitelist: [String!]
+  pollEnable: Boolean!
   flexDaoEntity: FlexDaoEntity
 }
 

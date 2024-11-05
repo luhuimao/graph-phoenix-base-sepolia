@@ -433,6 +433,8 @@ dataSources:
           file: ./abis/FlexInvestmentPoolExtension.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: FlexPollingVotingContract
+          file: ./abis/FlexPollingVotingContract.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address)
           handler: handleProposalCreated

@@ -16,8 +16,8 @@ import {
 import { FlexInvestmentPoolExtension } from "../generated/FlexFundingAdapterContract/FlexInvestmentPoolExtension";
 import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry";
 // import { DaoFactory } from "../generated/DaoFactory/DaoFactory";
-import { FlexInvestmentPoolAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
-
+import { FlexInvestmentPoolAdapterContract } from "../generated/FlexFundingAdapterContract/FlexInvestmentPoolAdapterContract";
+import { FlexPollingVotingContract } from "../generated/FlexFundingAdapterContract/FlexPollingVotingContract";
 import {
     FlexInvestmentProposal,
     FlexDaoStatistic,
@@ -30,8 +30,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
     let entity = FlexInvestmentProposal.load(event.params.proposalId.toHexString())
+    const daoContract = DaoRegistry.bind(event.params.daoAddress);
+    const flexPollVotingAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x6f48e16963713446db50a1503860d8e1fc3c888da56a85afcaa6dc29503cc610"));
+    const flexPollVotingAdapt = FlexPollingVotingContract.bind(flexPollVotingAdaptContrAddr);
 
-
+    const fundingPoolAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x2207fd6117465cefcba0abc867150698c0464aa41a293ec29ca01b67a6350c3c"));
+    const fundingPoolAdaptContr = FlexInvestmentPoolAdapterContract.bind(fundingPoolAdaptContrAddr);
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
@@ -122,6 +126,61 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.proposerFeeAmount = BigInt.fromI32(0);
     entity.proposerCarryAmount = BigInt.fromI32(0);
     entity.protocolFeeAmount = BigInt.fromI32(0);
+
+
+    const MAX_INVESTORS_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48"));
+    const MAX_INVESTORS = daoContract.getConfiguration(Bytes.fromHexString("0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2"));
+
+    entity.investorCapEnable = MAX_INVESTORS_ENABLE == BigInt.fromI32(1) ? true : false;
+    entity.investorCapAmount = MAX_INVESTORS;
+
+    const FLEX_INVESTOR_MEMBERSHIP_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_INVESTOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_INVESTOR_MEMBERSHIP_TYPE = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_INVESTOR_MEMBERSHIP_MIN_HOLDING = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_INVESTOR_MEMBERSHIP_TOKENID = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_INVESTOR_MEMBERSHIP_TOKEN_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+
+    entity.investorEligibilityEnable = FLEX_INVESTOR_MEMBERSHIP_ENABLE == BigInt.fromI32(1) ? true : false;
+    entity.investorEligibilityMinAmount = FLEX_INVESTOR_MEMBERSHIP_MIN_HOLDING;
+    entity.investorEligibilityName = FLEX_INVESTOR_MEMBERSHIP_NAME;
+    entity.investorEligibilityTokenAddress = FLEX_INVESTOR_MEMBERSHIP_TOKEN_ADDRESS;
+    entity.investorEligibilityTokenId = FLEX_INVESTOR_MEMBERSHIP_TOKENID;
+    entity.investorEligibilityVerifyType = FLEX_INVESTOR_MEMBERSHIP_TYPE;
+
+    let tem1: string[] = [];
+    const pwl = fundingPoolAdaptContr.try_getParticipanWhitelist(event.params.daoAddress);
+    if (!pwl.reverted && pwl.value.length > 0) {
+        for (let j = 0; j < pwl.value.length; j++) {
+            tem1.push(pwl.value[j].toHexString())
+        }
+    }
+    entity.investorEligibilityWhiteList = tem1;
+
+    const FLEX_INVESTMENT_TYPE = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_POLLVOTER_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0x7bd63360ec775df97ced77d73875245296c41d88ebf2b52f8e630b4e9a51b448"));
+    const FLEX_POLLVOTER_MEMBERSHIP_TYPE = daoContract.getConfiguration(Bytes.fromHexString("0x249486eeae30287051f65673dfa390711fd4587950c33b4150a633763f869724"));
+    const FLEX_POLLVOTER_MEMBERSHIP_MIN_HOLDING = daoContract.getConfiguration(Bytes.fromHexString("0x6839e94cab6f83f7a12a5a3d1d6f3bbcaf0185a49b20b86e6f47b8c78494ac3d"));
+    const FLEX_POLLVOTER_MEMBERSHIP_TOKENID = daoContract.getConfiguration(Bytes.fromHexString("0xf2b332c307ef460e99eb866928b78eca9f8af0da0626b4b48a13f9b52842fa6a"));
+    const FLEX_POLLVOTER_MEMBERSHIP_TOKEN_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0x770ef80745dba2953f780c8b963701e76fd3ac982923200f9214126e80f5f032"));
+
+    entity.pollEnable = FLEX_INVESTMENT_TYPE == BigInt.fromI32(1) ? true : false;
+    entity.pollVoterEligibilityMiniHoldingAmount = FLEX_POLLVOTER_MEMBERSHIP_MIN_HOLDING;
+    entity.pollVoterEligibilityName = FLEX_POLLVOTER_MEMBERSHIP_NAME;
+    entity.pollVoterEligibilityTokenAddress = FLEX_POLLVOTER_MEMBERSHIP_TOKEN_ADDRESS;
+    entity.pollVoterEligibilityTokenId = FLEX_POLLVOTER_MEMBERSHIP_TOKENID;
+    entity.pollVoterEligibilityType = FLEX_POLLVOTER_MEMBERSHIP_TYPE;
+
+    let tem: string[] = [];
+
+    const wl = flexPollVotingAdapt.try_getWhitelist(event.params.daoAddress)
+    if (!wl.reverted && wl.value.length > 0) {
+        for (let j = 0; j < wl.value.length; j++) {
+            tem.push(wl.value[j].toHexString())
+        }
+    }
+    entity.pollVoterEligibilityWhitelist = tem;
+
     entity.flexDaoEntity = event.params.daoAddress.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save();
@@ -178,7 +237,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 times(proposalInfo.getProposerRewardInfo().tokenRewardAmount).
                 div(BigInt.fromI64(10 ** 18));
 
-            entity.managementFeeAmount = managementFee;
+            entity.managementFeeAmount = managementFeeAmount;
             entity.managementCarryAmount = managementCarryAmount;
             entity.proposerFeeAmount = proposerReward;
             entity.proposerCarryAmount = proposerCarryAmount;
