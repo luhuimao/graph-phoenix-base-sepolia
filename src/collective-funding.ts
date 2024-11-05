@@ -58,9 +58,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.vestingNFTAddr = rel.value.getVestingInfo().erc721;
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.proposalExecuteTimestamp = BigInt.zero();
-        entity.protocolFeeAmount = entity.totalAmount.times(collectiveFundingPoolAdapterContract.protocolFee()).div(BigInt.fromI32(10 ** 18));
-        entity.proposerFeeAmount = entity.totalAmount.times(COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT).div(BigInt.fromI32(10 ** 18));
-        entity.proposerCarryAmount = entity.paybackAmount.times(COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT).div(BigInt.fromI32(10 ** 18));
+        entity.protocolFeeAmount = collectiveFundingPoolAdapterContract.protocolFee();
+        entity.proposerFeeAmount = COLLECTIVE_PROPOSER_INVEST_TOKEN_REWARD_AMOUNT;
+        entity.proposerCarryAmount = COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT;
         entity.save();
     }
 }

@@ -181,6 +181,11 @@ export function handleProposalCreated(event: ProposalCreated): void {
     }
     entity.pollVoterEligibilityWhitelist = tem;
 
+    const FLEX_POLLING_SUPER_MAJORITY = daoContract.getConfiguration(Bytes.fromHexString("0x777270e51451e60c2ce5118fc8e5844441dcc4d102e9052e60fb41312dbb848a"));
+    const FLEX_POLLING_QUORUM = daoContract.getConfiguration(Bytes.fromHexString("0x7789eea44dccd66529026559d1b36215cb5766016b41a8a8f16e08b2ec875837"));
+
+    entity.pollSupport = FLEX_POLLING_SUPER_MAJORITY;
+    entity.pollQuorum = FLEX_POLLING_QUORUM;
     entity.flexDaoEntity = event.params.daoAddress.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save();
@@ -220,28 +225,22 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 Bytes.fromHexString("0xda34ff95e06cbf2c9c32a559cd8aadd1a10104596417d62c03db2c1258df83d3")
             );
 
-            const managementCarryAmount = entity.paybackTokenAmount.times(
-                daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))).
-                div(BigInt.fromI64(10 ** 18));
-
+            const managementCarryAmount =
+                daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))
             const managementFee = managementFeeType == BigInt.fromI32(0)
                 ? (entity.totalFund.times(
                     managementFeeAmount)
                 ).div(BigInt.fromI64(10 ** 18))
                 : managementFeeAmount; // type 0:percentage of fund pool  type 1: fixed amount
             const proposerReward =
-                (entity.totalFund.times(
-                    proposalInfo.getProposerRewardInfo().cashRewardAmount)).div(BigInt.fromI64(10 ** 18))
-                ;
-            const proposerCarryAmount = entity.paybackTokenAmount.
-                times(proposalInfo.getProposerRewardInfo().tokenRewardAmount).
-                div(BigInt.fromI64(10 ** 18));
+                proposalInfo.getProposerRewardInfo().cashRewardAmount;
+            const proposerCarryAmount = proposalInfo.getProposerRewardInfo().tokenRewardAmount;
 
             entity.managementFeeAmount = managementFeeAmount;
             entity.managementCarryAmount = managementCarryAmount;
             entity.proposerFeeAmount = proposerReward;
             entity.proposerCarryAmount = proposerCarryAmount;
-            entity.protocolFeeAmount = protocolFee;
+            entity.protocolFeeAmount = flexFundingContract.protocolFee();
             entity.ultimateInvestedFund = entity.totalFund.minus(protocolFee.plus(managementFee).plus(proposerReward));
             let FlexDaoStatisticsEntity = FlexDaoStatistic.load(event.params.daoAddress.toHexString());
             if (!FlexDaoStatisticsEntity) {

@@ -313,6 +313,8 @@ type FlexInvestmentProposal @entity{
   pollVoterEligibilityTokenId:BigInt!
   pollVoterEligibilityWhitelist: [String!]
   pollEnable: Boolean!
+  pollSupport: BigInt!
+  pollQuorum: BigInt!
   flexDaoEntity: FlexDaoEntity
 }
 
