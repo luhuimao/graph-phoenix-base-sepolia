@@ -134,12 +134,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.investorCapEnable = MAX_INVESTORS_ENABLE == BigInt.fromI32(1) ? true : false;
     entity.investorCapAmount = MAX_INVESTORS;
 
-    const FLEX_INVESTOR_MEMBERSHIP_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
-    const FLEX_INVESTOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
-    const FLEX_INVESTOR_MEMBERSHIP_TYPE = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
-    const FLEX_INVESTOR_MEMBERSHIP_MIN_HOLDING = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
-    const FLEX_INVESTOR_MEMBERSHIP_TOKENID = daoContract.getConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
-    const FLEX_INVESTOR_MEMBERSHIP_TOKEN_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0x16560c56ab40c59c6ee21567e40e89d9059e8d1c5df75d3b95b38ff375501823"));
+    const FLEX_INVESTOR_MEMBERSHIP_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0xfeddffed075d0686e697569ece0ce2fd26bfbbb18719086f36d16c7117edb553"));
+    const FLEX_INVESTOR_MEMBERSHIP_NAME = daoContract.getStringConfiguration(Bytes.fromHexString("0xfd9a8d4692ffc545577ff1979a0a918c2b536b6b6a891cf324a93b2c43907f83"));
+    const FLEX_INVESTOR_MEMBERSHIP_TYPE = daoContract.getConfiguration(Bytes.fromHexString("0x77041e0d128001928f30b976713fed530b452bc354a9bad49ad1bcf93121f9dc"));
+    const FLEX_INVESTOR_MEMBERSHIP_MIN_HOLDING = daoContract.getConfiguration(Bytes.fromHexString("0xcab672166d6a1c8dae3ca0b03fed2e7258db17c3c3801ac2651987b066d39647"));
+    const FLEX_INVESTOR_MEMBERSHIP_TOKENID = daoContract.getConfiguration(Bytes.fromHexString("0xcdc3057ec9c82a3ea3fd34ef56b1825924525fbab071e1a2b9d664a07f400480"));
+    const FLEX_INVESTOR_MEMBERSHIP_TOKEN_ADDRESS = daoContract.getAddressConfiguration(Bytes.fromHexString("0x0f57fc3a39a8a66c31f52eab69ced65d5ac74e4a182b215146a45a0281de53e8"));
 
     entity.investorEligibilityEnable = FLEX_INVESTOR_MEMBERSHIP_ENABLE == BigInt.fromI32(1) ? true : false;
     entity.investorEligibilityMinAmount = FLEX_INVESTOR_MEMBERSHIP_MIN_HOLDING;

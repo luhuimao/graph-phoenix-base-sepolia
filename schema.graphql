@@ -1163,6 +1163,8 @@ type CollectiveFundRaiseProposalEntity @entity{
   executeHash: Bytes!
   fundRaiseState: String
   fundRaiseId: BigInt!
+  investorCapEnable: Boolean!
+  investorCapAmount: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 

@@ -54,6 +54,11 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.proposalId = event.params.proposalId;
         entity.executeHash = Bytes.empty();
         entity.fundRaiseId = daoContract.getCurrentFundEstablishmentProposalId();
+
+        const MAX_INVESTORS_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48"));
+        const MAX_INVESTORS = daoContract.getConfiguration(Bytes.fromHexString("0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2"));
+        entity.investorCapEnable = MAX_INVESTORS_ENABLE == BigInt.fromI32(1) ? true : false;
+        entity.investorCapAmount = MAX_INVESTORS;
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
     }
