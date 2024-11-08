@@ -232,13 +232,17 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                     managementFeeAmount)
                 ).div(BigInt.fromI64(10 ** 18))
                 : managementFeeAmount; // type 0:percentage of fund pool  type 1: fixed amount
-            const proposerReward =
+            const proposerRewardAmount =
                 proposalInfo.getProposerRewardInfo().cashRewardAmount;
+
+            const proposerReward = (entity.totalFund.times(
+                proposerRewardAmount)
+            ).div(BigInt.fromI64(10 ** 18));
             const proposerCarryAmount = proposalInfo.getProposerRewardInfo().tokenRewardAmount;
 
             entity.managementFeeAmount = managementFeeAmount;
             entity.managementCarryAmount = managementCarryAmount;
-            entity.proposerFeeAmount = proposerReward;
+            entity.proposerFeeAmount = proposerRewardAmount;
             entity.proposerCarryAmount = proposerCarryAmount;
             entity.protocolFeeAmount = flexFundingContract.protocolFee();
             entity.ultimateInvestedFund = entity.totalFund.minus(protocolFee.plus(managementFee).plus(proposerReward));
