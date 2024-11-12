@@ -36,6 +36,10 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
     const fundRaiseAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
     const fundRaiseContract = VintageFundRaiseAdapterContract.bind(fundRaiseAddress);
+    const fundingPoolContractAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892"));
+    const fundingPoolAdapt = VintageFundingPoolAdapterContract.bind(fundingPoolContractAddress);
+
+
     let entity = VintageInvestmentProposalInfo.load(event.params.proposalId.toHexString())
 
     // Entities only exist after they have been saved to the store;
@@ -88,6 +92,17 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     let successedFundCounter = VintageSuccessedFundCounter.load(event.params.daoAddr.toString());
     entity.executeHash = Bytes.empty();
     entity.succeedFundRound = successedFundCounter ? successedFundCounter.counter : BigInt.fromI32(0);
+
+    const MANAGEMENT_FEE = daoContract.getConfiguration(Bytes.fromHexString("0x11618fa890234170104debf73b2563b667bd200bac1d7d8dd024e2f3fadaefd2"));
+    const VINTAGE_RETURN_TOKEN_MANAGEMENT_FEE_AMOUNT = daoContract.getConfiguration(Bytes.fromHexString("0x0e8185cfd5d91894cd75ba6858a811ccb98f89440700b6d75931c8de1e97fa02"));
+    const VINTAGE_PROPOSER_FUND_REWARD_RADIO = daoContract.getConfiguration(Bytes.fromHexString("0x66ed99f9a48fc961fffd6425cceb65d9444f5bda8af3bc46d14fd6b5a844fde5"));
+    const VINTAGE_PROPOSER_TOKEN_REWARD_RADIO = daoContract.getConfiguration(Bytes.fromHexString("0x23bba46e5025fb6d2325c93cad4f861289d697c0913f7e18dab6bb065e2bdc28"));
+
+    entity.protocolFeeAmount = fundingPoolAdapt.protocolFee();
+    entity.managementFeeAmount = MANAGEMENT_FEE;
+    entity.managementCarryAmount = VINTAGE_RETURN_TOKEN_MANAGEMENT_FEE_AMOUNT;
+    entity.proposerFeeAmount = VINTAGE_PROPOSER_FUND_REWARD_RADIO;
+    entity.proposerCarryAmount = VINTAGE_PROPOSER_TOKEN_REWARD_RADIO
 
     const currentFundRound = fundRaiseContract.createdFundCounter(event.params.daoAddr);
     const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());

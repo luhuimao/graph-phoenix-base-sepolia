@@ -721,6 +721,11 @@ type VintageInvestmentProposalInfo @entity{
   succeedFundRound: BigInt
   executeHash: Bytes!
   fundEstablishmentProposalId: Bytes!
+  proposerFeeAmount: BigInt!
+  proposerCarryAmount: BigInt!
+  protocolFeeAmount: BigInt!
+  managementFeeAmount: BigInt!
+  managementCarryAmount: BigInt!
   vintageDaoEntity: VintageDaoEntity
 }
 
