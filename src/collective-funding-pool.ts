@@ -152,7 +152,13 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     let fundRaisedAmount = fundingPoolAdapt.fundRaisedByProposalId(event.params.daoAddress, fundRaiseProposalId);
 
     if (fundRaiseProposalEntity) {
-        fundRaisedState == 2 ? fundRaiseProposalEntity.state = BigInt.fromI32(3) : fundRaiseProposalEntity.state = BigInt.fromI32(4);
+        // fundRaisedState == 2 ? fundRaiseProposalEntity.state = BigInt.fromI32(3) : fundRaiseProposalEntity.state = BigInt.fromI32(4);
+        if (fundRaisedState == 2) {
+            fundRaiseProposalEntity.state = BigInt.fromI32(3);
+        } else {
+            fundRaiseProposalEntity.state = BigInt.fromI32(4);
+            fundRaiseProposalEntity.failedReason="FundRaisingFailed";
+        }
         fundRaiseProposalEntity.totalFund = fundRaisedAmount;
         fundRaiseProposalEntity.totalFundFromWei = fundRaisedAmount.div(BigInt.fromI64(10 ** 18)).toString();
         fundRaiseProposalEntity.save();

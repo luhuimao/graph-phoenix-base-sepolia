@@ -225,8 +225,6 @@ export function handleProposalExecuted(event: proposalExecuted): void {
                 vintageInvestorMembershipEntity.save();
 
             }
-            entity.executeHash = event.transaction.hash;
-            entity.save();
         }
 
         let fundRaiseEntity = VintageFundRaiseEntity.load(event.params.proposalId.toHexString());
@@ -238,6 +236,11 @@ export function handleProposalExecuted(event: proposalExecuted): void {
             fundRaiseEntity.fundNumber = "FundEstablishment#" + fundNumber.toString();
             fundRaiseEntity.save();
         }
+        entity.executeHash = event.transaction.hash;
+        if (event.params.voteResult == BigInt.fromI32(1) || event.params.voteResult == BigInt.fromI32(3)) {
+            entity.failedReason = "VotingFailed";
+        }
+        entity.save();
     }
 
     let voteInfoEntity = VintageProposalVoteInfo.load(event.params.proposalId.toHexString());

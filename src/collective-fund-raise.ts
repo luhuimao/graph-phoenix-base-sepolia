@@ -70,6 +70,8 @@ export function handlerProposalProcessed(event: proposalExecuted): void {
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
         entity.executeHash = event.transaction.hash;
+        if (event.params.voteResult == BigInt.fromI32(1) || event.params.voteResult == BigInt.fromI32(3))
+            entity.failedReason = "VotingFailed";
         entity.save();
 
         let collectiveDaoEntity = CollectiveDaoEntity.load(event.params.daoAddr.toHexString());

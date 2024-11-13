@@ -660,6 +660,7 @@ type VintageFundEstablishmentProposal @entity{
   investorEligibilityTokenId : BigInt!
   investorEligibilityVarifyType :BigInt!
   investorEligibilityWhiteList : [String!]
+  failedReason: String
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -1170,6 +1171,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   fundRaiseId: BigInt!
   investorCapEnable: Boolean!
   investorCapAmount: BigInt!
+  failedReason: String
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 
