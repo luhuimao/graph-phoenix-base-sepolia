@@ -121,11 +121,21 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.investors = [];
     entity.executeHash = Bytes.empty();
     entity.ultimateInvestedFund = BigInt.fromI32(0);
-    entity.managementFeeAmount = BigInt.fromI32(0);
-    entity.managementCarryAmount = BigInt.fromI32(0);
-    entity.proposerFeeAmount = BigInt.fromI32(0);
-    entity.proposerCarryAmount = BigInt.fromI32(0);
-    entity.protocolFeeAmount = BigInt.fromI32(0);
+
+    const managementFeeAmount = daoContract.getConfiguration(
+        Bytes.fromHexString("0x64c49ee5084f4940c312104c41603e43791b03dad28152afd6eadb5b960a8a87")
+    );
+    const managementCarryAmount =
+        daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))
+    const proposerRewardAmount =
+        proposalInfo.getProposerRewardInfo().cashRewardAmount;
+    const proposerCarryAmount = proposalInfo.getProposerRewardInfo().tokenRewardAmount;
+
+    entity.managementFeeAmount = managementFeeAmount;
+    entity.managementCarryAmount = managementCarryAmount;
+    entity.proposerFeeAmount = proposerRewardAmount;
+    entity.proposerCarryAmount = proposerCarryAmount;
+    entity.protocolFeeAmount = flexFundingContract.protocolFee();
 
 
     const MAX_INVESTORS_ENABLE = daoContract.getConfiguration(Bytes.fromHexString("0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48"));
@@ -224,9 +234,9 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             const managementFeeType = daoContract.getConfiguration(
                 Bytes.fromHexString("0xda34ff95e06cbf2c9c32a559cd8aadd1a10104596417d62c03db2c1258df83d3")
             );
+            // const managementCarryAmount =
+            //     daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))
 
-            const managementCarryAmount =
-                daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))
             const managementFee = managementFeeType == BigInt.fromI32(0)
                 ? (entity.totalFund.times(
                     managementFeeAmount)
@@ -238,13 +248,13 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             const proposerReward = (entity.totalFund.times(
                 proposerRewardAmount)
             ).div(BigInt.fromI64(10 ** 18));
-            const proposerCarryAmount = proposalInfo.getProposerRewardInfo().tokenRewardAmount;
+            // const proposerCarryAmount = proposalInfo.getProposerRewardInfo().tokenRewardAmount;
 
-            entity.managementFeeAmount = managementFeeAmount;
-            entity.managementCarryAmount = managementCarryAmount;
-            entity.proposerFeeAmount = proposerRewardAmount;
-            entity.proposerCarryAmount = proposerCarryAmount;
-            entity.protocolFeeAmount = flexFundingContract.protocolFee();
+            // entity.managementFeeAmount = managementFeeAmount;
+            // entity.managementCarryAmount = managementCarryAmount;
+            // entity.proposerFeeAmount = proposerRewardAmount;
+            // entity.proposerCarryAmount = proposerCarryAmount;
+            // entity.protocolFeeAmount = flexFundingContract.protocolFee();
             entity.ultimateInvestedFund = entity.totalFund.minus(protocolFee.plus(managementFee).plus(proposerReward));
             let FlexDaoStatisticsEntity = FlexDaoStatistic.load(event.params.daoAddress.toHexString());
             if (!FlexDaoStatisticsEntity) {

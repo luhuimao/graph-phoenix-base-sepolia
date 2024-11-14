@@ -549,6 +549,8 @@ dataSources:
           file: ./abis/FlexInvestmentPoolAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: FlexFundingAdapterContract
+          file: ./abis/FlexFundingAdapterContract.json
       eventHandlers:
         - event: Deposit(address,bytes32,uint256,address)
           handler: handleDeposit
