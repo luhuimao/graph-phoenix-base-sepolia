@@ -1453,9 +1453,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0x5Ec3A0aB6286F2199352AA2dbdB8474faE34EFfA"
+      address: "0xB681e9f9528D41404160806a9b6944459c92c24d"
       abi: ManualVesting
-      startBlock: 16574248
+      startBlock: 18113923
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1468,19 +1468,25 @@ dataSources:
           file: ./abis/ManualVesting.json
         - name: VestingERC721
           file: ./abis/VestingERC721.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128)
           handler: handleCreateVesting
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
+        - event: BatchVesting1(address[],address[],uint256,uint256,uint256)
+          handler: handleBatchVesting1
+        - event: BatchVesting2(address[],uint256,uint256,uint256)
+          handler: handleBatchVesting2
       file: ./src/manual-vesting.ts
   - kind: ethereum
     name: ManualVestingERC721
     network: base-sepolia
     source:
-      address: "0x41B9FA03E3Ec073Dcb1D77A5574B19B8DF719613"
+      address: "0xEeC65c3a5f5741c4AE9f90c8364C74DfbBA523F5"
       abi: ManualVestingERC721
-      startBlock: 17510782
+      startBlock: 18113966
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

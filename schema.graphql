@@ -1643,3 +1643,30 @@ type ManualVestingClaimedActivityEntity @entity{
   txHash: Bytes!
   claimedAmount: BigInt!
 }
+
+type BatchManualVestingEntity @entity{
+  id: ID!
+  txHash: Bytes!
+  name: String!
+  description: String!
+  tokenAddr: Bytes!
+  tokenSymbol: String
+  creator: Bytes!
+  createDateTime: String!
+  createdTime: BigInt!
+  receivers: [String!]
+  startTime: BigInt! # uint256
+  startTimeString:  String!
+  cliffEndTime: BigInt! # uint256
+  cliffEndTimeString: String!
+  endTime: BigInt! # uint256
+  endTimeString: String!
+  interval: BigInt! # uint256
+  totalAmount:  BigInt! # uint256
+  totalAmountFromWei: String!
+  cliffAmount: BigInt! # uint256
+  cliffAmountFromWei: String!
+  blockNumber: BigInt!
+  NFTEnable: Boolean!
+  erc721Address: Bytes!
+}
