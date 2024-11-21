@@ -132,6 +132,17 @@ export function handleBatchVesting1(event: BatchVesting1): void {
                 if (!contains(tem, event.params.investors[i].toHexString()))
                     tem.push(event.params.holders[i].toHexString());
             }
+            let tem2: BigInt[] = [];
+            let tem3: BigInt[] = [];
+            for (var n = event.params.startVestId.toI32(); n <= event.params.endVestId.toI32(); n++) {
+                tem3.push(BigInt.fromI32(n));
+                const vestInfo = vestingContract.vests(BigInt.fromI32(n));
+                if (vestInfo)
+                    tem2.push(vestInfo.getTotal());
+            }
+
+            entity.amounts = tem2;
+            entity.vestIds = tem3;
             entity.receivers = tem;
             entity.save()
         }
@@ -175,6 +186,18 @@ export function handleBatchVesting2(event: BatchVesting2): void {
                 if (!contains(tem, event.params.receivers[j].toHexString()))
                     tem.push(event.params.receivers[j].toHexString());
             }
+
+            let tem2: BigInt[] = [];
+            let tem3: BigInt[] = [];
+            for (var n = event.params.startVestId.toI32(); n <= event.params.endVestId.toI32(); n++) {
+                tem3.push(BigInt.fromI32(n));
+                const vestInfo = vestingContract.vests(BigInt.fromI32(n));
+                if (vestInfo)
+                    tem2.push(vestInfo.getTotal());
+            }
+
+            entity.amounts = tem2;
+            entity.vestIds = tem3;
             entity.receivers = tem;
             entity.save()
         }

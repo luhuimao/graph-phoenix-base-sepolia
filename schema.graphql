@@ -1655,6 +1655,8 @@ type BatchManualVestingEntity @entity{
   createDateTime: String!
   createdTime: BigInt!
   receivers: [String!]
+  amounts: [BigInt!]
+  vestIds: [BigInt!]
   startTime: BigInt! # uint256
   startTimeString:  String!
   cliffEndTime: BigInt! # uint256
