@@ -1656,7 +1656,7 @@ type BatchManualVestingEntity @entity{
   createdTime: BigInt!
   receivers: [String!]
   amounts: [BigInt!]
-  vestIds: [BigInt!]
+  vestIds: [BigInt!]!
   startTime: BigInt! # uint256
   startTimeString:  String!
   cliffEndTime: BigInt! # uint256
@@ -1671,4 +1671,13 @@ type BatchManualVestingEntity @entity{
   blockNumber: BigInt!
   NFTEnable: Boolean!
   erc721Address: Bytes!
+}
+
+type ManualVestInfoEntity @entity{
+  id: ID!
+  batchId: BigInt!
+  account: Bytes!
+  amount: BigInt!
+  token: Bytes!
+  created: Boolean!
 }
