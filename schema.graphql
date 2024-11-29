@@ -1681,4 +1681,5 @@ type ManualVestInfoEntity @entity{
   amount: BigInt!
   token: Bytes!
   created: Boolean!
+  txHash: Bytes!
 }
