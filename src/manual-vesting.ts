@@ -229,6 +229,7 @@ export function handleBatchVesting1(event: BatchVesting1): void {
                 mvi.batchId = event.params.batchId;
                 mvi.created = false;
                 mvi.token = batchVestInfo.getVestInfo().token;
+                mvi.txHash = event.transaction.hash;
                 mvi.save();
             }
         }
@@ -291,6 +292,7 @@ export function handleBatchVesting2(event: BatchVesting2): void {
                 mvi.batchId = event.params.batchId;
                 mvi.created = false;
                 mvi.token = batchVestInfo.getVestInfo().token;
+                mvi.txHash = event.transaction.hash;
                 mvi.save();
             }
         }
