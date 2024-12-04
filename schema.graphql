@@ -1633,7 +1633,8 @@ type ManualVestEntity @entity {
   claimedAmount: BigInt! # uint256
   claimedAmountFromWei: String!
   blockNumber: BigInt! # uint256
-  batchVestId: String
+  batchVestId: String!
+  batchId: BigInt!
 }
 
 type ManualVestingClaimedActivityEntity @entity{
@@ -1682,4 +1683,5 @@ type ManualVestInfoEntity @entity{
   token: Bytes!
   created: Boolean!
   txHash: Bytes!
+  recipient: Bytes!
 }

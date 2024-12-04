@@ -55,6 +55,8 @@ export function handleCreateVesting(event: CreateVesting): void {
     entity.claimedAmount = BigInt.fromI32(0);
     entity.claimedAmountFromWei = "0";
     entity.blockNumber = event.block.number;
+    entity.batchVestId = "";
+    entity.batchId = BigInt.zero();
     entity.save()
 }
 
@@ -96,6 +98,7 @@ export function handleCreateVesting2(event: CreateVesting2): void {
     entity.claimedAmountFromWei = "0";
     entity.blockNumber = event.block.number;
     entity.batchVestId = event.params.batchId.toHexString() + "-" + event.transaction.from.toHexString();
+    entity.batchId = event.params.batchId;
     entity.save();
 
     const batchVestInfo = BatchManualVestingEntity.load(event.params.batchId.toString());
@@ -152,8 +155,20 @@ export function handleNFTTransfer(event: Transfer): void {
         if (entity) {
             entity.recipient = event.params.to;
             entity.save();
+
+            // if (entity.batchVestId != null) {
+            let mvi = ManualVestInfoEntity.load(entity.batchVestId);
+            if (mvi) {
+                mvi.recipient = event.params.to;
+
+                mvi.save();
+            }
+            // }
+
         }
     }
+
+
 }
 
 export function handleBatchVesting1(event: BatchVesting1): void {
@@ -210,13 +225,14 @@ export function handleBatchVesting1(event: BatchVesting1): void {
                 mvi.created = false;
                 mvi.token = batchVestInfo.getVestInfo().token;
                 mvi.txHash = event.transaction.hash;
+                mvi.recipient = event.params.holders[j];
                 mvi.save();
             }
         }
 
         for (var i = 0; i < event.params.investors.length; i++) {
             if (!contains(tem, event.params.investors[i].toHexString()))
-                tem.push(event.params.holders[i].toHexString());
+                tem.push(event.params.investors[i].toHexString());
 
             const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.investors[j]).getAmount();
             tem2.push(amount);
@@ -230,6 +246,7 @@ export function handleBatchVesting1(event: BatchVesting1): void {
                 mvi.created = false;
                 mvi.token = batchVestInfo.getVestInfo().token;
                 mvi.txHash = event.transaction.hash;
+                mvi.recipient = event.params.investors[j];
                 mvi.save();
             }
         }
@@ -293,6 +310,7 @@ export function handleBatchVesting2(event: BatchVesting2): void {
                 mvi.created = false;
                 mvi.token = batchVestInfo.getVestInfo().token;
                 mvi.txHash = event.transaction.hash;
+                mvi.recipient = event.params.receivers[j];
                 mvi.save();
             }
         }

@@ -22,7 +22,7 @@ import {
 } from "../generated/schema"
 
 export function handleCreateVesting(event: CreateVesting): void {
-    log.error("vestId: {}", [event.params.vestId.toString()]);
+    // log.error("vestId: {}", [event.params.vestId.toString()]);
     let entity = CollectiveVestEntity.load(event.params.vestId.toString())
     const colVestingContr = CollectiveVestingAdapterContract.bind(event.address);
     let collectiveFundingProposalEntity = CollectiveInvestmentProposalEntity.load(event.params.proposalId.toHexString())
