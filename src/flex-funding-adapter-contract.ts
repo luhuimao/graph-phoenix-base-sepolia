@@ -211,7 +211,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
     const fundingPoolExtContrAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0xb12a3847d47fefceb164b75823af125f9aa82b76938df0ddf08c04cd314ba37c"));
     const fundingPoolExtContr = FlexInvestmentPoolExtension.bind(fundingPoolExtContrAddress);
 
-    const flexFreeInEscrowFundAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x04c8079f1092349ad870a1fff20752c43a2c16fef40213f90862cf78fa685820"));
+    const flexFreeInEscrowFundAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xeae11da953333a83b6467e2193334fb302549e1a42ad5797082aea1ab6be9120"));
     const flexFreeInEscrowFundAdaptContr = FlexFreeInEscrowFundAdapterContract.bind(flexFreeInEscrowFundAdaptContrAddr);
 
     const fundingPoolAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x2207fd6117465cefcba0abc867150698c0464aa41a293ec29ca01b67a6350c3c"));

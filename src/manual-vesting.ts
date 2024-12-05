@@ -208,46 +208,49 @@ export function handleBatchVesting1(event: BatchVesting1): void {
 
         let tem: string[] = [];
         let tem2: BigInt[] = [];
+        if (event.params.holders.length > 0) {
+            for (var j = 0; j < event.params.holders.length; j++) {
+                if (!contains(tem, event.params.holders[j].toHexString()))
+                    tem.push(event.params.holders[j].toHexString());
 
-        for (var j = 0; j < event.params.holders.length; j++) {
-            if (!contains(tem, event.params.holders[j].toHexString()))
-                tem.push(event.params.holders[j].toHexString());
+                const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.holders[j]).getAmount();
+                tem2.push(amount);
 
-            const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.holders[j]).getAmount();
-            tem2.push(amount);
-
-            let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.holders[j].toHexString());
-            if (!mvi) {
-                let mvi = new ManualVestInfoEntity(event.params.batchId.toHexString() + "-" + event.params.holders[j].toHexString());
-                mvi.account = event.params.holders[j];
-                mvi.amount = amount;
-                mvi.batchId = event.params.batchId;
-                mvi.created = false;
-                mvi.token = batchVestInfo.getVestInfo().token;
-                mvi.txHash = event.transaction.hash;
-                mvi.recipient = event.params.holders[j];
-                mvi.save();
+                let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.holders[j].toHexString());
+                if (!mvi) {
+                    let mvi = new ManualVestInfoEntity(event.params.batchId.toHexString() + "-" + event.params.holders[j].toHexString());
+                    mvi.account = event.params.holders[j];
+                    mvi.amount = amount;
+                    mvi.batchId = event.params.batchId;
+                    mvi.created = false;
+                    mvi.token = batchVestInfo.getVestInfo().token;
+                    mvi.txHash = event.transaction.hash;
+                    mvi.recipient = event.params.holders[j];
+                    mvi.save();
+                }
             }
         }
 
-        for (var i = 0; i < event.params.investors.length; i++) {
-            if (!contains(tem, event.params.investors[i].toHexString()))
-                tem.push(event.params.investors[i].toHexString());
+        if (event.params.investors.length > 0) {
+            for (var i = 0; i < event.params.investors.length; i++) {
+                if (!contains(tem, event.params.investors[i].toHexString()))
+                    tem.push(event.params.investors[i].toHexString());
 
-            const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.investors[j]).getAmount();
-            tem2.push(amount);
+                const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.investors[j]).getAmount();
+                tem2.push(amount);
 
-            let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.investors[j].toHexString());
-            if (!mvi) {
-                let mvi = new ManualVestInfoEntity(event.params.batchId.toHexString() + "-" + event.params.investors[j].toHexString());
-                mvi.account = event.params.investors[j];
-                mvi.amount = amount;
-                mvi.batchId = event.params.batchId;
-                mvi.created = false;
-                mvi.token = batchVestInfo.getVestInfo().token;
-                mvi.txHash = event.transaction.hash;
-                mvi.recipient = event.params.investors[j];
-                mvi.save();
+                let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.investors[j].toHexString());
+                if (!mvi) {
+                    let mvi = new ManualVestInfoEntity(event.params.batchId.toHexString() + "-" + event.params.investors[j].toHexString());
+                    mvi.account = event.params.investors[j];
+                    mvi.amount = amount;
+                    mvi.batchId = event.params.batchId;
+                    mvi.created = false;
+                    mvi.token = batchVestInfo.getVestInfo().token;
+                    mvi.txHash = event.transaction.hash;
+                    mvi.recipient = event.params.investors[j];
+                    mvi.save();
+                }
             }
         }
         let tem3: BigInt[] = [];
@@ -294,24 +297,26 @@ export function handleBatchVesting2(event: BatchVesting2): void {
         let tem: string[] = [];
         let tem2: BigInt[] = [];
 
-        for (var j = 0; j < event.params.receivers.length; j++) {
-            if (!contains(tem, event.params.receivers[j].toHexString()))
-                tem.push(event.params.receivers[j].toHexString());
+        if (event.params.receivers.length > 0) {
+            for (var j = 0; j < event.params.receivers.length; j++) {
+                if (!contains(tem, event.params.receivers[j].toHexString()))
+                    tem.push(event.params.receivers[j].toHexString());
 
-            const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.receivers[j]).getAmount();
-            tem2.push(amount);
+                const amount = vestingContract.eligibleVestUsers(event.params.batchId, event.params.receivers[j]).getAmount();
+                tem2.push(amount);
 
-            let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.receivers[j].toHexString());
-            if (!mvi) {
-                let mvi = new ManualVestInfoEntity(event.params.batchId.toHexString() + "-" + event.params.receivers[j].toHexString());
-                mvi.account = event.params.receivers[j];
-                mvi.amount = amount;
-                mvi.batchId = event.params.batchId;
-                mvi.created = false;
-                mvi.token = batchVestInfo.getVestInfo().token;
-                mvi.txHash = event.transaction.hash;
-                mvi.recipient = event.params.receivers[j];
-                mvi.save();
+                let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.receivers[j].toHexString());
+                if (!mvi) {
+                    let mvi = new ManualVestInfoEntity(event.params.batchId.toHexString() + "-" + event.params.receivers[j].toHexString());
+                    mvi.account = event.params.receivers[j];
+                    mvi.amount = amount;
+                    mvi.batchId = event.params.batchId;
+                    mvi.created = false;
+                    mvi.token = batchVestInfo.getVestInfo().token;
+                    mvi.txHash = event.transaction.hash;
+                    mvi.recipient = event.params.receivers[j];
+                    mvi.save();
+                }
             }
         }
 
