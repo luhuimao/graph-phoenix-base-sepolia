@@ -18,6 +18,7 @@ import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry
 // import { DaoFactory } from "../generated/DaoFactory/DaoFactory";
 import { FlexInvestmentPoolAdapterContract } from "../generated/FlexFundingAdapterContract/FlexInvestmentPoolAdapterContract";
 import { FlexPollingVotingContract } from "../generated/FlexFundingAdapterContract/FlexPollingVotingContract";
+import { FlexFreeInEscrowFundAdapterContract } from "../generated/FlexFundingAdapterContract/FlexFreeInEscrowFundAdapterContract";
 import {
     FlexInvestmentProposal,
     FlexDaoStatistic,
@@ -209,6 +210,13 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddress);
     const fundingPoolExtContrAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0xb12a3847d47fefceb164b75823af125f9aa82b76938df0ddf08c04cd314ba37c"));
     const fundingPoolExtContr = FlexInvestmentPoolExtension.bind(fundingPoolExtContrAddress);
+
+    const flexFreeInEscrowFundAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x04c8079f1092349ad870a1fff20752c43a2c16fef40213f90862cf78fa685820"));
+    const flexFreeInEscrowFundAdaptContr = FlexFreeInEscrowFundAdapterContract.bind(flexFreeInEscrowFundAdaptContrAddr);
+
+    const fundingPoolAdaptContrAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x2207fd6117465cefcba0abc867150698c0464aa41a293ec29ca01b67a6350c3c"));
+    const fundingPoolAdaptContr = FlexInvestmentPoolAdapterContract.bind(fundingPoolAdaptContrAddr);
+
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (entity) {
@@ -331,16 +339,35 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                     Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000baBe")),
                     event.block.number.minus(BigInt.fromI32(1))
                 );
+                const freeInEA = fundingPoolAdaptContr.try_freeInExtraAmount(event.params.daoAddress, event.params.proposalId);
+                const totalInvestedAmount1 = !totalInvestedAmount.reverted ?
+                    totalInvestedAmount.value.minus(
+                        !freeInEA.reverted ?
+                            freeInEA.value :
+                            BigInt.zero()) :
+                    BigInt.zero();
                 for (let j = 0; j < event.params.investors.length; j++) {
-                    tem.push(event.params.investors[j].toHexString())
+                    tem.push(event.params.investors[j].toHexString());
 
+                    const escRel = flexFreeInEscrowFundAdaptContr.try_getEscrowAmount(
+                        event.params.daoAddress,
+                        event.params.proposalId,
+                        event.params.investors[j]
+                    )
                     const myInvestedAmount = fundingPoolExtContr.try_getPriorAmount(
                         event.params.proposalId,
                         event.params.investors[j],
                         event.block.number.minus(BigInt.fromI32(1))
                     );
+                    const myInvestedAmount1 = !myInvestedAmount.reverted ?
+                        myInvestedAmount.value.minus(
+                            !escRel.reverted ?
+                                escRel.value.value1 :
+                                BigInt.zero()
+                        ) :
+                        BigInt.zero();
                     const myShare = (!totalInvestedAmount.reverted && !myInvestedAmount.reverted) ?
-                        myInvestedAmount.value.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount.value) : BigInt.zero();
+                        myInvestedAmount1.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount1) : BigInt.zero();
                     tem1.push(myShare);
                 }
             }
