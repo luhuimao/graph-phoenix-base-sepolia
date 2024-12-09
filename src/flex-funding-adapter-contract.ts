@@ -222,10 +222,6 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
 
-        // let flexFundingContract = FlexFundingAdapterContract.bind(event.address);
-        // let proposalInfo = flexFundingContract.Proposals((event.params.daoAddress),
-        //     event.params.proposalId);
-
         entity.paybackTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
         entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.executeHash = event.transaction.hash;
@@ -242,8 +238,6 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             const managementFeeType = daoContract.getConfiguration(
                 Bytes.fromHexString("0xda34ff95e06cbf2c9c32a559cd8aadd1a10104596417d62c03db2c1258df83d3")
             );
-            // const managementCarryAmount =
-            //     daoContract.getConfiguration(Bytes.fromHexString("0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb"))
 
             const managementFee = managementFeeType == BigInt.fromI32(0)
                 ? (entity.totalFund.times(
@@ -256,13 +250,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             const proposerReward = (entity.totalFund.times(
                 proposerRewardAmount)
             ).div(BigInt.fromI64(10 ** 18));
-            // const proposerCarryAmount = proposalInfo.getProposerRewardInfo().tokenRewardAmount;
 
-            // entity.managementFeeAmount = managementFeeAmount;
-            // entity.managementCarryAmount = managementCarryAmount;
-            // entity.proposerFeeAmount = proposerRewardAmount;
-            // entity.proposerCarryAmount = proposerCarryAmount;
-            // entity.protocolFeeAmount = flexFundingContract.protocolFee();
             entity.ultimateInvestedFund = entity.totalFund.minus(protocolFee.plus(managementFee).plus(proposerReward));
             let FlexDaoStatisticsEntity = FlexDaoStatistic.load(event.params.daoAddress.toHexString());
             if (!FlexDaoStatisticsEntity) {
@@ -278,7 +266,6 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             }
             const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
             if (entity.investors.length > 0) {
-                // FlexDaoStatisticsEntity.members = FlexDaoStatisticsEntity.members.plus(BigInt.fromI32(rel.value.length));
 
                 for (let j = 0; j < entity.investors.length; j++) {
                     const investor = entity.investors[j];
@@ -347,7 +334,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                             BigInt.zero()) :
                     BigInt.zero();
                 for (let j = 0; j < event.params.investors.length; j++) {
-                    tem.push(event.params.investors[j].toHexString());
+
 
                     const escRel = flexFreeInEscrowFundAdaptContr.try_getEscrowAmount(
                         event.params.daoAddress,
@@ -366,6 +353,9 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                                 BigInt.zero()
                         ) :
                         BigInt.zero();
+
+                    if (myInvestedAmount1.gt(BigInt.zero())) tem.push(event.params.investors[j].toHexString());
+
                     const myShare = (!totalInvestedAmount.reverted && !myInvestedAmount.reverted) ?
                         myInvestedAmount1.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount1) : BigInt.zero();
                     tem1.push(myShare);
@@ -378,6 +368,5 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
         }
 
         entity.save();
-
     }
 }

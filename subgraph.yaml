@@ -1432,9 +1432,9 @@ dataSources:
     name: InvestmentReceiptERC721
     network: base-sepolia
     source:
-      address: "0xD359D1021478C0a71Ab6F98D4726DDeB5E084876"
+      address: "0x2f5B67A62eD9baa2e7FE584fA869724848318FC0"
       abi: InvestmentReceiptERC721
-      startBlock: 15729238
+      startBlock: 18970789
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1455,9 +1455,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0x00C1503819479e41B8d3Fc4C6Ec14Bf62Da4b1e0"
+      address: "0xd70c575FCF3d455f943C2501D47982364786f50F"
       abi: ManualVesting
-      startBlock: 18754572
+      startBlock: 18970722
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1488,9 +1488,9 @@ dataSources:
     name: ManualVestingERC721
     network: base-sepolia
     source:
-      address: "0x3152b2F31aE965e9109029Ff4fBf19d9CDBd89d6"
+      address: "0x0EDD0fcc84475B3150f420f41b490383A5f92131"
       abi: ManualVestingERC721
-      startBlock: 18754687
+      startBlock: 18970741
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
