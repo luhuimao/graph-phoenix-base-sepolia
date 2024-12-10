@@ -363,7 +363,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             }
             finalInvestors.investors = tem;
             finalInvestors.shares = tem1;
-
+            entity.investors = tem;
             finalInvestors.save();
         }
 
