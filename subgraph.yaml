@@ -1455,9 +1455,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0xd70c575FCF3d455f943C2501D47982364786f50F"
+      address: "0x204F13d0Cb190dff6f155A9Aa3AED108565f220E"
       abi: ManualVesting
-      startBlock: 18970722
+      startBlock: 19099140
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1488,9 +1488,9 @@ dataSources:
     name: ManualVestingERC721
     network: base-sepolia
     source:
-      address: "0x0EDD0fcc84475B3150f420f41b490383A5f92131"
+      address: "0x61D820850Fa1486165028147998b1E21841119AD"
       abi: ManualVestingERC721
-      startBlock: 18970741
+      startBlock: 19099128
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

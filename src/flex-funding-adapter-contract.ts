@@ -354,11 +354,13 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                         ) :
                         BigInt.zero();
 
-                    if (myInvestedAmount1.gt(BigInt.zero())) tem.push(event.params.investors[j].toHexString());
+                    if (myInvestedAmount1.gt(BigInt.zero())) {
+                        tem.push(event.params.investors[j].toHexString());
 
-                    const myShare = (!totalInvestedAmount.reverted && !myInvestedAmount.reverted) ?
-                        myInvestedAmount1.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount1) : BigInt.zero();
-                    tem1.push(myShare);
+                        const myShare = (!totalInvestedAmount.reverted && !myInvestedAmount.reverted) ?
+                            myInvestedAmount1.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount1) : BigInt.zero();
+                        tem1.push(myShare);
+                    }
                 }
             }
             finalInvestors.investors = tem;
