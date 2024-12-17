@@ -115,18 +115,67 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                     portfolio.investmentProposalId = event.params.proposalId;
                     portfolio.timeStamp = event.block.timestamp;
                     portfolio.investmentCurrency = entity.token;
+                    portfolio.paybackCurrency = entity.paybackToken;
 
                     const bal1 = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, members.value[i]);
                     const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
                     const bal2 = collectiveFundingPoolExt.try_getPriorAmount(
                         members.value[i],
                         raiseTokenAddr,
-                        event.block.number.minus(BigInt.fromI32(1)));
+                        event.block.number.minus(BigInt.fromI32(1))
+                    );
 
-                    const myInvestedAmount = !bal2.reverted ? bal2.value.minus(bal1) : BigInt.zero();
+                    const poolBal = collectiveFundingPoolExt.try_getPriorAmount(
+                        members.value[i],
+                        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000ffff")),
+                        event.block.number.minus(BigInt.fromI32(1))
+                    );
 
-                    portfolio.investedAmount = myInvestedAmount;
-                    portfolio.investedAmountFromWei = portfolio.investedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    let myInvestedAmount = BigInt.zero();
+                    let netInvestedAmount = BigInt.zero();
+                    let myProtocolFeeAmount = BigInt.zero();
+                    let myScoutFeeAmount = BigInt.zero();
+                    let myScoutCarryAmount = BigInt.zero();
+                    let myTotalPaybackTokenAmount = BigInt.zero();
+                    let myNetPaybackTokenAmount = BigInt.zero();
+
+                    const protocolFeeAmount =
+                        entity.totalAmount.times(
+                            entity.protocolFeeAmount).div(
+                                BigInt.fromI64(10 ** 18));
+
+                    const proposerFundReward =
+                        entity.totalAmount.times(
+                            entity.proposerFeeAmount).div(
+                                BigInt.fromI64(10 ** 18));
+
+
+                    if (!bal2.reverted) {
+                        myInvestedAmount = bal2.value.minus(bal1);
+                        if (!poolBal.reverted) {
+                            netInvestedAmount = entity.totalAmount.times(bal2.value).div(poolBal.value);
+                            myProtocolFeeAmount = protocolFeeAmount.times(bal2.value).div(poolBal.value);
+                            myScoutFeeAmount = proposerFundReward.times(bal2.value).div(poolBal.value);
+
+                            myTotalPaybackTokenAmount = entity.paybackAmount.times(bal2.value).div(poolBal.value);
+                            myNetPaybackTokenAmount = myTotalPaybackTokenAmount.minus(myProtocolFeeAmount.plus(myScoutFeeAmount));
+                        }
+                    }
+
+                    myScoutCarryAmount = entity.paybackAmount.times(entity.proposerCarryAmount).div(BigInt.fromI64(10 ** 18));
+
+                    portfolio.totalInvestedAmount = myInvestedAmount;
+                    portfolio.totalInvestedAmountFromWei = portfolio.totalInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    portfolio.netInvestedAmount = netInvestedAmount;
+                    portfolio.netInvestedAmountFromWei = portfolio.netInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    portfolio.governorFeeAmount = BigInt.zero();
+                    portfolio.governorCarryAmount = BigInt.zero();
+                    portfolio.ScoutFeeAmount = myScoutFeeAmount;
+                    portfolio.ScoutCarryAmount = myScoutCarryAmount;
+                    portfolio.protocolFeeAmount = myProtocolFeeAmount;
+                    portfolio.totalPaybackTokenAmount = myTotalPaybackTokenAmount;
+                    portfolio.netPaybackTokenAmount = myNetPaybackTokenAmount;
+
                     portfolio.save();
                 }
 

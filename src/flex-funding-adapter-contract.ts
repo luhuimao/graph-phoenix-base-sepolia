@@ -275,16 +275,60 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                     p.timeStamp = event.block.timestamp;
                     p.investmentProposalId = event.params.proposalId;
                     p.investmentCurrency = entity.tokenAddress;
+                    p.paybackCurrency = entity.paybackTokenAddr;
 
                     const bal1 = fundingPoolExtContr.balanceOf(event.params.proposalId, Address.fromBytes(Bytes.fromHexString(investor)));
-                    const bal2 = fundingPoolExtContr.try_getPriorAmount(event.params.proposalId,
+                    const bal2 = fundingPoolExtContr.try_getPriorAmount(
+                        event.params.proposalId,
                         Address.fromBytes(Bytes.fromHexString(investor)),
-                        event.block.number.minus(BigInt.fromI32(1)));
+                        event.block.number.minus(BigInt.fromI32(1))
+                    );
 
+                    const poolBal = fundingPoolExtContr.try_getPriorAmount(
+                        event.params.proposalId,
+                        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000babe")),
+                        event.block.number.minus(BigInt.fromI32(1))
+                    );
 
-                    const myInvestedAmount = !bal2.reverted ? bal2.value.minus(bal1) : BigInt.zero();
-                    p.investedAmount = myInvestedAmount;
-                    p.investedAmountFromWei = p.investedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    let myInvestedAmount = BigInt.zero();
+                    let myNetInvestedAmount = BigInt.zero();
+                    let myProtocolFeeAmount = BigInt.zero();
+                    let myGovernorFeeAmount = BigInt.zero();
+                    let myProposerReward = BigInt.zero();
+                    let netPaybackTokenAmount = BigInt.zero();
+                    let totalPaybackTokenAmount = BigInt.zero();
+                    let myGovernorCarryAmount = BigInt.zero();
+                    let myScoutCarryAmount = BigInt.zero();
+
+                    const totalGovernorCarryAmount = entity.paybackTokenAmount.times(entity.managementCarryAmount).div(BigInt.fromI32(10 ** 18));
+                    const totalScoutCarryAmount = entity.paybackTokenAmount.times(entity.proposerCarryAmount).div(BigInt.fromI32(10 ** 18));
+                    if (!bal2.reverted) {
+                        myInvestedAmount = bal2.value.minus(bal1);
+                        if (!poolBal.reverted) {
+                            myNetInvestedAmount = entity.ultimateInvestedFund.times(bal2.value).div(poolBal.value);
+                            myProtocolFeeAmount = protocolFee.times(bal2.value).div(poolBal.value);
+                            myGovernorFeeAmount = managementFee.times(bal2.value).div(poolBal.value);
+                            myProposerReward = proposerReward.times(bal2.value).div(poolBal.value);
+                            myGovernorCarryAmount = totalGovernorCarryAmount.times(bal2.value).div(poolBal.value);
+                            myScoutCarryAmount = totalScoutCarryAmount.times(bal2.value).div(poolBal.value);
+
+                            totalPaybackTokenAmount = entity.paybackTokenAmount.times(bal2.value).div(poolBal.value);
+                            netPaybackTokenAmount = totalPaybackTokenAmount.minus(myGovernorCarryAmount.plus(myScoutCarryAmount));
+                        }
+                    }
+
+                    p.totalInvestedAmount = myInvestedAmount;
+                    p.totalInvestedAmountFromWei = p.totalInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    p.netInvestedAmount = myNetInvestedAmount;
+                    p.netInvestedAmountFromWei = p.netInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    p.protocolFeeAmount = myProtocolFeeAmount;
+                    p.governorCarryAmount = myGovernorCarryAmount;
+                    p.governorFeeAmount = myGovernorFeeAmount;
+                    p.ScoutCarryAmount = myScoutCarryAmount;
+                    p.ScoutFeeAmount = myProposerReward;
+                    p.netPaybackTokenAmount = netPaybackTokenAmount;
+                    p.totalPaybackTokenAmount = totalPaybackTokenAmount;
+
                     p.save();
                 }
 

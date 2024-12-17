@@ -518,11 +518,21 @@ type FlexInvestorPortfoliosEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   account : Bytes!
-  investedAmount: BigInt!
-  investedAmountFromWei: String
+  totalInvestedAmount: BigInt!
+  totalInvestedAmountFromWei: String
+  netInvestedAmount: BigInt!
+  netInvestedAmountFromWei: String
+  governorFeeAmount: BigInt!
+  ScoutFeeAmount: BigInt!
+  protocolFeeAmount: BigInt!
+  totalPaybackTokenAmount: BigInt!
+  netPaybackTokenAmount: BigInt!
+  governorCarryAmount: BigInt!
+  ScoutCarryAmount: BigInt!
   investmentProposalId: Bytes!
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
+  paybackCurrency: Bytes!
 }
 
 type FlexSetRiceReceiverProposalEntity @entity{
@@ -1049,11 +1059,21 @@ type VintageInvestorPortfoliosEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   account : Bytes!
-  investedAmount: BigInt!
-  investedAmountFromWei: String
+  totalInvestedAmount: BigInt!
+  totalInvestedAmountFromWei: String
+  netInvestedAmount: BigInt!
+  netInvestedAmountFromWei: String
+  governorFeeAmount: BigInt!
+  ScoutFeeAmount: BigInt!
+  protocolFeeAmount: BigInt!
+  totalPaybackTokenAmount: BigInt!
+  netPaybackTokenAmount: BigInt!
+  governorCarryAmount: BigInt!
+  ScoutCarryAmount: BigInt!
   investmentProposalId: Bytes!
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
+  paybackCurrency: Bytes!
 }
 
 type VintageSetRiceReceiverProposalEntity @entity{
@@ -1553,11 +1573,21 @@ type CollectiveInvestorPortfoliosEntity @entity{
   id: ID!
   daoAddr: Bytes! # address
   account : Bytes!
-  investedAmount: BigInt!
-  investedAmountFromWei: String
+  totalInvestedAmount: BigInt!
+  totalInvestedAmountFromWei: String
+  netInvestedAmount: BigInt!
+  netInvestedAmountFromWei: String
+  governorFeeAmount: BigInt!
+  ScoutFeeAmount: BigInt!
+  protocolFeeAmount: BigInt!
+  totalPaybackTokenAmount: BigInt!
+  netPaybackTokenAmount: BigInt!
+  governorCarryAmount: BigInt!
+  ScoutCarryAmount: BigInt!
   investmentProposalId: Bytes!
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
+  paybackCurrency: Bytes!
 }
 
 type CollectiveSetRiceReceiverProposalEntity @entity{

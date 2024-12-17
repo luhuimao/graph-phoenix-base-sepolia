@@ -30,7 +30,7 @@ import {
     VintageInvestorPortfoliosEntity,
     InvestmentProposalInvestorEntity
 } from "../generated/schema"
-import { bigInt, BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts"
+import { bigInt, BigInt, Bytes, Address, log, Entity } from "@graphprotocol/graph-ts"
 
 export function handleProposalCreated(event: ProposalCreatedEvent): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
@@ -134,6 +134,12 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
         proposalEntity.executeHash = event.transaction.hash;
         proposalEntity.save();
 
+        const totalInvestedAmount = fundingPoolExtContr.try_getPriorAmount(
+            Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
+            Address.fromBytes(proposalEntity.investmentToken),
+            event.block.number.minus(BigInt.fromI32(1))
+        );
+
         if (proposalEntity.state == BigInt.fromI32(3)) {
             let VintageDaoStatisticsEntity = VintageDaoStatistic.load(event.params.daoAddr.toHexString());
             if (!VintageDaoStatisticsEntity) {
@@ -164,11 +170,6 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
             let tem1: BigInt[] = [];
 
             if (event.params.investors.length > 0) {
-                const totalInvestedAmount = fundingPoolExtContr.try_getPriorAmount(
-                    Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
-                    Address.fromBytes(proposalEntity.investmentToken),
-                    event.block.number.minus(BigInt.fromI32(1))
-                );
                 for (let j = 0; j < event.params.investors.length; j++) {
                     tem.push(event.params.investors[j].toHexString());
 
@@ -281,9 +282,34 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
 
                     VintageDaoStatisticsEntity.save();
                 }
+
+                const poolBal = fundingPoolExtContr.try_getPriorAmount(
+                    Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
+                    Address.fromBytes(proposalEntity.investmentToken),
+                    event.block.number.minus(BigInt.fromI32(1))
+                );
+
+                const totalProtocolFeeAmount = proposalEntity.totalAmount.times(proposalEntity.protocolFeeAmount).div(BigInt.fromI32(10 ** 18));
+                const totalGovernorFeeAmount = proposalEntity.totalAmount.times(proposalEntity.managementFeeAmount).div(BigInt.fromI32(10 ** 18));
+                const totalProposerFeeAmount = proposalEntity.totalAmount.times(proposalEntity.proposerFeeAmount).div(BigInt.fromI32(10 ** 18));
+                const totalGovernorCarryAmount = proposalEntity.paybackTokenAmount.times(proposalEntity.managementCarryAmount).div(BigInt.fromI32(10 ** 18));
+                const totalScoutCarryAmount = proposalEntity.paybackTokenAmount.times(proposalEntity.proposerCarryAmount).div(BigInt.fromI32(10 ** 18));
+
                 for (var i = 0; i < investors.value.length; i++) {
                     const bal1 = fundingPoolExtContr.try_getPriorAmount(investors.value[i], Address.fromBytes(proposalEntity.investmentToken), proposalInfo.getExecuteBlockNum().minus(BigInt.fromI32(1)));
                     const bal2 = fundingPoolAdapt.balanceOf(event.params.daoAddr, investors.value[i]);
+
+
+                    let myTotalInvestedAmount = BigInt.zero();
+                    let netInvestedAmount = BigInt.zero();
+                    let totalPaybackTokenAmount = BigInt.zero();
+                    let netPaybackTokenAmount = BigInt.zero();
+                    let protocolFeeAmount = BigInt.zero();
+                    let governorCarryAmount = BigInt.zero();
+                    let governorFeeAmount = BigInt.zero();
+                    let ScoutCarryAmount = BigInt.zero();
+                    let ScoutFeeAmount = BigInt.zero();
+
                     if (!bal1.reverted) {
                         // log.error("prior value1: {}", [bal1.value.toString()]);
                         // log.error("prior value2: {}", [bal2.toString()]);
@@ -304,17 +330,45 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                         }
                         investorInvestmentEntity.investedAmount = investorInvestmentEntity.investedAmount.plus(investedAmount);
                         investorInvestmentEntity.save();
-                    }
 
+                        myTotalInvestedAmount = investedAmount;
+                        if (!poolBal.reverted) {
+                            netInvestedAmount = proposalEntity.investmentAmount.times(bal1.value).div(poolBal.value);
+                            protocolFeeAmount = totalProtocolFeeAmount.times(bal1.value).div(poolBal.value);
+                            governorFeeAmount = totalGovernorFeeAmount.times(bal1.value).div(poolBal.value);
+                            ScoutFeeAmount = totalProposerFeeAmount.times(bal1.value).div(poolBal.value);
+
+                            totalPaybackTokenAmount = proposalEntity.paybackTokenAmount.times(bal1.value).div(poolBal.value);
+                            governorCarryAmount = totalGovernorCarryAmount.times(bal1.value).div(poolBal.value);
+                            ScoutCarryAmount = totalScoutCarryAmount.times(bal1.value).div(poolBal.value);
+                            netPaybackTokenAmount = totalPaybackTokenAmount.minus(governorCarryAmount.plus(ScoutCarryAmount));
+                        }
+                    }
 
                     let p = new VintageInvestorPortfoliosEntity(event.params.proposalID.toHexString() + investors.value[i].toHexString());
                     p.account = investors.value[i];
                     p.daoAddr = event.params.daoAddr;
                     p.timeStamp = event.block.timestamp;
                     p.investmentCurrency = proposalEntity.investmentToken;
+                    p.paybackCurrency = proposalEntity.paybackToken;
                     p.investmentProposalId = event.params.proposalID;
-                    p.investedAmount = !bal1.reverted ? bal1.value.minus(bal2) : BigInt.zero();
-                    p.investedAmountFromWei = p.investedAmount.div(BigInt.fromI32(10 ** 18)).toString();
+
+                    p.totalInvestedAmount = myTotalInvestedAmount;
+                    p.totalInvestedAmountFromWei = p.totalInvestedAmount.div(BigInt.fromI32(10 ** 18)).toString();
+
+                    p.netInvestedAmount = netInvestedAmount;
+                    p.netInvestedAmountFromWei = p.netInvestedAmount.div(BigInt.fromI32(10 ** 18)).toString();
+
+                    p.totalPaybackTokenAmount = totalPaybackTokenAmount;
+                    p.netPaybackTokenAmount = netPaybackTokenAmount;
+
+                    p.protocolFeeAmount = protocolFeeAmount;
+
+                    p.governorCarryAmount = governorCarryAmount;
+                    p.governorFeeAmount = governorFeeAmount
+
+                    p.ScoutCarryAmount = ScoutCarryAmount;
+                    p.ScoutFeeAmount = ScoutFeeAmount
 
                     p.save();
                 }
