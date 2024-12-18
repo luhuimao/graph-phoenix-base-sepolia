@@ -126,8 +126,8 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                     );
 
                     const poolBal = collectiveFundingPoolExt.try_getPriorAmount(
-                        members.value[i],
-                        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000ffff")),
+                        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
+                        raiseTokenAddr,
                         event.block.number.minus(BigInt.fromI32(1))
                     );
 
@@ -149,20 +149,20 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                             entity.proposerFeeAmount).div(
                                 BigInt.fromI64(10 ** 18));
 
+                    const totalProposerCarryAmount = entity.paybackAmount.times(
+                        entity.proposerCarryAmount).div(BigInt.fromI64(10 ** 18));
 
                     if (!bal2.reverted) {
                         myInvestedAmount = bal2.value.minus(bal1);
-                        if (!poolBal.reverted) {
-                            netInvestedAmount = entity.totalAmount.times(bal2.value).div(poolBal.value);
+                        if (!poolBal.reverted && poolBal.value.gt(BigInt.zero())) {
+                            netInvestedAmount = entity.investmentAmount.times(bal2.value).div(poolBal.value);
                             myProtocolFeeAmount = protocolFeeAmount.times(bal2.value).div(poolBal.value);
                             myScoutFeeAmount = proposerFundReward.times(bal2.value).div(poolBal.value);
-
                             myTotalPaybackTokenAmount = entity.paybackAmount.times(bal2.value).div(poolBal.value);
-                            myNetPaybackTokenAmount = myTotalPaybackTokenAmount.minus(myProtocolFeeAmount.plus(myScoutFeeAmount));
+                            myScoutCarryAmount = totalProposerCarryAmount.times(bal2.value).div(poolBal.value);
                         }
                     }
-
-                    myScoutCarryAmount = entity.paybackAmount.times(entity.proposerCarryAmount).div(BigInt.fromI64(10 ** 18));
+                    myNetPaybackTokenAmount = myTotalPaybackTokenAmount.minus(myScoutCarryAmount);
 
                     portfolio.totalInvestedAmount = myInvestedAmount;
                     portfolio.totalInvestedAmountFromWei = portfolio.totalInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
@@ -178,9 +178,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
 
                     portfolio.save();
                 }
-
             }
-
 
             const finalInvestors = new InvestmentProposalInvestorEntity(event.params.proposalId.toHexString());
             finalInvestors.daoAddr = event.params.daoAddr;
@@ -200,7 +198,8 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                     const myInvestedAmount = collectiveFundingPoolExt.try_getPriorAmount(
                         event.params.investors[j],
                         raiseTokenAddr,
-                        event.block.number.minus(BigInt.fromI32(1)));
+                        event.block.number.minus(BigInt.fromI32(1))
+                    );
                     const myShare = (!totalInvestedAmount.reverted && !myInvestedAmount.reverted) ?
                         myInvestedAmount.value.times(BigInt.fromI64(10 ** 18)).div(totalInvestedAmount.value) : BigInt.zero();
                     tem1.push(myShare);

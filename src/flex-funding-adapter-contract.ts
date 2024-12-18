@@ -228,6 +228,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
 
         if (entity.state == BigInt.fromI32(3)) {
             entity.totalFund = proposalInfo.getInvestmentInfo().finalRaisedAmount;
+            
             const protocolFee =
                 (entity.totalFund.times(flexFundingContract.protocolFee())).div(
                     BigInt.fromI64(10 ** 18));
@@ -265,7 +266,21 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 FlexDaoStatisticsEntity.daoAddr = event.params.daoAddress;
             }
             const rel = fundingPoolExtContr.try_getInvestorsByProposalId(event.params.proposalId);
+
             if (entity.investors.length > 0) {
+                const poolBal = fundingPoolExtContr.try_getPriorAmount(
+                    event.params.proposalId,
+                    Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000babe")),
+                    event.block.number.minus(BigInt.fromI32(1))
+                );
+
+                const freeInEA = fundingPoolAdaptContr.try_freeInExtraAmount(event.params.daoAddress, event.params.proposalId);
+                const totalInvestedAmount = !poolBal.reverted ?
+                    poolBal.value.minus(
+                        !freeInEA.reverted ?
+                            freeInEA.value :
+                            BigInt.zero()) :
+                    BigInt.zero();
 
                 for (let j = 0; j < entity.investors.length; j++) {
                     const investor = entity.investors[j];
@@ -284,10 +299,10 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                         event.block.number.minus(BigInt.fromI32(1))
                     );
 
-                    const poolBal = fundingPoolExtContr.try_getPriorAmount(
+                    const escRel = flexFreeInEscrowFundAdaptContr.try_getEscrowAmount(
+                        event.params.daoAddress,
                         event.params.proposalId,
-                        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000babe")),
-                        event.block.number.minus(BigInt.fromI32(1))
+                        Address.fromBytes(Bytes.fromHexString(investor))
                     );
 
                     let myInvestedAmount = BigInt.zero();
@@ -300,23 +315,25 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                     let myGovernorCarryAmount = BigInt.zero();
                     let myScoutCarryAmount = BigInt.zero();
 
-                    const totalGovernorCarryAmount = entity.paybackTokenAmount.times(entity.managementCarryAmount).div(BigInt.fromI32(10 ** 18));
-                    const totalScoutCarryAmount = entity.paybackTokenAmount.times(entity.proposerCarryAmount).div(BigInt.fromI32(10 ** 18));
+                    const totalGovernorCarryAmount = entity.paybackTokenAmount.times(entity.managementCarryAmount).div(BigInt.fromI64(10 ** 18));
+                    const totalScoutCarryAmount = entity.paybackTokenAmount.times(entity.proposerCarryAmount).div(BigInt.fromI64(10 ** 18));
                     if (!bal2.reverted) {
-                        myInvestedAmount = bal2.value.minus(bal1);
-                        if (!poolBal.reverted) {
-                            myNetInvestedAmount = entity.ultimateInvestedFund.times(bal2.value).div(poolBal.value);
-                            myProtocolFeeAmount = protocolFee.times(bal2.value).div(poolBal.value);
-                            myGovernorFeeAmount = managementFee.times(bal2.value).div(poolBal.value);
-                            myProposerReward = proposerReward.times(bal2.value).div(poolBal.value);
-                            myGovernorCarryAmount = totalGovernorCarryAmount.times(bal2.value).div(poolBal.value);
-                            myScoutCarryAmount = totalScoutCarryAmount.times(bal2.value).div(poolBal.value);
-
-                            totalPaybackTokenAmount = entity.paybackTokenAmount.times(bal2.value).div(poolBal.value);
-                            netPaybackTokenAmount = totalPaybackTokenAmount.minus(myGovernorCarryAmount.plus(myScoutCarryAmount));
+                        myInvestedAmount = bal2.value.minus(
+                            !escRel.reverted ?
+                                escRel.value.value1 :
+                                BigInt.zero()
+                        );
+                        if (!poolBal.reverted && totalInvestedAmount.gt(BigInt.zero())) {
+                            myNetInvestedAmount = entity.ultimateInvestedFund.times(myInvestedAmount).div(totalInvestedAmount);
+                            myProtocolFeeAmount = protocolFee.times(myInvestedAmount).div(totalInvestedAmount);
+                            myGovernorFeeAmount = managementFee.times(myInvestedAmount).div(totalInvestedAmount);
+                            myProposerReward = proposerReward.times(myInvestedAmount).div(totalInvestedAmount);
+                            myGovernorCarryAmount = totalGovernorCarryAmount.times(myInvestedAmount).div(totalInvestedAmount);
+                            myScoutCarryAmount = totalScoutCarryAmount.times(myInvestedAmount).div(totalInvestedAmount);
+                            totalPaybackTokenAmount = entity.paybackTokenAmount.times(myInvestedAmount).div(totalInvestedAmount);
                         }
                     }
-
+                    netPaybackTokenAmount = totalPaybackTokenAmount.minus(myGovernorCarryAmount.plus(myScoutCarryAmount));
                     p.totalInvestedAmount = myInvestedAmount;
                     p.totalInvestedAmountFromWei = p.totalInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
                     p.netInvestedAmount = myNetInvestedAmount;
