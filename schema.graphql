@@ -533,6 +533,7 @@ type FlexInvestorPortfoliosEntity @entity{
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
   paybackCurrency: Bytes!
+  price: BigInt!
 }
 
 type FlexSetRiceReceiverProposalEntity @entity{
@@ -1074,6 +1075,7 @@ type VintageInvestorPortfoliosEntity @entity{
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
   paybackCurrency: Bytes!
+  price: BigInt!
 }
 
 type VintageSetRiceReceiverProposalEntity @entity{
@@ -1588,6 +1590,7 @@ type CollectiveInvestorPortfoliosEntity @entity{
   timeStamp: BigInt!
   investmentCurrency: Bytes! # address
   paybackCurrency: Bytes!
+  price: BigInt!
 }
 
 type CollectiveSetRiceReceiverProposalEntity @entity{

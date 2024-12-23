@@ -773,11 +773,7 @@ export function handleGovernorMembershipProposalProcessed(event: GovernorMembers
             flexDaoStewardMembershipEntity.save();
         }
 
-        if (entity) {
-            entity.state = proposalState;
-            entity.executeHash = event.transaction.hash;
-            entity.save();
-        }
+
 
         let voteInfoEntity = FlexProposalVoteInfo.load(event.params.proposalId.toHexString());
 
@@ -787,6 +783,12 @@ export function handleGovernorMembershipProposalProcessed(event: GovernorMembers
             voteInfoEntity.totalWeights = event.params.allVotingWeight;
             voteInfoEntity.save();
         }
+    }
+
+    if (entity) {
+        entity.state = proposalState;
+        entity.executeHash = event.transaction.hash;
+        entity.save();
     }
 }
 

@@ -170,8 +170,8 @@ export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFaile
     entity.finalRaised = poolAmount;
     entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
     entity.escrowBlockNum = event.block.number;
-    let rel1 = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
-    entity.myAdvanceDepositAmount = rel1.reverted ? BigInt.fromI32(0) : rel1.value;
+    // let rel1 = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
+    entity.myAdvanceDepositAmount = event.params.amount;
     entity.myRefundable = event.params.amount;
     entity.save();
 }

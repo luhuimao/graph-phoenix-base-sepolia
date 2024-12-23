@@ -116,7 +116,8 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                     portfolio.timeStamp = event.block.timestamp;
                     portfolio.investmentCurrency = entity.token;
                     portfolio.paybackCurrency = entity.paybackToken;
-
+                    portfolio.price = entity.price;
+                    
                     const bal1 = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, members.value[i]);
                     const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
                     const bal2 = collectiveFundingPoolExt.try_getPriorAmount(

@@ -228,7 +228,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
 
         if (entity.state == BigInt.fromI32(3)) {
             entity.totalFund = proposalInfo.getInvestmentInfo().finalRaisedAmount;
-            
+
             const protocolFee =
                 (entity.totalFund.times(flexFundingContract.protocolFee())).div(
                     BigInt.fromI64(10 ** 18));
@@ -291,7 +291,7 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                     p.investmentProposalId = event.params.proposalId;
                     p.investmentCurrency = entity.tokenAddress;
                     p.paybackCurrency = entity.paybackTokenAddr;
-
+                    p.price = entity.price;
                     const bal1 = fundingPoolExtContr.balanceOf(event.params.proposalId, Address.fromBytes(Bytes.fromHexString(investor)));
                     const bal2 = fundingPoolExtContr.try_getPriorAmount(
                         event.params.proposalId,

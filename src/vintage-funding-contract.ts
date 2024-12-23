@@ -354,7 +354,7 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                     p.investmentCurrency = proposalEntity.investmentToken;
                     p.paybackCurrency = proposalEntity.paybackToken;
                     p.investmentProposalId = event.params.proposalID;
-
+                    p.price = proposalEntity.price;
                     p.totalInvestedAmount = myTotalInvestedAmount;
                     p.totalInvestedAmountFromWei = p.totalInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
 
