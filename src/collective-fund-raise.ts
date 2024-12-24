@@ -17,6 +17,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     if (!rel.reverted) {
+        entity.fundRaiseId = !contract.try_fundRaisingId(event.params.daoAddr).reverted ? contract.try_fundRaisingId(event.params.daoAddr).value : BigInt.zero();
         entity.acceptTokenAddr = rel.value.getFundInfo().tokenAddress;
         entity.fundRaiseTarget = rel.value.getFundInfo().miniTarget;
         entity.fundRaiseTargetFromWei = entity.fundRaiseTarget.div(BigInt.fromI32(10 ** 18)).toString();

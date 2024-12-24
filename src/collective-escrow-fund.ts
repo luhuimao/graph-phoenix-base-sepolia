@@ -20,18 +20,18 @@ import {
     CollectiveEscrowFundAdapterContract
 } from "../generated/CollectiveEscrowFundAdapterContract/CollectiveEscrowFundAdapterContract";
 import { ColletiveFundingPoolAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundingPoolAdapterContract";
-import { ColletiveFundRaiseProposalAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundRaiseProposalAdapterContract";
+// import { ColletiveFundRaiseProposalAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundRaiseProposalAdapterContract";
 import { CollectiveInvestmentPoolExtension } from "../generated/CollectiveEscrowFundAdapterContract/CollectiveInvestmentPoolExtension";
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
-    CollectiveEscrowFundEntity,
+    // CollectiveEscrowFundEntity,
     CollectiveEscrowLiquidationFundEntity,
     CollectiveEscrowFailedFundRaisingFundEntity,
     CollectiveEscrowOverRaisedFundEntity,
-    CollectiveFundRaiseProposalEntity,
+    // CollectiveFundRaiseProposalEntity,
     // VintageFundRoundStatistic,
-    VintageInvestorInvestmentEntity,
-    VintageInvestorRedemptionsInFundRoundEntity
+    // VintageInvestorInvestmentEntity,
+    // VintageInvestorRedemptionsInFundRoundEntity
 } from "../generated/schema"
 
 
