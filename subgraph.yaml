@@ -300,9 +300,9 @@ dataSources:
     name: VintageGovernorVotingAssetAllocationProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x9cdD6C8493255629A17A42917742b84510f00087"
+      address: "0xC15730Bcbd1622622983BBA79712833049D1C630"
       abi: VintageGovernorVotingAssetAllocationProposalAdapterContract
-      startBlock: 12413753
+      startBlock: 19631949
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

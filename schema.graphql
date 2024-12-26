@@ -1194,7 +1194,7 @@ type CollectiveFundRaiseProposalEntity @entity{
   investorCapEnable: Boolean!
   investorCapAmount: BigInt!
   failedReason: String
-  fundRaisingId: BigInt!
+  fundRaisingId: BigInt
   collectiveDaoEntity: CollectiveDaoEntity
 } 
 

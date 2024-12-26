@@ -389,6 +389,7 @@ export function handleStartVote(event: handleStartVoteEvent): void {
                 event.params.proposalID);
 
         entity.state = BigInt.fromI32(vintageInvestmentProposalInfo.getStatus());
+        if (entity.state == BigInt.fromI32(4)) entity.executeHash = event.transaction.hash;
         entity.proposalStartVotingTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalStartVotingTimestamp;
         entity.proposalStopVotingTimestamp = vintageInvestmentProposalInfo.getProposalTimeInfo().proposalStopVotingTimestamp;
         entity.save();

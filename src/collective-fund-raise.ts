@@ -12,12 +12,13 @@ import {
 } from "../generated/schema"
 
 export function handleProposalCreated(event: ProposalCreated): void {
-    let entity = new CollectiveFundRaiseProposalEntity(event.params.proposalId.toHexString());
     const contract = ColletiveFundRaiseProposalAdapterContract.bind(event.address);
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
     const rel = contract.try_proposals(event.params.daoAddr, event.params.proposalId);
     if (!rel.reverted) {
-        entity.fundRaiseId = !contract.try_fundRaisingId(event.params.daoAddr).reverted ? contract.try_fundRaisingId(event.params.daoAddr).value : BigInt.zero();
+        let entity = new CollectiveFundRaiseProposalEntity(event.params.proposalId.toHexString());
+        entity.fundRaiseId = BigInt.zero();
+        // entity.fundRaiseId = !contract.try_fundRaisingId(event.params.daoAddr).reverted ? contract.try_fundRaisingId(event.params.daoAddr).value : BigInt.zero();
         entity.acceptTokenAddr = rel.value.getFundInfo().tokenAddress;
         entity.fundRaiseTarget = rel.value.getFundInfo().miniTarget;
         entity.fundRaiseTargetFromWei = entity.fundRaiseTarget.div(BigInt.fromI32(10 ** 18)).toString();
@@ -67,8 +68,13 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
 
 export function handlerProposalProcessed(event: proposalExecuted): void {
+    const contract = ColletiveFundRaiseProposalAdapterContract.bind(event.address);
+
     let entity = CollectiveFundRaiseProposalEntity.load(event.params.proposalId.toHexString());
     if (entity) {
+        const re = contract.try_fundRaisingId(event.params.daoAddr);
+        entity.fundRaiseId = !re.reverted ? re.value : BigInt.zero();
+
         entity.state = BigInt.fromI32(event.params.state);
         entity.executeHash = event.transaction.hash;
         if (event.params.voteResult == BigInt.fromI32(1) || event.params.voteResult == BigInt.fromI32(3))
