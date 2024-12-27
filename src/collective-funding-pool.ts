@@ -150,16 +150,16 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         successedFundCounter.counter = BigInt.fromI32(0);
     }
     let fundRaisedAmount = fundingPoolAdapt.fundRaisedByProposalId(event.params.daoAddress, fundRaiseProposalId);
-
+    const FUND_RAISING_MAX = daoContract.getConfiguration(Bytes.fromHexString("0x7e07fb4530796d057ca1d76d83f47aa8629dbb7e942ac28f30ad6f5e9e8d4189"));
     if (fundRaiseProposalEntity) {
         // fundRaisedState == 2 ? fundRaiseProposalEntity.state = BigInt.fromI32(3) : fundRaiseProposalEntity.state = BigInt.fromI32(4);
         if (fundRaisedState == 2) {
             fundRaiseProposalEntity.state = BigInt.fromI32(3);
         } else {
             fundRaiseProposalEntity.state = BigInt.fromI32(4);
-            fundRaiseProposalEntity.failedReason="FundRaisingFailed";
+            fundRaiseProposalEntity.failedReason = "FundRaisingFailed";
         }
-        fundRaiseProposalEntity.totalFund = fundRaisedAmount;
+        fundRaiseProposalEntity.totalFund = fundRaisedAmount > FUND_RAISING_MAX ? FUND_RAISING_MAX : fundRaisedAmount;
         fundRaiseProposalEntity.totalFundFromWei = fundRaisedAmount.div(BigInt.fromI64(10 ** 18)).toString();
         fundRaiseProposalEntity.save();
     }
