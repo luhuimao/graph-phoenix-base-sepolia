@@ -69,7 +69,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         userVestInfo.vestingInterval = vintageFundingProposalEntity ? vintageFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
         userVestInfo.vestingEndTime = vintageFundingProposalEntity ? vintageFundingProposalEntity.vetingEndTime : BigInt.fromI32(0);
         userVestInfo.totalAmount = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackTokenAmount : BigInt.fromI32(0);
-        userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
+        userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
         userVestInfo.tokenAddress = vintageFundingProposalEntity ? vintageFundingProposalEntity.paybackToken : Bytes.empty();
     }
 

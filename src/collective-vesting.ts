@@ -71,7 +71,7 @@ export function handleCreateVesting(event: CreateVesting): void {
         userVestInfo.vestingInterval = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
         userVestInfo.vestingEndTime = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
         userVestInfo.totalAmount = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.paybackAmount : BigInt.fromI32(0);
-        userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI32(10 ** 18)).toString();
+        userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
         userVestInfo.tokenAddress = event.params.token;
     }
 

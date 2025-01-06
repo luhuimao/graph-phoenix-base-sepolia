@@ -21,13 +21,13 @@ export function handleProposalCreated(event: ProposalCreated): void {
         // entity.fundRaiseId = !contract.try_fundRaisingId(event.params.daoAddr).reverted ? contract.try_fundRaisingId(event.params.daoAddr).value : BigInt.zero();
         entity.acceptTokenAddr = rel.value.getFundInfo().tokenAddress;
         entity.fundRaiseTarget = rel.value.getFundInfo().miniTarget;
-        entity.fundRaiseTargetFromWei = entity.fundRaiseTarget.div(BigInt.fromI32(10 ** 18)).toString();
+        entity.fundRaiseTargetFromWei = entity.fundRaiseTarget.div(BigInt.fromI64(10 ** 18)).toString();
         entity.fundRaiseMaxAmount = rel.value.getFundInfo().maxCap;
-        entity.fundRaiseMaxAmountFromWei = entity.fundRaiseMaxAmount.div(BigInt.fromI32(10 ** 18)).toString();
+        entity.fundRaiseMaxAmountFromWei = entity.fundRaiseMaxAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.lpMinDepositAmount = rel.value.getFundInfo().miniDeposit;
-        entity.lpMinDepositAmountFromWei = entity.lpMinDepositAmount.div(BigInt.fromI32(10 ** 18)).toString();
+        entity.lpMinDepositAmountFromWei = entity.lpMinDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.lpMaxDepositAmount = rel.value.getFundInfo().maxDeposit;
-        entity.lpMaxDepositAmountFromWei = entity.lpMaxDepositAmount.div(BigInt.fromI32(10 ** 18)).toString();
+        entity.lpMaxDepositAmountFromWei = entity.lpMaxDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.fundRaiseStartTime = rel.value.getTimeInfo().startTime;
         entity.fundRaiseEndTime = rel.value.getTimeInfo().endTime;
         entity.priorityDepositEnable = rel.value.getPriorityDepositor().enable;

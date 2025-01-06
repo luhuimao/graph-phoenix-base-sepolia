@@ -47,7 +47,8 @@ export function handleMinted(event: Minted): void {
             for (let j = 0; j < holderentity.holders.length; j++) {
                 tem1.push(holderentity.holders[j])
             }
-            tem1.push(event.params.minter.toHexString());
+            if (!contains(tem1, event.params.minter.toHexString()))
+                tem1.push(event.params.minter.toHexString());
         }
     }
     holderentity.holders = tem1;
@@ -82,7 +83,8 @@ export function handleMinted(event: Minted): void {
             for (let j = 0; j < minterEntity.minters.length; j++) {
                 tem3.push(minterEntity.minters[j])
             }
-            tem3.push(event.params.minter.toHexString());
+            if (!contains(tem3, event.params.minter.toHexString()))
+                tem3.push(event.params.minter.toHexString());
         }
     }
 
@@ -125,7 +127,13 @@ export function handleTransfer(event: Transfer): void {
         }
 
         const index = tem3.indexOf(event.params.from.toHexString());
-        if (index !== -1) tem3[index] = event.params.to.toHexString();
+        const index2 = tem3.indexOf(event.params.to.toHexString());
+        if (index != -1) {
+            if (index2 == -1)
+                tem3[index] = event.params.to.toHexString();
+            else
+                tem3.splice(index, 1);
+        }
         holderentity.holders = tem3;
 
         holderentity.save();

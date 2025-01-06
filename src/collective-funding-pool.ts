@@ -159,8 +159,8 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             fundRaiseProposalEntity.state = BigInt.fromI32(4);
             fundRaiseProposalEntity.failedReason = "FundRaisingFailed";
         }
-        fundRaiseProposalEntity.totalFund = fundRaisedAmount > FUND_RAISING_MAX ? FUND_RAISING_MAX : fundRaisedAmount;
-        fundRaiseProposalEntity.totalFundFromWei = fundRaisedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        fundRaiseProposalEntity.totalFund = fundRaisedAmount.gt(fundRaiseProposalEntity.fundRaiseMaxAmount) ? fundRaiseProposalEntity.fundRaiseMaxAmount : fundRaisedAmount;
+        fundRaiseProposalEntity.totalFundFromWei = fundRaiseProposalEntity.totalFund.div(BigInt.fromI64(10 ** 18)).toString();
         fundRaiseProposalEntity.save();
     }
 
