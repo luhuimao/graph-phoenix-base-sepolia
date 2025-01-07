@@ -1095,6 +1095,66 @@ type VintageSetRiceReceiverProposalEntity @entity{
   vintageDaoEntity: VintageDaoEntity
 }
 
+type VintageEscrowLiquidationFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundEstablishmentProposalId: Bytes!
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  fundRound: BigInt!
+  myWithdrawAmount: BigInt!
+  myRefundable: BigInt!
+  escrowBlockNum: BigInt!
+}
+
+type VintageEscrowFailedFundRaisingFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundEstablishmentProposalId: Bytes!
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  fundRound: BigInt!
+  finalRaised: BigInt! # uint256
+  finalRaisedFromWei: String!
+  minFundGoal: BigInt! # uint256
+  minFundGoalFromWei: String!
+  myAdvanceDepositAmount: BigInt!
+  myWithdrawAmount: BigInt!
+  myRefundable: BigInt!
+  escrowBlockNum: BigInt!
+}
+
+type VintageEscrowOverRaisedFundEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  fundEstablishmentProposalId: Bytes!
+  token: Bytes! # address
+  createTimeStamp: BigInt! # uint256
+  createDateTime: String!
+  amount: BigInt! # uint256
+  amountFromWei: String!
+  account: Bytes! # address
+  withdrawTimeStamp: BigInt! # uint256
+  withdrawDateTime: String!
+  withdrawTxHash: Bytes! # address
+  fundRound: BigInt!
+  myAdvanceDepositAmount: BigInt!
+  myConfirmedDepositAmount: BigInt!
+  myWithdrawAmount: BigInt!
+  myRefundable: BigInt!
+  escrowBlockNum: BigInt!
+}
+
 type CollectiveTopUpProposalEntity @entity{
   id: ID!
   daoAddr: Bytes! # address

@@ -136,9 +136,9 @@ dataSources:
     name: VintageFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x429BAcb7d0493dEbbE040421Bd613ede04Bd8fd0"
+      address: "0x338717652b7dF2C0C0a7852febAb190f7006B336"
       abi: VintageFundingPoolAdapterContract
-      startBlock: 19146510
+      startBlock: 20224304
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -219,9 +219,9 @@ dataSources:
     name: VintageEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0xd6ba2029fa0DD5C55B79cE2dB27E9e08e09A1b5f"
+      address: "0x57AFB8C4C5D0717C1Fab022dB4daF1e8df9163dE"
       abi: VintageEscrowFundAdapterContract
-      startBlock: 6313449
+      startBlock: 20224306
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -236,10 +236,18 @@ dataSources:
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
       eventHandlers:
-        - event: WithDraw(address,uint256,address,address,uint256)
-          handler: handleWithDraw
-        - event:  EscrowFund(address,uint256,address,address,uint256)
-          handler: handleEscrowFund
+        - event: WithdrawFromLiquidation(address,address,address,uint256,uint256)
+          handler: handleWithdrawFromLiquidation
+        - event:  EscrowFundFromLiquidation(address,address,address,uint256,uint256)
+          handler: handleEscrowFundFromLiquidation
+        - event: EscrowFundFromFailedFundRaising(address,address,address,uint256,uint256)
+          handler: handleEscrowFundFromFailedFundRaising
+        - event: WithdrawFromFailedFundRaising(address,address,address,uint256,uint256)
+          handler: handleWithdrawFromFailedFundRaising
+        - event: EscrowFundFromOverRaised(address,address,address,uint256,uint256)
+          handler: handleEscrowFundFromOverRaised
+        - event: WithdrawFromOverRaised(address,address,address,uint256,uint256)
+          handler: handleWithdrawFromOverRaised
       file: ./src/vintage-escrow-fund.ts
   - kind: ethereum
     name: VintageFreeInEscrowFundAdapterContract
