@@ -37,18 +37,23 @@ import {
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
+    const daoContract = DaoRegistry.bind(event.params.daoAddress);
+
+    const collectiveNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
+    const collectiveNewFundCont = ColletiveFundRaiseProposalAdapterContract.bind(collectiveNewFundContAddr);
     // Entities can be loaded from the store using a string ID; this ID
     // needs to be unique across all entities of the same type
     let entity = CollectiveInvestorActivity.load(event.transaction.hash.toHex())
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
-        entity = new CollectiveInvestorActivity(event.transaction.hash.toHex())
+        entity = new CollectiveInvestorActivity(event.transaction.hash.toHex());
+        const rel = collectiveNewFundCont.try_lastProposalIds(event.params.daoAddress)
+        entity.proposalId = rel.reverted ? Bytes.empty() : rel.value;
     }
 
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
-    entity.proposalId = Bytes.empty();
     entity.daoAddr = event.params.daoAddress;
     entity.account = event.params.account;
     entity.type = "deposit";
@@ -82,7 +87,8 @@ export function handleWithDraw(event: WithDraw): void {
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (!entity) {
-        entity = new CollectiveInvestorActivity(event.transaction.hash.toHex())
+        entity = new CollectiveInvestorActivity(event.transaction.hash.toHex());
+        entity.proposalId = Bytes.empty();
     }
 
     const daoContract = DaoRegistry.bind(event.params.daoAddress);
@@ -92,7 +98,6 @@ export function handleWithDraw(event: WithDraw): void {
 
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
-    entity.proposalId = Bytes.empty();
     entity.daoAddr = event.params.daoAddress;
     entity.account = event.params.account;
     entity.type = "withdraw";

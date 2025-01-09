@@ -20,7 +20,7 @@ import {
     CollectiveEscrowFundAdapterContract
 } from "../generated/CollectiveEscrowFundAdapterContract/CollectiveEscrowFundAdapterContract";
 import { ColletiveFundingPoolAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundingPoolAdapterContract";
-// import { ColletiveFundRaiseProposalAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundRaiseProposalAdapterContract";
+import { ColletiveFundRaiseProposalAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundRaiseProposalAdapterContract";
 import { CollectiveInvestmentPoolExtension } from "../generated/CollectiveEscrowFundAdapterContract/CollectiveInvestmentPoolExtension";
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
@@ -237,7 +237,10 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
 
     const dao = DaoRegistry.bind(event.params.dao);
 
-    const FUND_RAISING_TARGET = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
+    // const FUND_RAISING_TARGET = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
+
+    const collectiveFundRaiseProposalAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
+    const collectiveFundRaiseProposalAdapterContract = ColletiveFundRaiseProposalAdapterContract.bind(collectiveFundRaiseProposalAdapterContractAddr);
 
     const collectiveFundingPoolAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
     const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
@@ -245,12 +248,12 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
     const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
     const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
 
-    const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
-    const poolAmount = collectiveFundingPoolExt.getPriorAmount(
-        Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
-        raiseTokenAddr,
-        event.block.number.minus(BigInt.fromI32(1)));
-    const accumulateRaiseAmount = collectiveFundingPoolAdapterContract.try_accumulateRaiseAmount(event.params.dao);
+    // const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
+    // const poolAmount = collectiveFundingPoolExt.getPriorAmount(
+    //     Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
+    //     raiseTokenAddr,
+    //     event.block.number.minus(BigInt.fromI32(1)));
+    // const accumulateRaiseAmount = collectiveFundingPoolAdapterContract.try_accumulateRaiseAmount(event.params.dao);
 
     // const raisedAmount = poolAmount.minus(accumulateRaiseAmount.reverted ? BigInt.zero() : accumulateRaiseAmount.value);
     // const fundRaiseTarget = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
@@ -277,7 +280,10 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
     entity.fundRaisingId = event.params.fundRaisingId;
     entity.token = event.params.token;
     entity.escrowBlockNum = event.block.number;
-    let rel1 = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
+    // let rel1 = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
+    const fundRaiseProId = collectiveFundRaiseProposalAdapterContract.try_lastProposalIds(event.params.dao);
+
+    let rel1 = collectiveFundingPoolAdapterContract.try_investorsDepositAmountByFundRaise(event.params.dao, fundRaiseProId.reverted ? Bytes.empty() : fundRaiseProId.value, event.params.account);
     entity.myAdvanceDepositAmount = rel1.reverted ? BigInt.fromI32(0) : rel1.value;
     entity.myRefundable = event.params.amount;
     entity.amount = event.params.amount;

@@ -129,15 +129,15 @@ import {
 // }
 
 export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFailedFundRaising): void {
-    const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
+    // const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
     let entity = VintageEscrowFailedFundRaisingFundEntity.load(event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
         + event.params.fundRound.toHexString());
-    const dao = DaoRegistry.bind(event.params.dao);
+    // const dao = DaoRegistry.bind(event.params.dao);
 
-    const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
-    const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
+    // const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
+    // const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
 
     // const poolAmount = collectiveFundingPoolExt.getPriorAmount(
     //     Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
