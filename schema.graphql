@@ -1107,6 +1107,7 @@ type VintageEscrowLiquidationFundEntity @entity{
   withdrawDateTime: String!
   withdrawTxHash: Bytes! # address
   fundRound: BigInt!
+  fundRaiseId: BigInt!
   myWithdrawAmount: BigInt!
   myRefundable: BigInt!
   escrowBlockNum: BigInt!
@@ -1124,6 +1125,7 @@ type VintageEscrowFailedFundRaisingFundEntity @entity{
   withdrawDateTime: String!
   withdrawTxHash: Bytes! # address
   fundRound: BigInt!
+  fundRaiseId: BigInt!
   finalRaised: BigInt! # uint256
   finalRaisedFromWei: String!
   minFundGoal: BigInt! # uint256
@@ -1148,6 +1150,7 @@ type VintageEscrowOverRaisedFundEntity @entity{
   withdrawDateTime: String!
   withdrawTxHash: Bytes! # address
   fundRound: BigInt!
+  fundRaiseId: BigInt!
   myAdvanceDepositAmount: BigInt!
   myConfirmedDepositAmount: BigInt!
   myWithdrawAmount: BigInt!

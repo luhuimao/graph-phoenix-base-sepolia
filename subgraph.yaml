@@ -58,9 +58,9 @@ dataSources:
     name: VintageVotingContract
     network: base-sepolia
     source:
-      address: "0x5B7C82e8Dfc8BC7B0fC58d0586d3DD2963609A33"
+      address: "0x764b0A52Ead94F3C9062D25cB0321075313B04E4"
       abi: VintageVotingContract
-      startBlock: 20312026
+      startBlock: 20534072
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -101,9 +101,9 @@ dataSources:
     name: VintageFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xC64c77dF7faa16c51E581B3461c77C2Cfd3106F6"
+      address: "0xc678a8bF70f4aecB71883599778eb505D98d7Fe4"
       abi: VintageFundingAdapterContract
-      startBlock: 15430788
+      startBlock: 20534087
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -136,9 +136,9 @@ dataSources:
     name: VintageFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x338717652b7dF2C0C0a7852febAb190f7006B336"
+      address: "0x9882d352599aA942b6dcaF5a9E0010E04E80b16f"
       abi: VintageFundingPoolAdapterContract
-      startBlock: 20224304
+      startBlock: 20534075
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -219,9 +219,9 @@ dataSources:
     name: VintageEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0x57AFB8C4C5D0717C1Fab022dB4daF1e8df9163dE"
+      address: "0xc448f4eF185D2da7Ec0885D890aC24a57f783143"
       abi: VintageEscrowFundAdapterContract
-      startBlock: 20224306
+      startBlock: 20481943
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -235,6 +235,8 @@ dataSources:
           file: ./abis/VintageFundingPoolExtension.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: VintageFundRaiseAdapterContract
+          file: ./abis/VintageFundRaiseAdapterContract.json
       eventHandlers:
         - event: WithdrawFromLiquidation(address,address,address,uint256,uint256)
           handler: handleWithdrawFromLiquidation
@@ -1035,9 +1037,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0x1695389C483c9DDf1d29aAA12c64541Dbcc61489"
+      address: "0x7617637D99CB936cf2EBC7244fCF61DDE5544A58"
       abi: CollectiveVotingAdapterContract
-      startBlock: 20312028
+      startBlock: 20534091
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

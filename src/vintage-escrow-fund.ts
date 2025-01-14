@@ -22,6 +22,7 @@ import {
     VintageEscrowFundAdapterContract
 } from "../generated/VintageEscrowFundAdapterContract/VintageEscrowFundAdapterContract"
 import { VintageFundingPoolExtension } from "../generated/VintageEscrowFundAdapterContract/VintageFundingPoolExtension";
+import { VintageFundRaiseAdapterContract } from "../generated/VintageEscrowFundAdapterContract/VintageFundRaiseAdapterContract";
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
     VintageEscrowFundEntity,
@@ -130,12 +131,15 @@ import {
 
 export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFailedFundRaising): void {
     // const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
+
     let entity = VintageEscrowFailedFundRaisingFundEntity.load(event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
-        + event.params.fundRound.toHexString());
-    // const dao = DaoRegistry.bind(event.params.dao);
+        + event.params.fundRaiseId.toHexString());
+    const daoContract = DaoRegistry.bind(event.params.dao);
 
+    const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
+    const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
     // const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
     // const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
 
@@ -153,7 +157,8 @@ export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFaile
     let finalRaised = BigInt.fromI32(0);
     let newFundProposalId = Bytes.empty();
     let newFundExeBlockNum = BigInt.fromI32(0);
-    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
+    const fundRound = vintageNewFundCont.try_createdFundCounter(event.params.dao);
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + (fundRound.reverted ? "0" : fundRound.value.toString()));
     if (roundProposalIdEntity) {
         newFundProposalId = roundProposalIdEntity.proposalId;
         newFundEntity = VintageFundEstablishmentProposal.load(newFundProposalId.toHexString());
@@ -169,7 +174,7 @@ export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFaile
             event.params.dao.toHexString()
             + event.params.token.toHexString()
             + event.params.account.toHexString()
-            + event.params.fundRound.toHexString()
+            + event.params.fundRaiseId.toHexString()
         );
         entity.fundEstablishmentProposalId = newFundProposalId;
         entity.myWithdrawAmount = BigInt.fromI32(0);
@@ -179,13 +184,14 @@ export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFaile
         entity.createDateTime = new Date(entity.createTimeStamp.toI64() * 1000).toISOString();
         entity.withdrawTimeStamp = BigInt.fromI32(0);
         entity.withdrawDateTime = "0";
+        entity.fundRaiseId = event.params.fundRaiseId;
         entity.withdrawTxHash = Bytes.empty();
     }
     // let rel = vintageFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, newFundExeBlockNum.plus(BigInt.fromI32(1)));
     // if (!rel.reverted) entity.myConfirmedDepositAmount = rel.value;
 
     entity.fundEstablishmentProposalId = newFundProposalId;
-    entity.fundRound = event.params.fundRound;
+    entity.fundRound = fundRound.reverted ? BigInt.zero() : fundRound.value;
     entity.token = event.params.token;
     entity.minFundGoal = minFundGoal;
     entity.minFundGoalFromWei = entity.minFundGoal.div(BigInt.fromI64(10 ** 18)).toString();
@@ -203,8 +209,11 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
         event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
-        + event.params.fundRound.toHexString());
-    const dao = DaoRegistry.bind(event.params.dao);
+        + event.params.fundRaiseId.toHexString());
+    const daoContract = DaoRegistry.bind(event.params.dao);
+    const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
+    const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
+    const fundRound = vintageNewFundCont.try_createdFundCounter(event.params.dao);
 
     // const FUND_RAISING_TARGET = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
 
@@ -223,16 +232,20 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
 
     // const raisedAmount = poolAmount.minus(accumulateRaiseAmount.reverted ? BigInt.zero() : accumulateRaiseAmount.value);
     // const fundRaiseTarget = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
-
+    let newFundProposalId = Bytes.empty();
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + (fundRound.reverted ? "0" : fundRound.value.toString()));
+    if (roundProposalIdEntity) {
+        newFundProposalId = roundProposalIdEntity.proposalId;
+    }
 
     if (!entity) {
         entity = new VintageEscrowLiquidationFundEntity(
             event.params.dao.toHexString()
             + event.params.token.toHexString()
             + event.params.account.toHexString()
-            + event.params.fundRound.toHexString()
+            + event.params.fundRaiseId.toHexString()
         );
-
+        entity.fundEstablishmentProposalId = newFundProposalId;
         entity.myWithdrawAmount = BigInt.fromI32(0);
         entity.daoAddr = event.params.dao;
         entity.account = event.params.account;
@@ -241,9 +254,10 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
         entity.withdrawTimeStamp = BigInt.fromI32(0);
         entity.withdrawDateTime = "0";
         entity.withdrawTxHash = Bytes.empty();
+        entity.fundRaiseId = event.params.fundRaiseId;
     }
 
-    entity.fundRound = event.params.fundRound;
+    entity.fundRound = fundRound.reverted ? BigInt.zero() : fundRound.value;
     entity.token = event.params.token;
     entity.escrowBlockNum = event.block.number;
     entity.myRefundable = event.params.amount;
@@ -255,16 +269,21 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
     let entity = VintageEscrowOverRaisedFundEntity.load(event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
-        + event.params.fundRound.toHexString());
+        + event.params.fundRaiseId.toHexString()
+    );
 
-    const dao = DaoRegistry.bind(event.params.dao);
+    const daoContract = DaoRegistry.bind(event.params.dao);
 
-    const FUND_RAISING_TARGET = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
+    const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
+    const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
+    const fundRound = vintageNewFundCont.try_createdFundCounter(event.params.dao);
+
+    // const FUND_RAISING_TARGET = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
 
     // const collectiveFundingPoolAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
     // const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
 
-    const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
+    const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
     const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
 
     // const raiseTokenAddr = vintageFundingPoolExt.getFundRaisingTokenAddress();
@@ -276,16 +295,21 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
 
     // const raisedAmount = poolAmount.minus(accumulateRaiseAmount.reverted ? BigInt.zero() : accumulateRaiseAmount.value);
     // const fundRaiseTarget = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
-
+    let newFundProposalId = Bytes.empty();
+    // const currentFundRaiseId = dao.try_getCurrentFundEstablishmentProposalId();
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + (fundRound.reverted ? "0" : fundRound.value.toString()));
+    if (roundProposalIdEntity) {
+        newFundProposalId = roundProposalIdEntity.proposalId;
+    }
 
     if (!entity) {
         entity = new VintageEscrowOverRaisedFundEntity(
             event.params.dao.toHexString()
             + event.params.token.toHexString()
             + event.params.account.toHexString()
-            + event.params.fundRound.toHexString()
+            + event.params.fundRaiseId.toHexString()
         );
-
+        entity.fundEstablishmentProposalId = newFundProposalId;
         entity.myWithdrawAmount = BigInt.fromI32(0);
         entity.daoAddr = event.params.dao;
         entity.account = event.params.account;
@@ -294,9 +318,10 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
         entity.withdrawTimeStamp = BigInt.fromI32(0);
         entity.withdrawDateTime = "0";
         entity.withdrawTxHash = Bytes.empty();
+        entity.fundRaiseId = event.params.fundRaiseId;
     }
 
-    entity.fundRound = event.params.fundRound;
+    entity.fundRound = fundRound.reverted ? BigInt.zero() : fundRound.value;
     entity.token = event.params.token;
     entity.escrowBlockNum = event.block.number;
     let rel1 = vintageFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
@@ -312,7 +337,7 @@ export function handleWithdrawFromLiquidation(event: WithdrawFromLiquidation): v
     let entity = VintageEscrowLiquidationFundEntity.load(event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
-        + event.params.fundRound.toHexString());
+        + event.params.fundRaiseId.toHexString());
 
     if (entity) {
         entity.withdrawTimeStamp = event.block.timestamp;
@@ -325,11 +350,18 @@ export function handleWithdrawFromLiquidation(event: WithdrawFromLiquidation): v
 }
 
 export function handleWithdrawFromOverRaised(event: WithdrawFromOverRaised): void {
+
+    // let newFundProposalId;
+    // const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + event.params.fundRound.toString());
+    // if (roundProposalIdEntity) {
+    //     newFundProposalId = roundProposalIdEntity.proposalId;
+    // }
+
     let entity = VintageEscrowOverRaisedFundEntity.load(
         event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
-        + event.params.fundRound.toHexString());
+        + event.params.fundRaiseId.toHexString());
 
     if (entity) {
         entity.withdrawTimeStamp = event.block.timestamp;
@@ -346,7 +378,7 @@ export function handleWithdrawFromFailedFundRaising(event: WithdrawFromFailedFun
         event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()
-        + event.params.fundRound.toHexString());
+        + event.params.fundRaiseId.toHexString());
 
     if (entity) {
         entity.withdrawTimeStamp = event.block.timestamp;
