@@ -22,8 +22,8 @@ import { ColletiveFundRaiseProposalAdapterContract } from "../generated/Colletiv
 import { DaoRegistry } from "../generated/VintageFundingPoolAdapterContract/DaoRegistry";
 import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveFundingPoolAdapterContract/CollectiveInvestmentPoolExtension";
 import {
-    CollectiveRedempteEntity,
-    CollectiveInvestorBalance,
+    // CollectiveRedempteEntity,
+    // CollectiveInvestorBalance,
     CollectiveInvestorActivity,
     CollectiveFundRaiseProposalEntity,
     CollectiveDaoStatisticEntity,
@@ -33,7 +33,7 @@ import {
     // VintageFundRoundToFundEstablishmentProposalId,
     // VintageFundRaiseEntity,
     // VintageInvestorRedemptionsInFundRoundEntity,
-    CollectiveEscrowFundEntity
+    // CollectiveEscrowFundEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {

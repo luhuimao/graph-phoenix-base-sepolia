@@ -8,7 +8,7 @@
  */
 import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts"
 import {
-  SummonDao,
+  // SummonDao,
   FlexDaoCreated
 } from "../generated/SummonDao/SummonDao";
 import { FlexInvestmentPoolAdapterContract } from "../generated/SummonDao/FlexInvestmentPoolAdapterContract";
@@ -16,7 +16,7 @@ import { StewardManagementContract } from "../generated/SummonDao/StewardManagem
 import { DaoRegistry } from "../generated/SummonDao/DaoRegistry";
 import { FlexFundingAdapterContract } from "../generated/SummonDao/FlexFundingAdapterContract";
 import { FlexPollingVotingContract } from "../generated/SummonDao/FlexPollingVotingContract";
-import { FlexDaoSetVotingAdapterContract } from "../generated/SummonDao/FlexDaoSetVotingAdapterContract";
+// import { FlexDaoSetVotingAdapterContract } from "../generated/SummonDao/FlexDaoSetVotingAdapterContract";
 import { FlexStewardAllocationAdapter } from "../generated/SummonDao/FlexStewardAllocationAdapter";
 import {
   DaoEntiy,

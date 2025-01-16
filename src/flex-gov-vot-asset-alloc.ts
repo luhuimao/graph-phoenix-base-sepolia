@@ -8,7 +8,7 @@
  */
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
-    FlexGovernorVotingAssetAllocationProposalAdapterContract,
+    // FlexGovernorVotingAssetAllocationProposalAdapterContract,
     ProposalProcessed,
     ProposalCreated
 } from "../generated/FlexGovernorVotingAssetAllocationProposalAdapterContract/FlexGovernorVotingAssetAllocationProposalAdapterContract"

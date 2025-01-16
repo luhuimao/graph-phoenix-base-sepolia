@@ -25,12 +25,12 @@ import { VintageFundingPoolExtension } from "../generated/VintageEscrowFundAdapt
 import { VintageFundRaiseAdapterContract } from "../generated/VintageEscrowFundAdapterContract/VintageFundRaiseAdapterContract";
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
 import {
-    VintageEscrowFundEntity,
+    // VintageEscrowFundEntity,
     VintageFundRoundToFundEstablishmentProposalId,
     VintageFundEstablishmentProposal,
-    VintageFundRoundStatistic,
-    VintageInvestorInvestmentEntity,
-    VintageInvestorRedemptionsInFundRoundEntity,
+    // VintageFundRoundStatistic,
+    // VintageInvestorInvestmentEntity,
+    // VintageInvestorRedemptionsInFundRoundEntity,
     VintageEscrowFailedFundRaisingFundEntity,
     VintageEscrowLiquidationFundEntity,
     VintageEscrowOverRaisedFundEntity
@@ -204,7 +204,7 @@ export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFaile
 }
 
 export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation): void {
-    const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
+    // const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
     let entity = VintageEscrowLiquidationFundEntity.load(
         event.params.dao.toHexString()
         + event.params.token.toHexString()
@@ -265,7 +265,7 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
 }
 
 export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised): void {
-    const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
+    // const escrowContr = VintageEscrowFundAdapterContract.bind(event.address);
     let entity = VintageEscrowOverRaisedFundEntity.load(event.params.dao.toHexString()
         + event.params.token.toHexString()
         + event.params.account.toHexString()

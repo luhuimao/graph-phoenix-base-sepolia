@@ -1,4 +1,4 @@
-specVersion: 0.0.4
+specVersion: 1.2.0
 schema:
   file: ./schema.graphql
 dataSources:
@@ -51,8 +51,21 @@ dataSources:
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
+          calls:
+            DaoRegistry.getCurrentFundEstablishmentProposalId: DaoRegistry[event.params.daoAddr].getCurrentFundEstablishmentProposalId()
         - event: proposalExecuted(address,bytes32,uint8,uint128,uint128,uint128,uint256)
           handler: handleProposalExecuted
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x1405d0156cf64c805704fdf6691baebfcfa0d409ea827c231693ff0581b0b777)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x80140cd7e0b1d935bee578a67a41547c82987de8e7d6b3827d411b738110258b)
+            DaoRegistry.getConfiguration5: DaoRegistry[event.params.daoAddr].getConfiguration(0x04ecaf460eb9f82aeb70035e3f24c18a3650fa0da9ddbe7e63d70de659b9b901)
+            DaoRegistry.getConfiguration6: DaoRegistry[event.params.daoAddr].getConfiguration(0x6cb5bc3796b0717ca4ff665886c96fb0178d6341366eb7b6c737fe79083b836a)
+            DaoRegistry.getConfiguration7: DaoRegistry[event.params.daoAddr].getConfiguration(0x324dfda0ffcc38c4650b5df076e6f7b4938c2b723873af58b1be5e221dd2cc30)
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xe373ab56628c86db3f0e36774c2c5e0393f9272ff5c976bc3f0db2db60cdbc14)
+            DaoRegistry.getStringConfiguration: DaoRegistry[event.params.daoAddr].getStringConfiguration(0x324dfda0ffcc38c4650b5df076e6f7b4938c2b723873af58b1be5e221dd2cc30)
       file: ./src/vintage-new-fund.ts
   - kind: ethereum
     name: VintageVotingContract
@@ -94,6 +107,8 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256,uint8)
           handler: handleProposalCreated
+          calls:
+            VintageRaiserManagementContract.try_proposals: VintageRaiserManagementContract[event.address].try_proposals(event.params.daoAddr, event.params.proposalId)
         - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
           handler: handleProposalProcessed
       file: ./src/vintage-raiser-management.ts
@@ -127,10 +142,23 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32)
           handler: handleProposalCreated
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x11618fa890234170104debf73b2563b667bd200bac1d7d8dd024e2f3fadaefd2)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0x0e8185cfd5d91894cd75ba6858a811ccb98f89440700b6d75931c8de1e97fa02)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x66ed99f9a48fc961fffd6425cceb65d9444f5bda8af3bc46d14fd6b5a844fde5)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x23bba46e5025fb6d2325c93cad4f861289d697c0913f7e18dab6bb065e2bdc28)
         - event:   ProposalExecuted(address,bytes32,uint128,uint128,uint128,address[])
           handler: handleProposalExecuted
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddr].getExtensionAddress(0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f)
         - event: StartVote(address,bytes32)
           handler: handleStartVote
+          calls:
+            VintageFundingAdapterContract.proposals: VintageFundingAdapterContract[event.address].proposals(event.params.daoAddr,event.params.proposalID)
       file: ./src/vintage-funding-contract.ts
   - kind: ethereum
     name: VintageFundingPoolAdapterContract
@@ -158,14 +186,27 @@ dataSources:
       eventHandlers:
         - event: Deposit(address,uint256,address)
           handler: handleDeposit
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddress].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
         - event: WithDraw(address,uint256,address)
           handler: handleWithDraw
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddress].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
+            DaoRegistry.getConfiguration: DaoRegistry[event.params.daoAddress].getConfiguration(0xb0d4178853a5320a41f8c55fa6d58af06637e392beff71e66dba4e8f32c39bb8)
         - event: RedeptionFeeCharged(address,address,uint256,uint256)
           handler: handleRedeptionFeeCharged
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddress].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
         - event: ClearFund(address,uint256,address)
           handler: handleClearFund
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddress].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
         - event: ProcessFundRaise(address,uint256,uint256,uint256)
-          handler: handleProcessFundRaise       
+          handler: handleProcessFundRaise   
+          calls:
+            VintageFundingPoolAdapterContract.daoFundRaisingStates: VintageFundingPoolAdapterContract[event.address].daoFundRaisingStates(event.params.dao)
+            DaoRegistry.getExtensionAddress: DaoRegistry[event.params.daoAddress].getExtensionAddress(0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f)
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddress].getAddressConfiguration(0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027)
       file: ./src/vintage-funding-pool.ts
   - kind: ethereum
     name: VintageVesting
@@ -187,6 +228,8 @@ dataSources:
       eventHandlers:
         - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128,bytes32)
           handler: handleCreateVesting
+          calls:
+            VintageVesting.vests: VintageVesting[event.address].vests(event.params.vestId)
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
       file: ./src/vintage-vesting.ts
@@ -212,6 +255,8 @@ dataSources:
       eventHandlers:
         - event: AllocateToken(address,bytes32,address,address[])
           handler: handleAllocateToken
+          calls:
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(Address.fromHexString(0x5460409b9aa4688f80c10b29c3d7ad16025f050f472a6882a45fa7bb9bd12fb1)
         - event:  ConfigureDao(uint256,uint256)
           handler: handleConfigureDao
       file: ./src/vintage-alloc.ts
@@ -242,12 +287,18 @@ dataSources:
           handler: handleWithdrawFromLiquidation
         - event:  EscrowFundFromLiquidation(address,address,address,uint256,uint256)
           handler: handleEscrowFundFromLiquidation
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.dao].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
         - event: EscrowFundFromFailedFundRaising(address,address,address,uint256,uint256)
           handler: handleEscrowFundFromFailedFundRaising
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.dao].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
         - event: WithdrawFromFailedFundRaising(address,address,address,uint256,uint256)
           handler: handleWithdrawFromFailedFundRaising
         - event: EscrowFundFromOverRaised(address,address,address,uint256,uint256)
           handler: handleEscrowFundFromOverRaised
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.dao].getAdapterAddress(0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed)
         - event: WithdrawFromOverRaised(address,address,address,uint256,uint256)
           handler: handleWithdrawFromOverRaised
       file: ./src/vintage-escrow-fund.ts
@@ -304,8 +355,28 @@ dataSources:
           handler: handleProposalCreated
         - event:   ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
           handler: handleProposalExecuted
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xd90e10040720d66c9412cb511e3dbb6ba51669248a7495e763d44ab426893efa)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xd90e10040720d66c9412cb511e3dbb6ba51669248a7495e763d44ab426893efa)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x5b7b19076468102b84afbef323d128866c396a716ce4ce29f84beef8d266f3af)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0x23f0530138a805a7a3c83e0d6298d353102473dc25666f75173de90ac5414c82)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x4481bb4c8bc94e65f81ab5591f704165aab99eb4197df7acf672022476933f58)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x38cbcea6ba035c1d1890c83ce99918342ef746d839f9c2e2d4966d30a7e70b34)
+            DaoRegistry.getConfiguration5: DaoRegistry[event.params.daoAddr].getConfiguration(0xe33a9c3c87c85b9efd09c180b8fd30ca34326eb72e20fdd832b510971ccf71ae)
+            DaoRegistry.getConfiguration6: DaoRegistry[event.params.daoAddr].getConfiguration(0x686efe7bd1699b408d306db6bbee658ed667971c52d48d6912d7ee496e36e627)
+            DaoRegistry.getConfiguration7: DaoRegistry[event.params.daoAddr].getConfiguration(0x00634460a4b60c2e1bf8c87bfc42b6b68fd2a71f4bb2d760816eabc5038b5036)
+            DaoRegistry.getConfiguration8: DaoRegistry[event.params.daoAddr].getConfiguration(0xb75eae231d9582c6afc6491273df4a0ffbccd48ab2c48dbce59e5d68f2d19dc4)
+            DaoRegistry.getConfiguration9: DaoRegistry[event.params.daoAddr].getConfiguration(0x561bc86bc227a0f760218574791a84f180f6f9f02be9519a1f99c14fce07a310)
+            DaoRegistry.getConfiguration10: DaoRegistry[event.params.daoAddr].getConfiguration(0x8097540b5ab8a4c18e0b10cfbfd2c69e65e8da78f4f0485467006bafa3935964)
+            DaoRegistry.getConfiguration11: DaoRegistry[event.params.daoAddr].getConfiguration(0x0324de13a5a6e302ddb95a9fdf81cc736fc8acee2abe558970daac27395904e7)
+            DaoRegistry.getConfiguration12: DaoRegistry[event.params.daoAddr].getConfiguration(b4c601c38beae7eebb719eda3438f59fcbfd4c6dd7d38c00665b6fd5b432df32)
+            DaoRegistry.getConfiguration13: DaoRegistry[event.params.daoAddr].getConfiguration(0x9876c0f0505bfb2b1c38d3bbd25ba13159172cd0868972d76927723f5a9480fc)
+            DaoRegistry.getConfiguration14: DaoRegistry[event.params.daoAddr].getConfiguration(0x02a3530cbb6e7c084516c86f68bd62c3e3fcd783c6c5d7e138616207f7a32250)
+            DaoRegistry.getAddressConfiguration1: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xaa2cc36fff47c5c104b89a4abef628c92272c0af9c4db27739bc445b2f51e9a2)
+            DaoRegistry.getAddressConfiguration2: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xcd9b30ab6388c165d825b60b7d393528191ba59d975b4b1b52b7184b63b8a97c)
+            DaoRegistry.getStringConfiguration: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xa4b6f581a2d1e8b24bacedf9a91a13c8df6147ffb9d2bd4a770d867d91018da6)
+            VintageDaoSetAdapterContract.governorMembershipProposals: VintageDaoSetAdapterContract[event.address].governorMembershipProposals(event.params.daoAddr, event.params.proposalId)
       file: ./src/vintage-daoset.ts
-
   - kind: ethereum
     name: VintageGovernorVotingAssetAllocationProposalAdapterContract
     network: base-sepolia
@@ -353,10 +424,13 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256)
           handler: handleProposalCreated
+          calls:
+            VintageSetRiceReceiverProposalAdapterContract.try_proposals: VintageSetRiceReceiverProposalAdapterContract[event.address].try_proposals(event.params.daoAddr, event.params.proposalId)
         - event: ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
           handler: handleProposalProcessed
+          calls:
+            VintageSetRiceReceiverProposalAdapterContract.try_proposals: VintageSetRiceReceiverProposalAdapterContract[event.address].try_proposals(event.params.daoAddr, event.params.proposalId)
       file: ./src/vintage-set-rice-receiver.ts
-
   - kind: ethereum
     name: SummonDao
     network: base-sepolia
@@ -391,6 +465,66 @@ dataSources:
       eventHandlers:
         - event: FlexDaoCreated(address,address,string,address)
           handler: handleFlexDaoCreated
+          calls:
+            DaoRegistry.getAddressConfiguration1: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xc77068975ba2254bd67080aa196783f213ee682a15d902d03f33782130cf737d)
+            DaoRegistry.getAddressConfiguration2: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x0f57fc3a39a8a66c31f52eab69ced65d5ac74e4a182b215146a45a0281de53e8)
+            DaoRegistry.getAddressConfiguration3: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x770ef80745dba2953f780c8b963701e76fd3ac982923200f9214126e80f5f032)
+            DaoRegistry.getAddressConfiguration4: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xb5a1ad3f04728d7c38547e3d43006a1ec090a02fce04bbb1d0ee4519a1921e57)
+            DaoRegistry.getAddressConfiguration5: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xea1256a286695b4929ba634b6e0a36015d2a908045a29f78da51cee1a0d82b6b)
+            DaoRegistry.getAddressConfiguration6: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x0bfac56541ded449415df8f96f54b002e55665d7fd2fafc884184e8c17f3c772)
+            DaoRegistry.getAddressConfiguration7: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x30091caaedd0994beeeeb3b7b5734296263687ae0126aaf79e5e0f8e5c1706b2)
+            DaoRegistry.getAddressConfiguration8: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x8987d08c67963e4cacd5e5936c122a968c66853d58299dd822c1942227109839)
+            DaoRegistry.getAddressConfiguration9: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xa23a2786abcf8c551ce7fba1966ec456144d9caa0db070879d03a4ea4fd9b2fd)
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x2207fd6117465cefcba0abc867150698c0464aa41a293ec29ca01b67a6350c3c)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x6f48e16963713446db50a1503860d8e1fc3c888da56a85afcaa6dc29503cc610)
+            DaoRegistry.getAdapterAddress3: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x37cbe06c1044f98864ea25736326bc1d488e24e5e23781ea2ad64c4069cb9e6e)
+            DaoRegistry.getAdapterAddress4: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xcad7b0867188190920a10bf710c45443f6358175d56a759e7dc109e6d7b5d753)
+            DaoRegistry.getAdapterAddress5: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x7a8526bca00f0726b2fab8c3bfd5b00bfa84d07f111e48263b13de605eefcdda)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x77041e0d128001928f30b976713fed530b452bc354a9bad49ad1bcf93121f9dc)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xcab672166d6a1c8dae3ca0b03fed2e7258db17c3c3801ac2651987b066d39647)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0xcdc3057ec9c82a3ea3fd34ef56b1825924525fbab071e1a2b9d664a07f400480)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0xfeddffed075d0686e697569ece0ce2fd26bfbbb18719086f36d16c7117edb553)
+            DaoRegistry.getConfiguration5: DaoRegistry[event.params.daoAddr].getConfiguration(0xf2b332c307ef460e99eb866928b78eca9f8af0da0626b4b48a13f9b52842fa6a)
+            DaoRegistry.getConfiguration6: DaoRegistry[event.params.daoAddr].getConfiguration(0x249486eeae30287051f65673dfa390711fd4587950c33b4150a633763f869724)
+            DaoRegistry.getConfiguration7: DaoRegistry[event.params.daoAddr].getConfiguration(0x6839e94cab6f83f7a12a5a3d1d6f3bbcaf0185a49b20b86e6f47b8c78494ac3d)
+            DaoRegistry.getConfiguration8: DaoRegistry[event.params.daoAddr].getConfiguration(0x6e9fd67c3f2ca4e2b4e4b45b33b985dc3a1bffcadea24d12440a5901f72217b5)
+            DaoRegistry.getConfiguration9: DaoRegistry[event.params.daoAddr].getConfiguration(0x9876c0f0505bfb2b1c38d3bbd25ba13159172cd0868972d76927723f5a9480fc)
+            DaoRegistry.getConfiguration10: DaoRegistry[event.params.daoAddr].getConfiguration(0xb4c601c38beae7eebb719eda3438f59fcbfd4c6dd7d38c00665b6fd5b432df32)
+            DaoRegistry.getConfiguration11: DaoRegistry[event.params.daoAddr].getConfiguration(0x75b7d343967750d1f6c15979b7559cea8be22ff1a06a51681b9cbef0d2fff4fe)
+            DaoRegistry.getConfiguration12: DaoRegistry[event.params.daoAddr].getConfiguration(0x18ef0b57fe939edb640a200fdf533493bd8f26a274151543a109b64c857e20f3)
+            DaoRegistry.getConfiguration13: DaoRegistry[event.params.daoAddr].getConfiguration(0x77b1580d1632c74a32483c26a7156260a89ae4138b020ea7d09b0dcf24f1ea24)
+            DaoRegistry.getConfiguration14: DaoRegistry[event.params.daoAddr].getConfiguration(0x0324de13a5a6e302ddb95a9fdf81cc736fc8acee2abe558970daac27395904e7)
+            DaoRegistry.getConfiguration15: DaoRegistry[event.params.daoAddr].getConfiguration(0xe815a3c082eed7f7f7baab546f11a8718682c0eb3017b099ddc301a92f6673e3)
+            DaoRegistry.getConfiguration16: DaoRegistry[event.params.daoAddr].getConfiguration(0x730faccfe82f70711a34ce5202c6e1b1f79f421c16fcef745a9d92d06a7c0d4c)
+            DaoRegistry.getConfiguration17: DaoRegistry[event.params.daoAddr].getConfiguration(0x522d712abf06d7a4ec6dac3c77461903ee7523b623709d23acad0c6ae24dccc2)
+            DaoRegistry.getConfiguration18: DaoRegistry[event.params.daoAddr].getConfiguration(0xb1f9461b62129e5e1283e29f3e1ced18d2e86af86241cfcb424f6ba4fb7f454c)
+            DaoRegistry.getConfiguration19: DaoRegistry[event.params.daoAddr].getConfiguration(0xa8b1c741b883d35410d6186bbec4278982b7e509115b304ea7443665f139cc5a)
+            DaoRegistry.getConfiguration20: DaoRegistry[event.params.daoAddr].getConfiguration(0x461c66a772f861188d09f9684d5e0953afbfc97e19709fe20d9f2757f401e781)
+            DaoRegistry.getConfiguration21: DaoRegistry[event.params.daoAddr].getConfiguration(0x46021a9d9de6e72975a5d8d7d00e797ad1d45b789f6119571dc599350897dcb5)
+            DaoRegistry.getConfiguration22: DaoRegistry[event.params.daoAddr].getConfiguration(0x71ecc01da16acc23ab0eca549b0aaa7659ae183a220304fe5072243bc984fd79)
+            DaoRegistry.getConfiguration23: DaoRegistry[event.params.daoAddr].getConfiguration(0x84580f9d926113d2c801e908a914b652340b3d8527c171bcea8d1868e92a507c)
+            DaoRegistry.getConfiguration24: DaoRegistry[event.params.daoAddr].getConfiguration(0x50c40dbbb38d5b02b04e0c6d7be02f4391fc8c14a98860284871ef1834c8390b)
+            DaoRegistry.getConfiguration25: DaoRegistry[event.params.daoAddr].getConfiguration(0x93cc40268a57b3f7e5eb22a016a12d19010736289cceac5742a116fea3491b35)
+            DaoRegistry.getConfiguration26: DaoRegistry[event.params.daoAddr].getConfiguration(0x2073e6ba5c75026b006fdd165596d94b89cada2e00d8e44a99d422de8ea467e0)
+            DaoRegistry.getConfiguration27: DaoRegistry[event.params.daoAddr].getConfiguration(0x57901982635f8a470a3648422f8f769cf08dc2057489be5bf0099fcb44f7d43c)
+            DaoRegistry.getConfiguration28: DaoRegistry[event.params.daoAddr].getConfiguration(0xb34f156369747125f679c86d97f51861a5a2a9f927a1addd4354acbaaa88ae57)
+            DaoRegistry.getConfiguration29: DaoRegistry[event.params.daoAddr].getConfiguration(0xf6d5f030b79ca78dad001b87a49239ec96be97e62d13501da94c9a392700509e)
+            DaoRegistry.getConfiguration30: DaoRegistry[event.params.daoAddr].getConfiguration(0x64c49ee5084f4940c312104c41603e43791b03dad28152afd6eadb5b960a8a87)
+            DaoRegistry.getConfiguration31: DaoRegistry[event.params.daoAddr].getConfiguration(0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb)
+            DaoRegistry.getConfiguration32: DaoRegistry[event.params.daoAddr].getConfiguration(0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48)
+            DaoRegistry.getConfiguration33: DaoRegistry[event.params.daoAddr].getConfiguration(0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2)
+            DaoRegistry.getConfiguration34: DaoRegistry[event.params.daoAddr].getConfiguration(0xee63cc82ca6990a4cc5fa3ca10d8a5281ae1758a8d8f22892c4badb7cacd111e)
+            DaoRegistry.getConfiguration35: DaoRegistry[event.params.daoAddr].getConfiguration(0x777270e51451e60c2ce5118fc8e5844441dcc4d102e9052e60fb41312dbb848a)
+            DaoRegistry.getConfiguration36: DaoRegistry[event.params.daoAddr].getConfiguration(0x7789eea44dccd66529026559d1b36215cb5766016b41a8a8f16e08b2ec875837)
+            DaoRegistry.getConfiguration37: DaoRegistry[event.params.daoAddr].getConfiguration(0x18ccfaf5deb9f2b0bd666344fa9c46950fbcee85fbfd05c3959876dfe502c209)
+            DaoRegistry.getConfiguration38: DaoRegistry[event.params.daoAddr].getConfiguration(0x4e640b0dd9bf7618f23df95b8d516df2ff38868970d2d109c5b4b0455980659f)
+            DaoRegistry.getConfiguration39: DaoRegistry[event.params.daoAddr].getConfiguration(0x6e9fd67c3f2ca4e2b4e4b45b33b985dc3a1bffcadea24d12440a5901f72217b5)
+            DaoRegistry.getConfiguration40: DaoRegistry[event.params.daoAddr].getConfiguration(0xf873703084a7a9b6b81a595d5038f888fd90f4f9a530d4950a46c89eab021188)
+            DaoRegistry.getStringConfiguration1: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xfd9a8d4692ffc545577ff1979a0a918c2b536b6b6a891cf324a93b2c43907f83)
+            DaoRegistry.getStringConfiguration2: DaoRegistry[event.params.daoAddr].getStringConfiguration(0x7bd63360ec775df97ced77d73875245296c41d88ebf2b52f8e630b4e9a51b448)
+            DaoRegistry.getStringConfiguration3: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xe6fc898f462d48724eb27b66193f38e8f83f214469eb3145fe9431a89411e724)
+            DaoRegistry.getStringConfiguration4: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xed2fa238da16f9e9bea8f1aa8dc2f0d04c522f8adbda71cc4ea5c11f5a51f32d)
+
       file: ./src/summon-flex-dao.ts
   - kind: ethereum
     name: SummonVintageDao
@@ -417,6 +551,35 @@ dataSources:
       eventHandlers:
         - event: VintageDaoCreated(address,address,string,address)
           handler: handleVintageDaoCreated
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xaaff643bdbd909f604d46ce015336f7e20fee3ac4a55cef3610188dee176c892)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xd90e10040720d66c9412cb511e3dbb6ba51669248a7495e763d44ab426893efa)
+            DaoRegistry.getAddressConfiguration1: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xc77068975ba2254bd67080aa196783f213ee682a15d902d03f33782130cf737d)
+            DaoRegistry.getAddressConfiguration2: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xe373ab56628c86db3f0e36774c2c5e0393f9272ff5c976bc3f0db2db60cdbc14)
+            DaoRegistry.getAddressConfiguration3: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xaa2cc36fff47c5c104b89a4abef628c92272c0af9c4db27739bc445b2f51e9a2)
+            DaoRegistry.getAddressConfiguration4: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0xcd9b30ab6388c165d825b60b7d393528191ba59d975b4b1b52b7184b63b8a97c)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x1405d0156cf64c805704fdf6691baebfcfa0d409ea827c231693ff0581b0b777)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x80140cd7e0b1d935bee578a67a41547c82987de8e7d6b3827d411b738110258b)
+            DaoRegistry.getConfiguration5: DaoRegistry[event.params.daoAddr].getConfiguration(0x04ecaf460eb9f82aeb70035e3f24c18a3650fa0da9ddbe7e63d70de659b9b901)
+            DaoRegistry.getConfiguration6: DaoRegistry[event.params.daoAddr].getConfiguration(0x6cb5bc3796b0717ca4ff665886c96fb0178d6341366eb7b6c737fe79083b836a)
+            DaoRegistry.getConfiguration7: DaoRegistry[event.params.daoAddr].getConfiguration(0x5b7b19076468102b84afbef323d128866c396a716ce4ce29f84beef8d266f3af)
+            DaoRegistry.getConfiguration8: DaoRegistry[event.params.daoAddr].getConfiguration(0x23f0530138a805a7a3c83e0d6298d353102473dc25666f75173de90ac5414c82)
+            DaoRegistry.getConfiguration9: DaoRegistry[event.params.daoAddr].getConfiguration(0x4481bb4c8bc94e65f81ab5591f704165aab99eb4197df7acf672022476933f58)
+            DaoRegistry.getConfiguration10: DaoRegistry[event.params.daoAddr].getConfiguration(0x38cbcea6ba035c1d1890c83ce99918342ef746d839f9c2e2d4966d30a7e70b34)
+            DaoRegistry.getConfiguration11: DaoRegistry[event.params.daoAddr].getConfiguration(0xe33a9c3c87c85b9efd09c180b8fd30ca34326eb72e20fdd832b510971ccf71ae)
+            DaoRegistry.getConfiguration12: DaoRegistry[event.params.daoAddr].getConfiguration(0x686efe7bd1699b408d306db6bbee658ed667971c52d48d6912d7ee496e36e627)
+            DaoRegistry.getConfiguration13: DaoRegistry[event.params.daoAddr].getConfiguration(0x00634460a4b60c2e1bf8c87bfc42b6b68fd2a71f4bb2d760816eabc5038b5036)
+            DaoRegistry.getConfiguration14: DaoRegistry[event.params.daoAddr].getConfiguration(0xb75eae231d9582c6afc6491273df4a0ffbccd48ab2c48dbce59e5d68f2d19dc4)
+            DaoRegistry.getConfiguration15: DaoRegistry[event.params.daoAddr].getConfiguration(0x561bc86bc227a0f760218574791a84f180f6f9f02be9519a1f99c14fce07a310)
+            DaoRegistry.getConfiguration16: DaoRegistry[event.params.daoAddr].getConfiguration(0x8097540b5ab8a4c18e0b10cfbfd2c69e65e8da78f4f0485467006bafa3935964)
+            DaoRegistry.getConfiguration17: DaoRegistry[event.params.daoAddr].getConfiguration(0x0324de13a5a6e302ddb95a9fdf81cc736fc8acee2abe558970daac27395904e7)
+            DaoRegistry.getConfiguration18: DaoRegistry[event.params.daoAddr].getConfiguration(b4c601c38beae7eebb719eda3438f59fcbfd4c6dd7d38c00665b6fd5b432df32)
+            DaoRegistry.getConfiguration19: DaoRegistry[event.params.daoAddr].getConfiguration(0x9876c0f0505bfb2b1c38d3bbd25ba13159172cd0868972d76927723f5a9480fc)
+            DaoRegistry.getConfiguration20: DaoRegistry[event.params.daoAddr].getConfiguration(0x02a3530cbb6e7c084516c86f68bd62c3e3fcd783c6c5d7e138616207f7a32250)
+            DaoRegistry.getStringConfiguration1: DaoRegistry[event.params.daoAddr].getStringConfiguration(0x324dfda0ffcc38c4650b5df076e6f7b4938c2b723873af58b1be5e221dd2cc30)
+            DaoRegistry.getStringConfiguration2: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xa4b6f581a2d1e8b24bacedf9a91a13c8df6147ffb9d2bd4a770d867d91018da6)
       file: ./src/summon-vintage-dao.ts
   - kind: ethereum
     name: FlexFundingAdapterContract
@@ -450,8 +613,15 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address)
           handler: handleProposalCreated
+          calls:
+            FlexFundingAdapterContract.Proposals: FlexFundingAdapterContract[event.address].Proposals(event.params.daoAddress,event.params.proposalId)
+            FlexFundingAdapterContract.try_getPriorityDepositedWhitelist: FlexFundingAdapterContract[event.address].try_getPriorityDepositedWhitelist(event.params.daoAddress, event.params.proposalId)
+            FlexFundingAdapterContract.protocolFee: FlexFundingAdapterContract[event.address].protocolFee()
         - event: ProposalExecuted(address,bytes32,uint8,address[])
           handler: handleproposalExecuted
+          calls:
+            FlexFundingAdapterContract.Proposals: FlexFundingAdapterContract[event.address].Proposals(event.params.daoAddress,event.params.proposalId)
+            FlexFundingAdapterContract.protocolFee: FlexFundingAdapterContract[event.address].protocolFee()
       file: ./src/flex-funding-adapter-contract.ts
   - kind: ethereum
     name: FlexVesting
@@ -475,6 +645,8 @@ dataSources:
       eventHandlers:
         - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128,bytes32)
           handler: handleCreateVesting
+          calls:
+            FlexVesting.vests: FlexVesting[event.address].vests(event.params.vestId)
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
       file: ./src/flex-vesting-contract.ts
@@ -497,6 +669,8 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256,uint8)
           handler: handleProposalCreated
+          calls:
+            StewardManagementContract.try_proposals: StewardManagementContract[event.address].try_proposals(event.params.daoAddr, event.params.proposalId)
         - event:  ProposalProcessed(address,bytes32,uint8,uint128,uint256,uint256,uint256)
           handler: handleProposalProcessed
       file: ./src/flex-steward-management.ts
@@ -520,6 +694,8 @@ dataSources:
       eventHandlers:
         - event: SubmitVote(address,bytes32,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256,uint256)
           handler: handleSubmitVote
+          calls:
+            FlexPollingVotingContract.getVotingWeight: FlexPollingVotingContract[event.address].getVotingWeight(event.params.daoAddr, event.params.voter)
       file: ./src/flex-poll-voting.ts
   - kind: ethereum
     name: FlexVotingContract
@@ -541,6 +717,8 @@ dataSources:
       eventHandlers:
         - event: SubmitVote(address,bytes32,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256,uint256)
           handler: handleSubmitVote
+          calls:
+            FlexVotingContract.getVotingWeight: FlexVotingContract[event.address].getVotingWeight(event.params.daoAddr,event.params.voter)
       file: ./src/flex-voting.ts
   - kind: ethereum
     name: FlexInvestmentPoolAdapterContract
@@ -566,8 +744,16 @@ dataSources:
       eventHandlers:
         - event: Deposit(address,bytes32,uint256,address)
           handler: handleDeposit
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddress].getAdapterAddress(0x7a8526bca00f0726b2fab8c3bfd5b00bfa84d07f111e48263b13de605eefcdda)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddress].getConfiguration(0xda34ff95e06cbf2c9c32a559cd8aadd1a10104596417d62c03db2c1258df83d3)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddress].getConfiguration(0x64c49ee5084f4940c312104c41603e43791b03dad28152afd6eadb5b960a8a87)
         - event: WithDraw(address,bytes32,uint256,address)
           handler: handleWithDraw
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddress].getAdapterAddress(0x7a8526bca00f0726b2fab8c3bfd5b00bfa84d07f111e48263b13de605eefcdda)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddress].getConfiguration(0xda34ff95e06cbf2c9c32a559cd8aadd1a10104596417d62c03db2c1258df83d3)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddress].getConfiguration(0x64c49ee5084f4940c312104c41603e43791b03dad28152afd6eadb5b960a8a87)
       file: ./src/flex-funding-pool.ts
   - kind: ethereum
     name: FlexAllocationAdapterContract
@@ -591,6 +777,8 @@ dataSources:
       eventHandlers:
         - event: AllocateToken(bytes32,address,address,address[])
           handler: handleAllocateToken
+          calls:
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x8987d08c67963e4cacd5e5936c122a968c66853d58299dd822c1942227109839)
         - event: ConfigureDao(uint256,uint256)
           handler: handleConfigureDao
       file: ./src/flex-alloc.ts
@@ -631,6 +819,22 @@ dataSources:
           handler: handlePollingProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handlePollingProposalProcessed
+          calls:
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0xee63cc82ca6990a4cc5fa3ca10d8a5281ae1758a8d8f22892c4badb7cacd111e)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0x18ccfaf5deb9f2b0bd666344fa9c46950fbcee85fbfd05c3959876dfe502c209)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x777270e51451e60c2ce5118fc8e5844441dcc4d102e9052e60fb41312dbb848a)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x7789eea44dccd66529026559d1b36215cb5766016b41a8a8f16e08b2ec875837)
+            DaoRegistry.getConfiguration5: DaoRegistry[event.params.daoAddr].getConfiguration(0xf873703084a7a9b6b81a595d5038f888fd90f4f9a530d4950a46c89eab021188)
+            DaoRegistry.getConfiguration6: DaoRegistry[event.params.daoAddr].getConfiguration(0x4e640b0dd9bf7618f23df95b8d516df2ff38868970d2d109c5b4b0455980659f)
+            DaoRegistry.getConfiguration7: DaoRegistry[event.params.daoAddr].getConfiguration(0x6e9fd67c3f2ca4e2b4e4b45b33b985dc3a1bffcadea24d12440a5901f72217b5)
+            DaoRegistry.getConfiguration8: DaoRegistry[event.params.daoAddr].getConfiguration(0xf2b332c307ef460e99eb866928b78eca9f8af0da0626b4b48a13f9b52842fa6a)
+            DaoRegistry.getConfiguration9: DaoRegistry[event.params.daoAddr].getConfiguration(0x249486eeae30287051f65673dfa390711fd4587950c33b4150a633763f869724)
+            DaoRegistry.getConfiguration10: DaoRegistry[event.params.daoAddr].getConfiguration(0x6839e94cab6f83f7a12a5a3d1d6f3bbcaf0185a49b20b86e6f47b8c78494ac3d)
+            DaoRegistry.getConfiguration11: DaoRegistry[event.params.daoAddr].getConfiguration(0x6e9fd67c3f2ca4e2b4e4b45b33b985dc3a1bffcadea24d12440a5901f72217b5)
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x5f0e8d109045653360289a7a02d5dc2a99e382006a42ef93f66de55ecff3176f)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x6f48e16963713446db50a1503860d8e1fc3c888da56a85afcaa6dc29503cc610)
+            DaoRegistry.getAddressConfiguration1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xa23a2786abcf8c551ce7fba1966ec456144d9caa0db070879d03a4ea4fd9b2fd)
+            DaoRegistry.getAddressConfiguration2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x770ef80745dba2953f780c8b963701e76fd3ac982923200f9214126e80f5f032)
       file: ./src/flex-daoset-contract.ts
     
   - kind: ethereum
@@ -657,6 +861,17 @@ dataSources:
           handler: handleVotingProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handleVotingProposalProcessed
+          calls:
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x9876c0f0505bfb2b1c38d3bbd25ba13159172cd0868972d76927723f5a9480fc)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xb4c601c38beae7eebb719eda3438f59fcbfd4c6dd7d38c00665b6fd5b432df32)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x75b7d343967750d1f6c15979b7559cea8be22ff1a06a51681b9cbef0d2fff4fe)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x18ef0b57fe939edb640a200fdf533493bd8f26a274151543a109b64c857e20f3)
+            DaoRegistry.getConfiguration5: DaoRegistry[event.params.daoAddr].getConfiguration(0x77b1580d1632c74a32483c26a7156260a89ae4138b020ea7d09b0dcf24f1ea24)
+            DaoRegistry.getConfiguration6: DaoRegistry[event.params.daoAddr].getConfiguration(0x0324de13a5a6e302ddb95a9fdf81cc736fc8acee2abe558970daac27395904e7)
+            DaoRegistry.getConfiguration7: DaoRegistry[event.params.daoAddr].getConfiguration(0xe815a3c082eed7f7f7baab546f11a8718682c0eb3017b099ddc301a92f6673e3)
+            DaoRegistry.getConfiguration8: DaoRegistry[event.params.daoAddr].getConfiguration(0x730faccfe82f70711a34ce5202c6e1b1f79f421c16fcef745a9d92d06a7c0d4c)
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x8ceb7c7dc4c27ecfdcfd7ab759513c13202213bb0305fcd8889452f229d798e7)
+            DaoRegistry.getAddressConfiguration1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xb5a1ad3f04728d7c38547e3d43006a1ec090a02fce04bbb1d0ee4519a1921e57)
       file: ./src/flex-daoset-contract.ts
     
   - kind: ethereum
@@ -683,6 +898,11 @@ dataSources:
           handler: handleFeesProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handleFeesProposalProcessed
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xc6bb47f9566baa74b5032b5c10e5bf4a1e2382ca337c2de674732f6401d52cc0)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x64c49ee5084f4940c312104c41603e43791b03dad28152afd6eadb5b960a8a87)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xea659d8e1a730b10af1cecb4f8ee391adf80e75302d6aaeb9642dc8a4a5e5dbb)
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x8987d08c67963e4cacd5e5936c122a968c66853d58299dd822c1942227109839)
       file: ./src/flex-daoset-contract.ts
 
   - kind: ethereum
@@ -711,6 +931,15 @@ dataSources:
           handler: handleGovernorMembershipProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handleGovernorMembershipProposalProcessed
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x869e5d18913d4e9bb387c730a04b58d11e95102194f7217a4b684f6e61dff920)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xcad7b0867188190920a10bf710c45443f6358175d56a759e7dc109e6d7b5d753)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x71ecc01da16acc23ab0eca549b0aaa7659ae183a220304fe5072243bc984fd79)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0x84580f9d926113d2c801e908a914b652340b3d8527c171bcea8d1868e92a507c)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0x50c40dbbb38d5b02b04e0c6d7be02f4391fc8c14a98860284871ef1834c8390b)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0x93cc40268a57b3f7e5eb22a016a12d19010736289cceac5742a116fea3491b35)
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x0bfac56541ded449415df8f96f54b002e55665d7fd2fafc884184e8c17f3c772)
+            DaoRegistry.getStringConfiguration: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xe6fc898f462d48724eb27b66193f38e8f83f214469eb3145fe9431a89411e724)
       file: ./src/flex-daoset-contract.ts
 
   - kind: ethereum
@@ -737,6 +966,10 @@ dataSources:
           handler: handleInvestorCapProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handleInvestorCapProposalProcessed
+          calls:
+            DaoRegistry.getAdapterAddress: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x08f2d2eeda0c9072cdba8b58d442503b4cf9eb6c2f74d75e91dc719111c3189c)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x69f4ffb3ebcb7809550bddd3e4d449a47e737bf6635bc7a730996643997b0e48)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xecbde689cc6337d29a750b8b8a8abbfa97427b4ac800ab55be2f2c87311510f2)
       file: ./src/flex-daoset-contract.ts
 
   - kind: ethereum
@@ -765,6 +998,15 @@ dataSources:
           handler: handleInvestorMembershipProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handleInvestorMembershipProposalProcessed
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x2207fd6117465cefcba0abc867150698c0464aa41a293ec29ca01b67a6350c3c)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xe6121cbf77e02f965a1829c382f701ad4cec84fbda84c45378db0768d2e40871)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x77041e0d128001928f30b976713fed530b452bc354a9bad49ad1bcf93121f9dc)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0xcab672166d6a1c8dae3ca0b03fed2e7258db17c3c3801ac2651987b066d39647)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0xcdc3057ec9c82a3ea3fd34ef56b1825924525fbab071e1a2b9d664a07f400480)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0xfeddffed075d0686e697569ece0ce2fd26bfbbb18719086f36d16c7117edb553)
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x0f57fc3a39a8a66c31f52eab69ced65d5ac74e4a182b215146a45a0281de53e8)
+            DaoRegistry.getStringConfiguration: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xfd9a8d4692ffc545577ff1979a0a918c2b536b6b6a891cf324a93b2c43907f83)
       file: ./src/flex-daoset-contract.ts
 
   - kind: ethereum
@@ -793,6 +1035,15 @@ dataSources:
           handler: handleProposerMembershipProposalCreated
         - event: ProposalProcessed(address,bytes32,uint256,uint128,uint256,uint256)
           handler: handleProposerMembershipProposalProcessed
+          calls:
+            DaoRegistry.getAdapterAddress1: DaoRegistry[event.params.daoAddr].getAdapterAddress(0x7a8526bca00f0726b2fab8c3bfd5b00bfa84d07f111e48263b13de605eefcdda)
+            DaoRegistry.getAdapterAddress2: DaoRegistry[event.params.daoAddr].getAdapterAddress(0xf3ce48289b9021e92bc5661ccf481e756dcb8de846c2eb9620bb83917cab5237)
+            DaoRegistry.getConfiguration1: DaoRegistry[event.params.daoAddr].getConfiguration(0x2073e6ba5c75026b006fdd165596d94b89cada2e00d8e44a99d422de8ea467e0)
+            DaoRegistry.getConfiguration2: DaoRegistry[event.params.daoAddr].getConfiguration(0x57901982635f8a470a3648422f8f769cf08dc2057489be5bf0099fcb44f7d43c)
+            DaoRegistry.getConfiguration3: DaoRegistry[event.params.daoAddr].getConfiguration(0xb34f156369747125f679c86d97f51861a5a2a9f927a1addd4354acbaaa88ae57)
+            DaoRegistry.getConfiguration4: DaoRegistry[event.params.daoAddr].getConfiguration(0xf6d5f030b79ca78dad001b87a49239ec96be97e62d13501da94c9a392700509e)
+            DaoRegistry.getAddressConfiguration: DaoRegistry[event.params.daoAddr].getAddressConfiguration(0x30091caaedd0994beeeeb3b7b5734296263687ae0126aaf79e5e0f8e5c1706b2)
+            DaoRegistry.getStringConfiguration: DaoRegistry[event.params.daoAddr].getStringConfiguration(0xed2fa238da16f9e9bea8f1aa8dc2f0d04c522f8adbda71cc4ea5c11f5a51f32d)
       file: ./src/flex-daoset-contract.ts
 
   - kind: ethereum
@@ -849,6 +1100,10 @@ dataSources:
       eventHandlers:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleERC721Transfer
+          calls:
+            VestingERC721.vintageVestContrAddress: VestingERC721[event.address].vintageVestContrAddress()
+            VestingERC721.flexVestContrAddress: VestingERC721[event.address].flexVestContrAddress()
+            VestingERC721.collectiveVestContrAddress: VestingERC721[event.address].collectiveVestContrAddress()
       file: ./src/vestingERC721.ts
   - kind: ethereum
     name: VintageVestingERC721
@@ -872,6 +1127,8 @@ dataSources:
       eventHandlers:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleERC721Transfer
+          calls:
+            VintageVestingERC721.vestAddress: VintageVestingERC721[event.address].vestAddress()
       file: ./src/vintage-vesting.ts
   - kind: ethereum
     name: FlexVestingERC721

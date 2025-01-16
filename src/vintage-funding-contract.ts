@@ -24,7 +24,7 @@ import {
     VintageProposalVoteInfo,
     VintageFundRoundStatistic,
     VintageFundRaiseEntity,
-    VintageEscrowFundEntity,
+    // VintageEscrowFundEntity,
     VintageInvestorInvestmentEntity,
     VintageSuccessedFundCounter,
     VintageInvestorPortfoliosEntity,
@@ -198,7 +198,7 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
             voteInfoEntity.save();
         }
 
-        const daoContract = DaoRegistry.bind(event.params.daoAddr);
+        // const daoContract = DaoRegistry.bind(event.params.daoAddr);
         const fundRaiseAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
         const fundRaiseContract = VintageFundRaiseAdapterContract.bind(fundRaiseAddress);
         const currentFundRound = fundRaiseContract.createdFundCounter(event.params.daoAddr);

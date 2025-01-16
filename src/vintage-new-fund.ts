@@ -27,7 +27,6 @@ import {
 
 export function handleProposalCreated(event: ProposalCreated): void {
     // log.error("proposalId {}", [event.params.proposalId.toHexString()]);
-
     let entity = VintageFundEstablishmentProposal.load(event.params.proposalId.toHexString())
 
     if (!entity) {

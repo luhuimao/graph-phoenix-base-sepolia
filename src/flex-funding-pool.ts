@@ -11,10 +11,10 @@
 // import { EventLog } from "ethers/types/contract"
 import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts";
 import {
-    FlexInvestmentPoolAdapterContract,
+    // FlexInvestmentPoolAdapterContract,
     Deposit,
     WithDraw,
-    InvestorMembershipCreated
+    // InvestorMembershipCreated
 } from "../generated/FlexInvestmentPoolAdapterContract/FlexInvestmentPoolAdapterContract";
 import { DaoRegistry } from "../generated/FlexInvestmentPoolAdapterContract/DaoRegistry";
 import { FlexFundingAdapterContract } from "../generated/FlexInvestmentPoolAdapterContract/FlexFundingAdapterContract";
@@ -23,8 +23,8 @@ import {
     InvestorBalance,
     InvestorAtivity,
     FlexInvestmentProposal,
-    FlexDaoStatistic,
-    FlexDaoInvestorMembershipEntity
+    // FlexDaoStatistic,
+    // FlexDaoInvestorMembershipEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {

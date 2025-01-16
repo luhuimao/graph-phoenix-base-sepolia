@@ -84,7 +84,8 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
             //     }
             //     break;
             case 1:
-                proposalState = BigInt.fromI32(daosetContrct.governorMembershipProposals(event.params.daoAddr, event.params.proposalId).getState());
+                const daosetMembershipProposalInfo = daosetContrct.governorMembershipProposals(event.params.daoAddr, event.params.proposalId);
+                proposalState = BigInt.fromI32(daosetMembershipProposalInfo.getState());
 
                 if (proposalState == BigInt.fromI32(2)) {
                     let vintageGovernorMembershipEntity = VintageGovernorMembershipEntity.load(event.params.daoAddr.toHexString());

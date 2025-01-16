@@ -373,7 +373,7 @@ type FlexPollVoting @entity{
   flexDaoEntity: FlexDaoEntity
 }
 
-type FlexVoting @entity{
+type FlexVoting @entity(immutable: true){
   id: ID!
   txHash:Bytes! # address
   daoAddr: Bytes! # address
@@ -410,7 +410,7 @@ type InvestorBalance @entity{
   balanceFromWei: String!
 }
 
-type InvestorAtivity @entity{
+type InvestorAtivity @entity(immutable: true){
   id:ID!
   txHash:Bytes! 
   daoAddr: Bytes! # address
@@ -423,7 +423,7 @@ type InvestorAtivity @entity{
   timeString: String!
 }
 
-type FlexVestingEligibleUsers @entity {
+type FlexVestingEligibleUsers @entity(immutable: true) {
   id: ID!
   proposalId: Bytes! # bytes32
   proposer: Bytes! # address
@@ -469,7 +469,7 @@ type FlexDaosetProposal @entity{
   flexDaoEntity: FlexDaoEntity
 }
 
-type FlexVestingClaimedActivityEntity @entity{
+type FlexVestingClaimedActivityEntity @entity(immutable: true){
   id: ID!
   vestId: BigInt!
   timeStamp: BigInt!
@@ -514,7 +514,7 @@ type FLexGovernorVotingAssetAllocationProposalEntity @entity{
   typeInString: String!
 }
 
-type FlexInvestorPortfoliosEntity @entity{
+type FlexInvestorPortfoliosEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   account : Bytes!
@@ -769,7 +769,7 @@ type VintageUserVestInfo @entity{
   tokenAddress: Bytes!
 }
 
-type VintageInvestorAtivity @entity{
+type VintageInvestorAtivity @entity(immutable: true){
   id:ID!
   txHash:Bytes! 
   daoAddr: Bytes! # address
@@ -796,7 +796,7 @@ type VintageProposalVoteInfo @entity{
   currentQuorum: BigInt! # uint256
 }
 
-type VintageVoting @entity{
+type VintageVoting @entity(immutable: true){
   id: ID!
   txHash:Bytes! # address
   daoAddr: Bytes! # address
@@ -862,14 +862,14 @@ type VintageAllocateToken @entity {
   lps: [Bytes!]! # address[]
 }
 
-type VintageVestingEligibleUsers @entity {
+type VintageVestingEligibleUsers @entity(immutable: true) {
   id: ID!
   proposalId: Bytes! # bytes32
   proposer: Bytes! # address
   lps: [String!]! # address[]
 }
 
-type VintageClearFundEntity @entity{
+type VintageClearFundEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   timeStamp: BigInt! # uint256
@@ -880,7 +880,7 @@ type VintageClearFundEntity @entity{
   createdSucceedFundCounter: BigInt! # uint256
 }
 
-type VintageRedempteEntity @entity{
+type VintageRedempteEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   timeStamp: BigInt! # uint256
@@ -1030,7 +1030,7 @@ type VintageInvestorRedemptionsInFundRoundEntity @entity{
   redemptionAmount: BigInt!
 }
 
-type VintageVestingClaimedActivityEntity @entity{
+type VintageVestingClaimedActivityEntity @entity(immutable: true){
   id: ID!
   vestId: BigInt!
   timeStamp: BigInt!
@@ -1056,7 +1056,7 @@ type VintageGovernorVotingAssetAllocationProposalEntity @entity{
   typeInString: String!
 }
 
-type VintageInvestorPortfoliosEntity @entity{
+type VintageInvestorPortfoliosEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   account : Bytes!
@@ -1188,7 +1188,7 @@ type CollectiveProposalVoteInfo @entity{
   currentQuorum: BigInt! # uint256
 }
 
-type CollectiveVoting @entity{
+type CollectiveVoting @entity(immutable: true){
   id: ID!
   txHash:Bytes! # address
   daoAddr: Bytes! # address
@@ -1361,7 +1361,7 @@ type CollectiveUserVestInfo @entity{
   created: Boolean!
 }
 
-type CollectiveVestingClaimedActivityEntity @entity{
+type CollectiveVestingClaimedActivityEntity @entity(immutable: true){
   id: ID!
   vestId: BigInt!
   timeStamp: BigInt!
@@ -1370,7 +1370,7 @@ type CollectiveVestingClaimedActivityEntity @entity{
   claimedAmount: BigInt!
 }
 
-type CollectiveVestingEligibleUsers @entity {
+type CollectiveVestingEligibleUsers @entity(immutable: true) {
   id: ID!
   proposalId: Bytes! # bytes32
   proposer: Bytes! # address
@@ -1424,7 +1424,7 @@ type CollectiveDaoFeeInfoEntity @entity{
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
-type CollectiveInvestorActivity @entity{
+type CollectiveInvestorActivity @entity(immutable: true){
   id:ID!
   txHash:Bytes! 
   daoAddr: Bytes! # address
@@ -1471,7 +1471,7 @@ type CollectiveDaoStatisticEntity @entity{
   governors: [String!]!
 }
 
-type CollectiveClearFundEntity @entity{
+type CollectiveClearFundEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   timeStamp: BigInt! # uint256
@@ -1624,7 +1624,7 @@ type CollectiveMemberRedemptionFeeEntity @entity{
   account: Bytes! # address
 }
 
-type CollectiveRedemptionFeeClaimedEntity @entity{
+type CollectiveRedemptionFeeClaimedEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   tokenAddr: Bytes! # address
@@ -1635,7 +1635,7 @@ type CollectiveRedemptionFeeClaimedEntity @entity{
   txHash: Bytes!
 }
 
-type CollectiveInvestorPortfoliosEntity @entity{
+type CollectiveInvestorPortfoliosEntity @entity(immutable: true){
   id: ID!
   daoAddr: Bytes! # address
   account : Bytes!
@@ -1734,7 +1734,7 @@ type ManualVestEntity @entity {
   batchId: BigInt!
 }
 
-type ManualVestingClaimedActivityEntity @entity{
+type ManualVestingClaimedActivityEntity @entity(immutable: true){
   id: ID!
   vestId: BigInt!
   timeStamp: BigInt!

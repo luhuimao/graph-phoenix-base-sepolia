@@ -10,9 +10,7 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     VintageVesting,
-    CancelVesting,
     CreateVesting,
-    LogUpdateOwner,
     Withdraw
 } from "../generated/VintageVesting/VintageVesting";
 import { VintageVestingERC721, Transfer } from "../generated/VintageVestingERC721/VintageVestingERC721";
@@ -40,17 +38,18 @@ export function handleCreateVesting(event: CreateVesting): void {
     entity.cliffDuration = event.params.cliffDuration
     entity.stepDuration = event.params.stepDuration
     entity.steps = event.params.steps
-    entity.totalAmount = vintageVestingContr.vests(event.params.vestId).getTotal();
+    const vestInfo = vintageVestingContr.vests(event.params.vestId);
+    entity.totalAmount = vestInfo.getTotal();
     entity.claimedAmount = BigInt.fromI32(0);
     entity.startTimeString = new Date(event.params.start.toI64() * 1000).toISOString();
     entity.cliffEndTimeString = new Date((event.params.start.toI64() +
         event.params.cliffDuration.toI64()) * 1000).toISOString();
     entity.vestEndTimeString = new Date(
-        vintageVestingContr.vests(event.params.vestId).getTimeInfo().end.toI64() *
+        vestInfo.getTimeInfo().end.toI64() *
         1000
     ).toISOString();
-    entity.nftToken = vintageVestingContr.vests(event.params.vestId).getNftInfo().nftToken;
-    entity.tokenId = vintageVestingContr.vests(event.params.vestId).getNftInfo().tokenId;
+    entity.nftToken = vestInfo.getNftInfo().nftToken;
+    entity.tokenId = vestInfo.getNftInfo().tokenId;
 
     let vintageFundingProposalEntity = VintageInvestmentProposalInfo.load(event.params.proposalId.toHexString())
     entity.daoAddr = vintageFundingProposalEntity ? vintageFundingProposalEntity.daoAddress : Bytes.fromHexString("0x");

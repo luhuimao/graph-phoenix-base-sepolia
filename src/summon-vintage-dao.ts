@@ -8,7 +8,7 @@
  */
 import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts"
 import {
-    SummonVintageDao,
+    // SummonVintageDao,
     VintageDaoCreated
 } from "../generated/SummonVintageDao/SummonVintageDao";
 import { VintageFundingPoolAdapterContract } from "../generated/SummonVintageDao/VintageFundingPoolAdapterContract";
@@ -22,7 +22,7 @@ import {
     VintageInvestorMembershipEntity,
     VintageGovernorMembershipEntity,
     VintageVotingInfoEntity,
-    VintageDaoFeeInfoEntity
+    // VintageDaoFeeInfoEntity
 } from "../generated/schema"
 
 export function handleVintageDaoCreated(event: VintageDaoCreated): void {
