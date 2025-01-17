@@ -23,6 +23,7 @@ import { DaoRegistry } from "../generated/VintageFundingPoolAdapterContract/DaoR
 import { VintageFundingPoolExtension } from "../generated/VintageFundingPoolAdapterContract/VintageFundingPoolExtension";
 import {
     VintageRedempteEntity,
+    VintageFundRedemptionEntity,
     VintageInvestorBalance,
     VintageInvestorAtivity,
     VintageFundEstablishmentProposal,
@@ -54,15 +55,15 @@ export function handleDeposit(event: Deposit): void {
 
     if (roundProposalIdEntity) {
         let InvestorBalanceEntity = VintageInvestorBalance.load(
-            event.params.daoAddress.toString()
-            + roundProposalIdEntity.proposalId.toString()
-            + event.params.account.toString());
+            event.params.daoAddress.toHexString()
+            + roundProposalIdEntity.proposalId.toHexString()
+            + event.params.account.toHexString());
 
         if (!InvestorBalanceEntity) {
             InvestorBalanceEntity = new VintageInvestorBalance(
-                event.params.daoAddress.toString() +
-                roundProposalIdEntity.proposalId.toString() +
-                event.params.account.toString());
+                event.params.daoAddress.toHexString() +
+                roundProposalIdEntity.proposalId.toHexString() +
+                event.params.account.toHexString());
 
             InvestorBalanceEntity.balance = BigInt.fromI64(0);
             InvestorBalanceEntity.balanceFromWei = "0";
@@ -293,10 +294,27 @@ export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
     entity.txHash = event.transaction.hash;
     entity.save();
 
+
+
     const daoContract = DaoRegistry.bind(event.params.dao);
     const vintageNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
     const vintageNewFundCont = VintageFundRaiseAdapterContract.bind(vintageNewFundContAddr);
     const createdNewFundId = vintageNewFundCont.createdFundCounter(event.params.dao);
+
+
+    const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + createdNewFundId.toString());
+    if (roundProposalIdEntity) {
+        let vintageFundRedemptionEntity = VintageFundRedemptionEntity.load(roundProposalIdEntity.proposalId.concat(event.params.account));
+        if (!vintageFundRedemptionEntity) {
+            vintageFundRedemptionEntity = new VintageFundRedemptionEntity(roundProposalIdEntity.proposalId.concat(event.params.account));
+            vintageFundRedemptionEntity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId;
+            vintageFundRedemptionEntity.daoAddr = event.params.dao;
+            vintageFundRedemptionEntity.account = event.params.account;
+        }
+        vintageFundRedemptionEntity.amount = vintageFundRedemptionEntity.amount.plus(event.params.redempAmount)
+        vintageFundRedemptionEntity.save();
+    }
+
 
     let redemptionsInFundRoundEntity = VintageInvestorRedemptionsInFundRoundEntity.load(
         event.params.dao.toHexString() +
@@ -339,6 +357,7 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             newFundEntity.totalFund = totoalRaised;
             newFundEntity.totalFundFromWei = newFundEntity.totalFund.div(BigInt.fromI64(10 ** 18)).toString();
             newFundEntity.executeBlockNum = event.block.number;
+            newFundEntity.processFundRaiseBlockNum = event.block.number;
             // newFundEntity.state = fundRaisedState == 2 ? BigInt.fromI32(3) : BigInt.fromI32(4);
             if (fundRaisedState == 2) {
                 newFundEntity.state = BigInt.fromI32(3);

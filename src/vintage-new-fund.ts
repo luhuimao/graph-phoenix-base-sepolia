@@ -31,6 +31,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
     if (!entity) {
         entity = new VintageFundEstablishmentProposal(event.params.proposalId.toHexString())
+        entity.processFundRaiseBlockNum = BigInt.zero();
     }
     const daoContr = DaoRegistry.bind(event.params.daoAddr);
 

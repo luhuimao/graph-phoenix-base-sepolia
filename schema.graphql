@@ -672,6 +672,7 @@ type VintageFundEstablishmentProposal @entity{
   investorEligibilityVarifyType :BigInt!
   investorEligibilityWhiteList : [String!]
   failedReason: String
+  processFundRaiseBlockNum: BigInt!
   vintageDaoEntity: VintageDaoEntity
 }
 
@@ -1110,6 +1111,9 @@ type VintageEscrowLiquidationFundEntity @entity{
   fundRaiseId: BigInt!
   myWithdrawAmount: BigInt!
   myRefundable: BigInt!
+  myConfirmedDepositAmount: BigInt!
+  myInvestmentAmount: BigInt!
+  myRedemptionAmount: BigInt!
   escrowBlockNum: BigInt!
 }
 
@@ -1156,6 +1160,14 @@ type VintageEscrowOverRaisedFundEntity @entity{
   myWithdrawAmount: BigInt!
   myRefundable: BigInt!
   escrowBlockNum: BigInt!
+}
+
+type VintageFundRedemptionEntity @entity{
+  id: Bytes!
+  fundEstablishmentProposalId: Bytes!
+  daoAddr: Bytes!
+  account: Bytes!
+  amount: BigInt!
 }
 
 type CollectiveTopUpProposalEntity @entity{

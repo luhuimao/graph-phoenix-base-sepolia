@@ -11,15 +11,15 @@
 // import { EventLog } from "ethers/types/contract"
 import { BigInt, Bytes, bigInt, Address } from "@graphprotocol/graph-ts";
 import {
-    EscrowFund as EscorwFundEvent,
-    WithDraw as WithDrawEvent,
+    // EscrowFund as EscorwFundEvent,
+    // WithDraw as WithDrawEvent,
     EscrowFundFromFailedFundRaising,
     EscrowFundFromOverRaised,
     EscrowFundFromLiquidation,
     WithdrawFromLiquidation,
     WithdrawFromFailedFundRaising,
     WithdrawFromOverRaised,
-    VintageEscrowFundAdapterContract
+    // VintageEscrowFundAdapterContract
 } from "../generated/VintageEscrowFundAdapterContract/VintageEscrowFundAdapterContract"
 import { VintageFundingPoolExtension } from "../generated/VintageEscrowFundAdapterContract/VintageFundingPoolExtension";
 import { VintageFundRaiseAdapterContract } from "../generated/VintageEscrowFundAdapterContract/VintageFundRaiseAdapterContract";
@@ -33,7 +33,9 @@ import {
     // VintageInvestorRedemptionsInFundRoundEntity,
     VintageEscrowFailedFundRaisingFundEntity,
     VintageEscrowLiquidationFundEntity,
-    VintageEscrowOverRaisedFundEntity
+    VintageEscrowOverRaisedFundEntity,
+    VintageFundRedemptionEntity,
+    VintageInvestorInvestmentEntity
 } from "../generated/schema"
 
 
@@ -220,24 +222,44 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
     // const collectiveFundingPoolAdapterContractAddr = dao.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
     // const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
 
-    // const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
-    // const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
+    const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
+    const vintageFundingPoolExt = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
 
-    // const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
-    // const poolAmount = collectiveFundingPoolExt.getPriorAmount(
-    //     Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000decd")),
-    //     raiseTokenAddr,
-    //     event.block.number.minus(BigInt.fromI32(1)));
+    const raiseTokenAddr = vintageFundingPoolExt.getFundRaisingTokenAddress();
+
+
     // const accumulateRaiseAmount = collectiveFundingPoolAdapterContract.try_accumulateRaiseAmount(event.params.dao);
 
     // const raisedAmount = poolAmount.minus(accumulateRaiseAmount.reverted ? BigInt.zero() : accumulateRaiseAmount.value);
     // const fundRaiseTarget = dao.getConfiguration(Bytes.fromHexString("0x31af571e53636dddd77f772cce9d30b42075760f2da731636acc6962da2fbef8"));
     let newFundProposalId = Bytes.empty();
+    let processFundRaiseBlockNum = BigInt.zero();
     const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.dao.toHexString() + (fundRound.reverted ? "0" : fundRound.value.toString()));
     if (roundProposalIdEntity) {
         newFundProposalId = roundProposalIdEntity.proposalId;
+        let vinFundRaiseProposal = VintageFundEstablishmentProposal.load(newFundProposalId.toHexString());
+        if (vinFundRaiseProposal)
+            processFundRaiseBlockNum = vinFundRaiseProposal.processFundRaiseBlockNum;
+    }
+    let confirmedDepositAmount = BigInt.zero();
+    if (processFundRaiseBlockNum.gt(BigInt.zero())) {
+        confirmedDepositAmount = vintageFundingPoolExt.getPriorAmount(
+            event.params.account,
+            raiseTokenAddr,
+            processFundRaiseBlockNum);
     }
 
+
+    let myInvestmentAmount = BigInt.zero();
+    if (!fundRound.reverted) {
+        let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(event.params.dao.toHexString() + fundRound.value.toHexString() + event.params.account.toHexString());
+        if (investorInvestmentEntity)
+            myInvestmentAmount = investorInvestmentEntity.investedAmount;
+    }
+
+    let myRedemptionAmount = BigInt.zero();
+    const vintageFundRedemptionEntity = VintageFundRedemptionEntity.load(newFundProposalId);
+    if (vintageFundRedemptionEntity) myRedemptionAmount = vintageFundRedemptionEntity.amount;
     if (!entity) {
         entity = new VintageEscrowLiquidationFundEntity(
             event.params.dao.toHexString()
@@ -255,6 +277,9 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
         entity.withdrawDateTime = "0";
         entity.withdrawTxHash = Bytes.empty();
         entity.fundRaiseId = event.params.fundRaiseId;
+        entity.myConfirmedDepositAmount = confirmedDepositAmount;
+        entity.myInvestmentAmount = myInvestmentAmount;
+        entity.myRedemptionAmount = myRedemptionAmount;
     }
 
     entity.fundRound = fundRound.reverted ? BigInt.zero() : fundRound.value;
