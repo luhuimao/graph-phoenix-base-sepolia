@@ -810,13 +810,14 @@ type VintageVoting @entity(immutable: true){
 }
 
 type VintageInvestorBalance @entity{
-  id:ID!
+  id: Bytes!
   daoAddr: Bytes! # address
   account:  Bytes! # address
   balance: BigInt! # uint256
   balanceFromWei: String!
   fundEstablishmentProposalId: Bytes! # bytes32
   fundId: BigInt! # uint256
+  myAdvanceDepositAmount: BigInt!
 }
 
 type VintageDaoStatistic @entity{
