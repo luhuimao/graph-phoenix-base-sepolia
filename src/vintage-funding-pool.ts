@@ -54,14 +54,16 @@ export function handleDeposit(event: Deposit): void {
 
     if (roundProposalIdEntity) {
         let InvestorBalanceEntity = VintageInvestorBalance.load(
-            event.params.daoAddress.concat(roundProposalIdEntity.proposalId).concat(
-                event.params.account)
+            event.params.daoAddress.toHexString() +
+            roundProposalIdEntity.proposalId.toHexString() +
+            event.params.account.toHexString()
         );
 
         if (!InvestorBalanceEntity) {
             InvestorBalanceEntity = new VintageInvestorBalance(
-                event.params.daoAddress.concat(roundProposalIdEntity.proposalId).concat(
-                    event.params.account)
+                event.params.daoAddress.toHexString() +
+                roundProposalIdEntity.proposalId.toHexString() +
+                event.params.account.toHexString()
             );
 
             InvestorBalanceEntity.balance = BigInt.fromI64(0);
@@ -125,8 +127,9 @@ export function handleWithDraw(event: WithDraw): void {
         let newFundEntity = VintageFundEstablishmentProposal.load(roundProposalIdEntity.proposalId.toHexString());
 
         let InvestorBalanceEntity = VintageInvestorBalance.load(
-            event.params.daoAddress.concat(roundProposalIdEntity.proposalId).concat(
-                event.params.account)
+            event.params.daoAddress.toHexString() +
+            roundProposalIdEntity.proposalId.toHexString() +
+            event.params.account.toHexString()
         );
 
         if (InvestorBalanceEntity) {
@@ -314,9 +317,14 @@ export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
         // account: Bytes!
         // amount: BigInt!
 
-        let vintageFundRedemptionEntity = VintageFundRedemptionEntity.load(roundProposalIdEntity.proposalId.concat(event.params.account));
+        let vintageFundRedemptionEntity = VintageFundRedemptionEntity.load(
+            roundProposalIdEntity.proposalId.toHexString() +
+            event.params.account.toHexString()
+        );
         if (!vintageFundRedemptionEntity) {
-            vintageFundRedemptionEntity = new VintageFundRedemptionEntity(roundProposalIdEntity.proposalId.concat(event.params.account));
+            vintageFundRedemptionEntity = new VintageFundRedemptionEntity(
+                roundProposalIdEntity.proposalId.toHexString() +
+                event.params.account.toHexString());
             vintageFundRedemptionEntity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId;
             vintageFundRedemptionEntity.daoAddr = event.params.dao;
             vintageFundRedemptionEntity.account = event.params.account;
@@ -326,8 +334,9 @@ export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
         vintageFundRedemptionEntity.save();
 
         let InvestorBalanceEntity = VintageInvestorBalance.load(
-            event.params.dao.concat(roundProposalIdEntity.proposalId).concat(
-                event.params.account)
+            event.params.dao.toHexString() +
+            roundProposalIdEntity.proposalId.toHexString() +
+            event.params.account.toHexString()
         );
         if (InvestorBalanceEntity) {
             InvestorBalanceEntity.myAdvanceDepositAmount = InvestorBalanceEntity.myAdvanceDepositAmount.plus(event.params.redempAmount);

@@ -12,9 +12,14 @@ import {
     ProposalProcessed,
     ProposalCreated
 } from "../generated/VintageRaiserManagementContract/VintageRaiserManagementContract"
+
+import { DaoRegistry } from "../generated/VintageRaiserManagementContract/DaoRegistry";
+import { VintageVotingContract } from "../generated/VintageRaiserManagementContract/VintageVotingContract";
+
 import {
     VintageGovernorManagementProposal,
-    VintageProposalVoteInfo
+    VintageProposalVoteInfo,
+    VintageGovernorOutVotingToBeRemovedEntity
 } from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -56,6 +61,26 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.vintageDaoEntity = event.params.daoAddr.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save()
+
+    if (event.params.pType == 1) {
+        const daoContr = DaoRegistry.bind(event.params.daoAddr);
+        const vinVotingAdaptContrAddr = daoContr.getAdapterAddress(Bytes.fromHexString("0xd3999c37f8f35da86f802a74f9bf032c4aeb46e49abd9c861f489ef4cb40d0a8"));
+        const vinVotingAdaptContr = VintageVotingContract.bind(vinVotingAdaptContrAddr);
+        const votingToBeRemoved = vinVotingAdaptContr.try_getVotingWeight(
+            event.params.daoAddr,
+            event.params.account
+        )
+        const vintageGovernorOutVotingToBeRemovedEntity = new VintageGovernorOutVotingToBeRemovedEntity(
+            event.params.daoAddr.toHexString() +
+            event.params.proposalId.toHexString() +
+            event.params.account.toHexString());
+
+        vintageGovernorOutVotingToBeRemovedEntity.daoAddr = event.params.daoAddr;
+        vintageGovernorOutVotingToBeRemovedEntity.governorOutProposalId = event.params.proposalId;
+        vintageGovernorOutVotingToBeRemovedEntity.account = event.params.account;
+        vintageGovernorOutVotingToBeRemovedEntity.votingToBeRemoved = votingToBeRemoved.reverted ? BigInt.zero() : votingToBeRemoved.value;
+        vintageGovernorOutVotingToBeRemovedEntity.save();
+    }
 
 }
 

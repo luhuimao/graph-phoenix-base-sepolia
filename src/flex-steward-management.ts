@@ -11,8 +11,15 @@ import {
     StewardManagementContract,
     ProposalProcessed,
     ProposalCreated
-} from "../generated/StewardManagementContract/StewardManagementContract"
-import { FlexStewardMangementProposal, FlexProposalVoteInfo } from "../generated/schema";
+} from "../generated/StewardManagementContract/StewardManagementContract";
+import { FlexVotingContract } from "../generated/StewardManagementContract/FlexVotingContract";
+import { DaoRegistry } from "../generated/StewardManagementContract/DaoRegistry";
+
+import {
+    FlexStewardMangementProposal,
+    FlexProposalVoteInfo,
+    FlexGovernorOutVotingToBeRemovedEntity
+} from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
@@ -53,6 +60,27 @@ export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
+    if (event.params.pType == 1) {
+        const daoCont = DaoRegistry.bind(event.params.daoAddr);
+        const flexVotingAdaptContrAddr = daoCont.getAdapterAddress(Bytes.fromHexString("0x0d479c38716a0298633b1dbf1ce145a3fbd1d79ca4527de172afc3bad04a2ba7"));
+        const flexVotingAdaptContr = FlexVotingContract.bind(flexVotingAdaptContrAddr);
+        const votingToBeRemoved = flexVotingAdaptContr.try_getVotingWeight(
+            event.params.daoAddr, event.params.account
+        );
+        let flexGovernorOutVotingToBeRemovedEntity = new FlexGovernorOutVotingToBeRemovedEntity(
+            event.params.daoAddr.toHexString() +
+            event.params.proposalId.toHexString() +
+            event.params.account.toHexString()
+        );
+
+        flexGovernorOutVotingToBeRemovedEntity.daoAddr = event.params.daoAddr;
+        flexGovernorOutVotingToBeRemovedEntity.governorOutProposalId = event.params.proposalId;
+        flexGovernorOutVotingToBeRemovedEntity.account = event.params.account;
+        flexGovernorOutVotingToBeRemovedEntity.votingToBeRemoved = votingToBeRemoved.reverted ?
+            BigInt.zero() : votingToBeRemoved.value;
+
+        flexGovernorOutVotingToBeRemovedEntity.save();
+    }
 }
 
 

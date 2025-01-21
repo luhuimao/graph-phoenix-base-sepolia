@@ -40,9 +40,9 @@ export function handleDeposit(event: Deposit): void {
     if (!entity) {
         entity = new InvestorAtivity(event.transaction.hash.toHex())
     }
-    let InvestorBalanceEntity = InvestorBalance.load(event.params.proposalId.toHexString() + event.params.account.toString());
+    let InvestorBalanceEntity = InvestorBalance.load(event.params.daoAddress.toHexString() + event.params.proposalId.toHexString() + event.params.account.toHexString());
     if (!InvestorBalanceEntity) {
-        InvestorBalanceEntity = new InvestorBalance(event.params.proposalId.toHexString() + event.params.account.toString());
+        InvestorBalanceEntity = new InvestorBalance(event.params.daoAddress.toHexString() + event.params.proposalId.toHexString() + event.params.account.toHexString());
         InvestorBalanceEntity.balance = BigInt.fromI64(0);
         InvestorBalanceEntity.daoAddr = event.params.daoAddress;
         InvestorBalanceEntity.proposalId = event.params.proposalId;
@@ -137,11 +137,11 @@ export function handleWithDraw(event: WithDraw): void {
         entity = new InvestorAtivity(event.transaction.hash.toHex())
     }
     let InvestorBalanceEntity = InvestorBalance.load(
-        event.params.proposalId.toHexString() + event.params.account.toString()
+        event.params.daoAddress.toHexString() + event.params.proposalId.toHexString() + event.params.account.toHexString()
     );
     if (!InvestorBalanceEntity) {
         InvestorBalanceEntity = new InvestorBalance(
-            event.params.proposalId.toHexString() + event.params.account.toString()
+            event.params.daoAddress.toHexString() + event.params.proposalId.toHexString() + event.params.account.toHexString()
         );
         InvestorBalanceEntity.balance = BigInt.fromI64(0);
         InvestorBalanceEntity.daoAddr = event.params.daoAddress;

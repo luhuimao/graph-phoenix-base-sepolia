@@ -553,6 +553,14 @@ type FlexSetRiceReceiverProposalEntity @entity{
   flexDaoEntity: FlexDaoEntity
 }
 
+type FlexGovernorOutVotingToBeRemovedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  governorOutProposalId: Bytes!
+  account: Bytes!
+  votingToBeRemoved: BigInt!
+}
+
 
 type VintageDaoFeeInfoEntity @entity{
   id: ID!
@@ -810,7 +818,7 @@ type VintageVoting @entity(immutable: true){
 }
 
 type VintageInvestorBalance @entity{
-  id: Bytes!
+  id: ID!
   daoAddr: Bytes! # address
   account:  Bytes! # address
   balance: BigInt! # uint256
@@ -1164,11 +1172,19 @@ type VintageEscrowOverRaisedFundEntity @entity{
 }
 
 type VintageFundRedemptionEntity @entity{
-  id: Bytes!
+  id: ID!
   fundEstablishmentProposalId: Bytes!
   daoAddr: Bytes!
   account: Bytes!
   amount: BigInt!
+}
+
+type VintageGovernorOutVotingToBeRemovedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  governorOutProposalId: Bytes!
+  account: Bytes!
+  votingToBeRemoved: BigInt!
 }
 
 type CollectiveTopUpProposalEntity @entity{

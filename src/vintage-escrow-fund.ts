@@ -258,7 +258,9 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
     }
 
     let myRedemptionAmount = BigInt.zero();
-    const vintageFundRedemptionEntity = VintageFundRedemptionEntity.load(newFundProposalId);
+    const vintageFundRedemptionEntity = VintageFundRedemptionEntity.load(newFundProposalId.toHexString() +
+        event.params.account.toHexString()
+    );
     if (vintageFundRedemptionEntity) myRedemptionAmount = vintageFundRedemptionEntity.amount;
     if (!entity) {
         entity = new VintageEscrowLiquidationFundEntity(
