@@ -339,7 +339,9 @@ export function handleRedeptionFeeCharged(event: RedeptionFeeCharged): void {
             event.params.account.toHexString()
         );
         if (InvestorBalanceEntity) {
-            InvestorBalanceEntity.myAdvanceDepositAmount = InvestorBalanceEntity.myAdvanceDepositAmount.plus(event.params.redempAmount);
+            InvestorBalanceEntity.myAdvanceDepositAmount = InvestorBalanceEntity.myAdvanceDepositAmount.plus(
+                event.params.redempAmount).minus(
+                    event.params.redemptionFee);
             InvestorBalanceEntity.save();
         }
     }

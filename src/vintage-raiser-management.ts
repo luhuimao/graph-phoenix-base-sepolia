@@ -19,7 +19,8 @@ import { VintageVotingContract } from "../generated/VintageRaiserManagementContr
 import {
     VintageGovernorManagementProposal,
     VintageProposalVoteInfo,
-    VintageGovernorOutVotingToBeRemovedEntity
+    VintageGovernorOutVotingToBeRemovedEntity,
+    VintageGovernorInVotingToBeAllocatedEntity
 } from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -62,10 +63,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
+    const daoContr = DaoRegistry.bind(event.params.daoAddr);
+    const vinVotingAdaptContrAddr = daoContr.getAdapterAddress(Bytes.fromHexString("0xd3999c37f8f35da86f802a74f9bf032c4aeb46e49abd9c861f489ef4cb40d0a8"));
+    const vinVotingAdaptContr = VintageVotingContract.bind(vinVotingAdaptContrAddr);
+
     if (event.params.pType == 1) {
-        const daoContr = DaoRegistry.bind(event.params.daoAddr);
-        const vinVotingAdaptContrAddr = daoContr.getAdapterAddress(Bytes.fromHexString("0xd3999c37f8f35da86f802a74f9bf032c4aeb46e49abd9c861f489ef4cb40d0a8"));
-        const vinVotingAdaptContr = VintageVotingContract.bind(vinVotingAdaptContrAddr);
+
         const votingToBeRemoved = vinVotingAdaptContr.try_getVotingWeight(
             event.params.daoAddr,
             event.params.account
@@ -80,6 +83,23 @@ export function handleProposalCreated(event: ProposalCreated): void {
         vintageGovernorOutVotingToBeRemovedEntity.account = event.params.account;
         vintageGovernorOutVotingToBeRemovedEntity.votingToBeRemoved = votingToBeRemoved.reverted ? BigInt.zero() : votingToBeRemoved.value;
         vintageGovernorOutVotingToBeRemovedEntity.save();
+    }
+
+    if (event.params.pType == 0) {
+        const votingToBeAllocated = vinVotingAdaptContr.try_getVintageVotingWeightToBeAllocated(
+            event.params.daoAddr,
+            entity.allocation
+        )
+        const vintageGovernorInVotingToBeAllocatedEntity = new VintageGovernorInVotingToBeAllocatedEntity(
+            event.params.daoAddr.toHexString() +
+            event.params.proposalId.toHexString() +
+            event.params.account.toHexString());
+
+        vintageGovernorInVotingToBeAllocatedEntity.daoAddr = event.params.daoAddr;
+        vintageGovernorInVotingToBeAllocatedEntity.governorInProposalId = event.params.proposalId;
+        vintageGovernorInVotingToBeAllocatedEntity.account = event.params.account;
+        vintageGovernorInVotingToBeAllocatedEntity.votingToBeAllocated = votingToBeAllocated.reverted ? BigInt.zero() : votingToBeAllocated.value;
+        vintageGovernorInVotingToBeAllocatedEntity.save();
     }
 
 }

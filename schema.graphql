@@ -561,6 +561,14 @@ type FlexGovernorOutVotingToBeRemovedEntity @entity{
   votingToBeRemoved: BigInt!
 }
 
+type FlexGovernorInVotingToBeAllocatedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  governorInProposalId: Bytes!
+  account: Bytes!
+  votingToBeAllocated: BigInt!
+}
+
 
 type VintageDaoFeeInfoEntity @entity{
   id: ID!
@@ -1185,6 +1193,14 @@ type VintageGovernorOutVotingToBeRemovedEntity @entity{
   governorOutProposalId: Bytes!
   account: Bytes!
   votingToBeRemoved: BigInt!
+}
+
+type VintageGovernorInVotingToBeAllocatedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  governorInProposalId: Bytes!
+  account: Bytes!
+  votingToBeAllocated: BigInt!
 }
 
 type CollectiveTopUpProposalEntity @entity{

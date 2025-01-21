@@ -18,7 +18,8 @@ import { DaoRegistry } from "../generated/StewardManagementContract/DaoRegistry"
 import {
     FlexStewardMangementProposal,
     FlexProposalVoteInfo,
-    FlexGovernorOutVotingToBeRemovedEntity
+    FlexGovernorOutVotingToBeRemovedEntity,
+    FlexGovernorInVotingToBeAllocatedEntity
 } from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -60,10 +61,11 @@ export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
+    const daoCont = DaoRegistry.bind(event.params.daoAddr);
+    const flexVotingAdaptContrAddr = daoCont.getAdapterAddress(Bytes.fromHexString("0x0d479c38716a0298633b1dbf1ce145a3fbd1d79ca4527de172afc3bad04a2ba7"));
+    const flexVotingAdaptContr = FlexVotingContract.bind(flexVotingAdaptContrAddr);
+
     if (event.params.pType == 1) {
-        const daoCont = DaoRegistry.bind(event.params.daoAddr);
-        const flexVotingAdaptContrAddr = daoCont.getAdapterAddress(Bytes.fromHexString("0x0d479c38716a0298633b1dbf1ce145a3fbd1d79ca4527de172afc3bad04a2ba7"));
-        const flexVotingAdaptContr = FlexVotingContract.bind(flexVotingAdaptContrAddr);
         const votingToBeRemoved = flexVotingAdaptContr.try_getVotingWeight(
             event.params.daoAddr, event.params.account
         );
@@ -80,6 +82,26 @@ export function handleProposalCreated(event: ProposalCreated): void {
             BigInt.zero() : votingToBeRemoved.value;
 
         flexGovernorOutVotingToBeRemovedEntity.save();
+    }
+
+    if (event.params.pType == 0) {
+        const votingToBeAllocated = flexVotingAdaptContr.try_getFlexVotingWeightToBeAllocated(
+            event.params.daoAddr,
+            entity.allocation
+        );
+
+        let flexGovernorInVotingToBeAllocatedEntity = new FlexGovernorInVotingToBeAllocatedEntity(
+            event.params.daoAddr.toHexString() +
+            event.params.proposalId.toHexString() +
+            event.params.account.toHexString());
+
+        flexGovernorInVotingToBeAllocatedEntity.daoAddr = event.params.daoAddr;
+        flexGovernorInVotingToBeAllocatedEntity.governorInProposalId = event.params.proposalId;
+        flexGovernorInVotingToBeAllocatedEntity.account = event.params.account;
+        flexGovernorInVotingToBeAllocatedEntity.votingToBeAllocated = votingToBeAllocated.reverted ?
+            BigInt.zero() :
+            votingToBeAllocated.value;
+        flexGovernorInVotingToBeAllocatedEntity.save();
     }
 }
 
