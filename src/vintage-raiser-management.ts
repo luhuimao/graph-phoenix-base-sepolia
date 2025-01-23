@@ -15,6 +15,10 @@ import {
 
 import { DaoRegistry } from "../generated/VintageRaiserManagementContract/DaoRegistry";
 import { VintageVotingContract } from "../generated/VintageRaiserManagementContract/VintageVotingContract";
+import { ERC20 } from "../generated/VintageRaiserManagementContract/ERC20";
+import { ERC721 } from "../generated/VintageRaiserManagementContract/ERC721";
+import { ERC1155 } from "../generated/VintageRaiserManagementContract/ERC1155";
+import { VintageFundingPoolAdapterContract } from "../generated/VintageRaiserManagementContract/VintageFundingPoolAdapterContract";
 
 import {
     VintageGovernorManagementProposal,
@@ -88,6 +92,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     if (event.params.pType == 0) {
         const votingToBeAllocated = vinVotingAdaptContr.try_getVintageVotingWeightToBeAllocated(
             event.params.daoAddr,
+            event.params.account,
             entity.allocation
         )
         const vintageGovernorInVotingToBeAllocatedEntity = new VintageGovernorInVotingToBeAllocatedEntity(
@@ -101,7 +106,6 @@ export function handleProposalCreated(event: ProposalCreated): void {
         vintageGovernorInVotingToBeAllocatedEntity.votingToBeAllocated = votingToBeAllocated.reverted ? BigInt.zero() : votingToBeAllocated.value;
         vintageGovernorInVotingToBeAllocatedEntity.save();
     }
-
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

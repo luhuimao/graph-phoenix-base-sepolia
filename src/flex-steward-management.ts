@@ -14,6 +14,9 @@ import {
 } from "../generated/StewardManagementContract/StewardManagementContract";
 import { FlexVotingContract } from "../generated/StewardManagementContract/FlexVotingContract";
 import { DaoRegistry } from "../generated/StewardManagementContract/DaoRegistry";
+import { ERC20 } from "../generated/StewardManagementContract/ERC20";
+import { ERC721 } from "../generated/StewardManagementContract/ERC721";
+import { ERC1155 } from "../generated/StewardManagementContract/ERC1155";
 
 import {
     FlexStewardMangementProposal,
@@ -85,9 +88,36 @@ export function handleProposalCreated(event: ProposalCreated): void {
     }
 
     if (event.params.pType == 0) {
+        const FLEX_VOTING_ASSET_TYPE = daoCont.getConfiguration(Bytes.fromHexString("0x75b7d343967750d1f6c15979b7559cea8be22ff1a06a51681b9cbef0d2fff4fe"));
+        const FLEX_VOTING_ASSET_TOKEN_ID = daoCont.getConfiguration(Bytes.fromHexString("0x77b1580d1632c74a32483c26a7156260a89ae4138b020ea7d09b0dcf24f1ea24"));
+        const FLEX_VOTING_ASSET_TOKEN_ADDRESS = daoCont.getAddressConfiguration(Bytes.fromHexString("0xb5a1ad3f04728d7c38547e3d43006a1ec090a02fce04bbb1d0ee4519a1921e57"));
+        let assetAmount = BigInt.zero();
+        switch (FLEX_VOTING_ASSET_TYPE.toI32()) {
+            // 0. ERC20 1. ERC721, 2. ERC1155 3.allocation
+            case 0:
+                const erc20Contr = ERC20.bind(FLEX_VOTING_ASSET_TOKEN_ADDRESS);
+                const bal1 = erc20Contr.try_balanceOf(event.params.account);
+                assetAmount = bal1.reverted ? BigInt.zero() : bal1.value.div(BigInt.fromI64(10 ** 18));
+                break;
+            case 1:
+                const erc721Contr = ERC721.bind(FLEX_VOTING_ASSET_TOKEN_ADDRESS);
+                const bal2 = erc721Contr.try_balanceOf(event.params.account);
+                assetAmount = bal2.reverted ? BigInt.zero() : bal2.value;
+                break;
+            case 2:
+                const erc1155Contr = ERC1155.bind(FLEX_VOTING_ASSET_TOKEN_ADDRESS);
+                const bal3 = erc1155Contr.try_balanceOf(event.params.account, FLEX_VOTING_ASSET_TOKEN_ID);
+                assetAmount = bal3.reverted ? BigInt.zero() : bal3.value;
+                break;
+            case 3:
+                assetAmount = entity.allocation;
+                break;
+            default:
+                break;
+        }
         const votingToBeAllocated = flexVotingAdaptContr.try_getFlexVotingWeightToBeAllocated(
             event.params.daoAddr,
-            entity.allocation
+            assetAmount
         );
 
         let flexGovernorInVotingToBeAllocatedEntity = new FlexGovernorInVotingToBeAllocatedEntity(

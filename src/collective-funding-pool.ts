@@ -23,7 +23,7 @@ import { DaoRegistry } from "../generated/VintageFundingPoolAdapterContract/DaoR
 import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveFundingPoolAdapterContract/CollectiveInvestmentPoolExtension";
 import {
     // CollectiveRedempteEntity,
-    // CollectiveInvestorBalance,
+    CollectiveInvestorBalance,
     CollectiveInvestorActivity,
     CollectiveFundRaiseProposalEntity,
     CollectiveDaoStatisticEntity,
@@ -65,7 +65,26 @@ export function handleDeposit(event: Deposit): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
+    const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress);
 
+    let collectiveInvestorBalance = CollectiveInvestorBalance.load(event.params.daoAddress.toHexString() + fundRaiseProposalId.toHexString() + event.params.account.toHexString());
+
+    if (!collectiveInvestorBalance) {
+        collectiveInvestorBalance = new CollectiveInvestorBalance(event.params.daoAddress.toHexString() + fundRaiseProposalId.toHexString() + event.params.account.toHexString());
+        collectiveInvestorBalance.daoAddr = event.params.daoAddress;
+        collectiveInvestorBalance.account = event.params.account;
+        collectiveInvestorBalance.fundEstablishmentProposalId = fundRaiseProposalId;
+        collectiveInvestorBalance.balance = BigInt.zero();
+
+        let fundId = BigInt.zero();
+        let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
+        if (fundRaiseProposalEntity) fundId = fundRaiseProposalEntity.fundRaiseId;
+        collectiveInvestorBalance.fundId = fundId;
+    }
+    collectiveInvestorBalance.balance = collectiveInvestorBalance.balance.plus(event.params.amount);
+    collectiveInvestorBalance.balanceFromWei = collectiveInvestorBalance.balance.div(BigInt.fromI64(10 ** 18)).toString();
+
+    collectiveInvestorBalance.save();
 }
 
 function contains(investors: string[], account: string): boolean {
@@ -108,6 +127,22 @@ export function handleWithDraw(event: WithDraw): void {
 
     // Entities can be written to the store with `.save()`
     entity.save();
+
+    const fundRaiseStartTime = daoContract.getConfiguration(Bytes.fromHexString("0xbd04d44792b7dbfe3b50b0f9f2006f7ef449e374a39021cb9bfa7cd0bdd850d7"));
+    const fundRaiseEnTime = daoContract.getConfiguration(Bytes.fromHexString("0x533afc15b6312917b5e28e2272ea69d44e5ea8e00d3bd57cada1275c2f14c9e8"));
+
+    if (event.block.timestamp.gt(fundRaiseStartTime) && event.block.timestamp.lt(fundRaiseEnTime)) {
+        const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress);
+        let collectiveInvestorBalance = CollectiveInvestorBalance.load(event.params.daoAddress.toHexString() + fundRaiseProposalId.toHexString() + event.params.account.toHexString());
+
+        if (collectiveInvestorBalance) {
+            collectiveInvestorBalance.balance = collectiveInvestorBalance.balance.minus(event.params.amount);
+            collectiveInvestorBalance.balanceFromWei = collectiveInvestorBalance.balance.div(BigInt.fromI64(10 ** 18)).toString();
+
+            collectiveInvestorBalance.save();
+        }
+    }
+
 }
 
 export function handleClearFund(event: ClearFund): void {
