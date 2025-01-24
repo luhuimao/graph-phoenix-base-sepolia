@@ -329,9 +329,9 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                             investorInvestmentEntity.fundRound = currentFundRound;
                             investorInvestmentEntity.investor = investors.value[i];
                             investorInvestmentEntity.investedAmount = BigInt.fromI32(0);
+                            investorInvestmentEntity.netInvestedAmount = BigInt.fromI32(0);
                         }
                         investorInvestmentEntity.investedAmount = investorInvestmentEntity.investedAmount.plus(investedAmount);
-                        investorInvestmentEntity.save();
 
                         myTotalInvestedAmount = investedAmount;
                         if (!poolBal.reverted && poolBal.value.gt(BigInt.zero())) {
@@ -344,6 +344,9 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
                             governorCarryAmount = totalGovernorCarryAmount.times(bal1.value).div(poolBal.value);
                             ScoutCarryAmount = totalScoutCarryAmount.times(bal1.value).div(poolBal.value);
                         }
+
+                        investorInvestmentEntity.netInvestedAmount = investorInvestmentEntity.netInvestedAmount.plus(netInvestedAmount);
+                        investorInvestmentEntity.save();
                     }
                     netPaybackTokenAmount = totalPaybackTokenAmount.minus(governorCarryAmount.plus(ScoutCarryAmount));
 

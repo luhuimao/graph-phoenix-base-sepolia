@@ -35,7 +35,8 @@ import {
     VintageEscrowLiquidationFundEntity,
     VintageEscrowOverRaisedFundEntity,
     VintageFundRedemptionEntity,
-    VintageInvestorInvestmentEntity
+    VintageInvestorInvestmentEntity,
+    VintageInvestorRefundEntity
 } from "../generated/schema"
 
 
@@ -254,7 +255,7 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
     if (!fundRound.reverted) {
         let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(event.params.dao.toHexString() + fundRound.value.toHexString() + event.params.account.toHexString());
         if (investorInvestmentEntity)
-            myInvestmentAmount = investorInvestmentEntity.investedAmount;
+            myInvestmentAmount = investorInvestmentEntity.netInvestedAmount;
     }
 
     let myRedemptionAmount = BigInt.zero();
@@ -282,6 +283,13 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
         entity.myConfirmedDepositAmount = confirmedDepositAmount;
         entity.myInvestmentAmount = myInvestmentAmount;
         entity.myRedemptionAmount = myRedemptionAmount;
+    }
+
+    let vintageInvestorRefundEntity = VintageInvestorRefundEntity.load(event.address.toHexString() + event.params.fundRaiseId.toHexString() + event.params.account.toHexString());
+    if (vintageInvestorRefundEntity) {
+        entity.myWithdrawAmount = entity.myWithdrawAmount.plus(vintageInvestorRefundEntity.amount);
+        entity.withdrawTxHash = vintageInvestorRefundEntity.withdrawTxHash;
+        entity.save();
     }
 
     entity.fundRound = fundRound.reverted ? BigInt.zero() : fundRound.value;
@@ -369,7 +377,7 @@ export function handleWithdrawFromLiquidation(event: WithdrawFromLiquidation): v
     if (entity) {
         entity.withdrawTimeStamp = event.block.timestamp;
         entity.withdrawDateTime = new Date(entity.withdrawTimeStamp.toI64() * 1000).toISOString();
-        entity.myWithdrawAmount = event.params.amount;
+        entity.myWithdrawAmount = entity.myWithdrawAmount.plus(event.params.amount);
         entity.withdrawTxHash = event.transaction.hash;
         entity.myRefundable = BigInt.zero();
         entity.save();

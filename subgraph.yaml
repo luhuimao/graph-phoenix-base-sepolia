@@ -60,9 +60,9 @@ dataSources:
     name: VintageVotingContract
     network: base-sepolia
     source:
-      address: "0x85AdB152711287d382B18f17Ec88D5FfceBF88D9"
+      address: "0x48Cd26616063A34b53FbD5f4EA55c9A5D24cC98a"
       abi: VintageVotingContract
-      startBlock: 20883931
+      startBlock: 20966203
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -154,9 +154,9 @@ dataSources:
     name: VintageFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x54E7460242f6214102C8430291317C932C620531"
+      address: "0x60f03069EDa7581D621F766a57aF6024b74de09D"
       abi: VintageFundingPoolAdapterContract
-      startBlock: 20873917
+      startBlock: 20966206
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1094,9 +1094,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0x58af33E202976CA24586cE924641CE76B0e27dc5"
+      address: "0xB5CdF65ea5f4eBbCf186c8f1E29f368F4f02A221"
       abi: CollectiveVotingAdapterContract
-      startBlock: 20873921
+      startBlock: 20966210
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

@@ -1038,6 +1038,7 @@ type VintageInvestorInvestmentEntity @entity{
   fundRound: BigInt!
   investor: Bytes! # address
   investedAmount: BigInt!
+  netInvestedAmount: BigInt!
 }
 
 type VintageInvestorRedemptionsInFundRoundEntity @entity{
@@ -1201,6 +1202,16 @@ type VintageGovernorInVotingToBeAllocatedEntity @entity{
   governorInProposalId: Bytes!
   account: Bytes!
   votingToBeAllocated: BigInt!
+}
+
+type VintageInvestorRefundEntity @entity{
+    id: ID!
+    daoAddr: Bytes!
+    fundId:BigInt!
+    amount: BigInt!
+    account: Bytes!
+    timeStamp: BigInt!
+    withdrawTxHash: Bytes!
 }
 
 type CollectiveTopUpProposalEntity @entity{

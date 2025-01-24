@@ -34,7 +34,8 @@ import {
     VintageFundRoundToFundEstablishmentProposalId,
     VintageFundRaiseEntity,
     VintageInvestorRedemptionsInFundRoundEntity,
-    VintageEscrowFundEntity
+    VintageEscrowFundEntity,
+    VintageInvestorRefundEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -246,6 +247,23 @@ export function handleWithDraw(event: WithDraw): void {
 
     // Entities can be written to the store with `.save()`
     entity.save();
+
+    let vintageInvestorRefundEntity = VintageInvestorRefundEntity.load(event.address.toHexString() + createdNewFundId.toHexString() + event.params.account.toHexString());
+    if (!vintageInvestorRefundEntity) {
+        vintageInvestorRefundEntity = new VintageInvestorRefundEntity(event.address.toHexString() + createdNewFundId.toHexString() + event.params.account.toHexString());
+
+        vintageInvestorRefundEntity.daoAddr = event.params.daoAddress;
+        vintageInvestorRefundEntity.fundId = createdNewFundId;
+        vintageInvestorRefundEntity.amount = BigInt.zero();
+        vintageInvestorRefundEntity.account = event.params.account;
+        vintageInvestorRefundEntity.timeStamp = event.block.timestamp;
+        vintageInvestorRefundEntity.withdrawTxHash = Bytes.empty();
+    }
+
+    vintageInvestorRefundEntity.amount = vintageInvestorRefundEntity.amount.plus(event.params.amount);
+    vintageInvestorRefundEntity.timeStamp = event.block.timestamp;
+    vintageInvestorRefundEntity.withdrawTxHash = event.transaction.hash;
+    vintageInvestorRefundEntity.save();
 }
 
 export function handleClearFund(event: ClearFund): void {
