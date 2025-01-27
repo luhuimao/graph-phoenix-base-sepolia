@@ -283,17 +283,16 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
         entity.myConfirmedDepositAmount = confirmedDepositAmount;
         entity.myInvestmentAmount = myInvestmentAmount;
         entity.myRedemptionAmount = myRedemptionAmount;
+        entity.token = event.params.token;
     }
 
-    let vintageInvestorRefundEntity = VintageInvestorRefundEntity.load(event.address.toHexString() + event.params.fundRaiseId.toHexString() + event.params.account.toHexString());
+    let vintageInvestorRefundEntity = VintageInvestorRefundEntity.load(event.params.dao.toHexString() + event.params.fundRaiseId.toHexString() + event.params.account.toHexString());
     if (vintageInvestorRefundEntity) {
         entity.myWithdrawAmount = entity.myWithdrawAmount.plus(vintageInvestorRefundEntity.amount);
         entity.withdrawTxHash = vintageInvestorRefundEntity.withdrawTxHash;
-        entity.save();
     }
 
     entity.fundRound = fundRound.reverted ? BigInt.zero() : fundRound.value;
-    entity.token = event.params.token;
     entity.escrowBlockNum = event.block.number;
     entity.myRefundable = event.params.amount;
     entity.save();

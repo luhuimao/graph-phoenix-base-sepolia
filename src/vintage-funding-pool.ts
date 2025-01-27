@@ -35,7 +35,7 @@ import {
     VintageFundRaiseEntity,
     VintageInvestorRedemptionsInFundRoundEntity,
     VintageEscrowFundEntity,
-    VintageInvestorRefundEntity
+    VintageInvestorRefundEntity,
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -191,6 +191,32 @@ export function handleWithDraw(event: WithDraw): void {
 
             }
             if (fundRaiseEntity && fundRaiseEntity.fundRaiseState == "succeed") {
+                if (event.block.timestamp > lastFundEndTime && event.block.timestamp < lastFundEndTime.plus(refundDuration)) {
+                    let vintageInvestorRefundEntity = VintageInvestorRefundEntity.load(
+                        event.params.daoAddress.toHexString() +
+                        createdNewFundId.toHexString() +
+                        event.params.account.toHexString()
+                    );
+                    if (!vintageInvestorRefundEntity) {
+                        vintageInvestorRefundEntity = new VintageInvestorRefundEntity(
+                            event.params.daoAddress.toHexString() +
+                            createdNewFundId.toHexString() +
+                            event.params.account.toHexString()
+                        );
+
+                        vintageInvestorRefundEntity.daoAddr = event.params.daoAddress;
+                        vintageInvestorRefundEntity.fundId = createdNewFundId;
+                        vintageInvestorRefundEntity.amount = BigInt.zero();
+                        vintageInvestorRefundEntity.account = event.params.account;
+                        vintageInvestorRefundEntity.timeStamp = event.block.timestamp;
+                        vintageInvestorRefundEntity.withdrawTxHash = Bytes.empty();
+                    }
+
+                    vintageInvestorRefundEntity.amount = vintageInvestorRefundEntity.amount.plus(event.params.amount);
+                    vintageInvestorRefundEntity.timeStamp = event.block.timestamp;
+                    vintageInvestorRefundEntity.withdrawTxHash = event.transaction.hash;
+                    vintageInvestorRefundEntity.save();
+                }
                 if (event.block.timestamp > lastFundEndTime.plus(refundDuration)) {
                     if (!escrowFundEntity) {
                         escrowFundEntity = new VintageEscrowFundEntity(
@@ -224,13 +250,9 @@ export function handleWithDraw(event: WithDraw): void {
                         escrowFundEntity.myConfirmedDepositAmount = BigInt.fromI32(0);
                     }
                     escrowFundEntity.myWithdraw = escrowFundEntity.myWithdraw.plus(event.params.amount);
-
                     escrowFundEntity.save();
-
                 }
             }
-
-
         }
     }
 
@@ -247,23 +269,6 @@ export function handleWithDraw(event: WithDraw): void {
 
     // Entities can be written to the store with `.save()`
     entity.save();
-
-    let vintageInvestorRefundEntity = VintageInvestorRefundEntity.load(event.address.toHexString() + createdNewFundId.toHexString() + event.params.account.toHexString());
-    if (!vintageInvestorRefundEntity) {
-        vintageInvestorRefundEntity = new VintageInvestorRefundEntity(event.address.toHexString() + createdNewFundId.toHexString() + event.params.account.toHexString());
-
-        vintageInvestorRefundEntity.daoAddr = event.params.daoAddress;
-        vintageInvestorRefundEntity.fundId = createdNewFundId;
-        vintageInvestorRefundEntity.amount = BigInt.zero();
-        vintageInvestorRefundEntity.account = event.params.account;
-        vintageInvestorRefundEntity.timeStamp = event.block.timestamp;
-        vintageInvestorRefundEntity.withdrawTxHash = Bytes.empty();
-    }
-
-    vintageInvestorRefundEntity.amount = vintageInvestorRefundEntity.amount.plus(event.params.amount);
-    vintageInvestorRefundEntity.timeStamp = event.block.timestamp;
-    vintageInvestorRefundEntity.withdrawTxHash = event.transaction.hash;
-    vintageInvestorRefundEntity.save();
 }
 
 export function handleClearFund(event: ClearFund): void {
@@ -413,6 +418,8 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             // newFundEntity.state = fundRaisedState == 2 ? BigInt.fromI32(3) : BigInt.fromI32(4);
             if (fundRaisedState == 2) {
                 newFundEntity.state = BigInt.fromI32(3);
+                newFundEntity.fundStartTime = event.block.timestamp;
+                newFundEntity.fundEndTime = newFundEntity.fundStartTime.plus(newFundEntity.fundTerm);
             } else {
                 newFundEntity.state = BigInt.fromI32(4);
                 newFundEntity.failedReason = "FundRaisingFailed";
