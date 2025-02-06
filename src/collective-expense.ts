@@ -6,8 +6,10 @@ import {
 } from "../generated/ColletiveExpenseProposalAdapterContract/ColletiveExpenseProposalAdapterContract"
 import {
     CollectiveExpenseProposalEntity,
-    CollectiveProposalVoteInfo
+    CollectiveProposalVoteInfo,
+    CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
 export function handleProposalCreated(event: ProposalCreated): void {
     const contract = ColletiveExpenseProposalAdapterContract.bind(event.address);
@@ -28,6 +30,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.proposer = event.transaction.from;
         entity.save();
     }
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handlerProposalProcessed(event: ProposalProcessed): void {

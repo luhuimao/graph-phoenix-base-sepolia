@@ -26,17 +26,17 @@ export function handleSubmitVote(event: SubmitVote): void {
     if (!entity) {
         entity = new FlexPollVoting(event.transaction.hash.toHex())
     }
-    let voteInfoEntity = FlexProposalVoteInfo.load(event.params.proposalId.toHexString());
-    if (!voteInfoEntity) {
-        voteInfoEntity = new FlexProposalVoteInfo(event.params.proposalId.toHexString())
-        voteInfoEntity.totalWeights = BigInt.fromI32(0);
+    // let voteInfoEntity = FlexProposalVoteInfo.load(event.params.proposalId.toHexString());
+    // if (!voteInfoEntity) {
+    //     voteInfoEntity = new FlexProposalVoteInfo(event.params.proposalId.toHexString())
+    //     voteInfoEntity.totalWeights = BigInt.fromI32(0);
 
-        const flexDaoPollingInfoEntity = FlexDaoPollingInfoEntity.load(event.params.daoAddr.toHexString());
-        if (flexDaoPollingInfoEntity) {
-            voteInfoEntity.support = flexDaoPollingInfoEntity.support;
-            voteInfoEntity.quorum = flexDaoPollingInfoEntity.quorum;
-        }
-    }
+    //     const flexDaoPollingInfoEntity = FlexDaoPollingInfoEntity.load(event.params.daoAddr.toHexString());
+    //     if (flexDaoPollingInfoEntity) {
+    //         voteInfoEntity.support = flexDaoPollingInfoEntity.support;
+    //         voteInfoEntity.quorum = flexDaoPollingInfoEntity.quorum;
+    //     }
+    // }
 
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
@@ -51,15 +51,18 @@ export function handleSubmitVote(event: SubmitVote): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    voteInfoEntity.daoAddr = event.params.daoAddr;
-    voteInfoEntity.proposalId = event.params.proposalId;
-    voteInfoEntity.startVoteTime = event.params.voteStartTime;
-    voteInfoEntity.stopVoteTime = event.params.voteStopTime;
-    voteInfoEntity.startVoteTimeString = new Date(event.params.voteStartTime.toI64() * 1000).toISOString();
-    voteInfoEntity.stopVoteTimeString = new Date(event.params.voteStopTime.toI64() * 1000).toISOString();
-    voteInfoEntity.nbYes = event.params.nbYes;
-    voteInfoEntity.nbNo = event.params.nbNo;
-    voteInfoEntity.currentSupport = event.params.currentSupportf;
-    voteInfoEntity.currentQuorum = event.params.currentQuorum;
-    voteInfoEntity.save();
+    let voteInfoEntity = FlexProposalVoteInfo.load(event.params.proposalId.toHexString());
+    if (voteInfoEntity) {
+        // voteInfoEntity.daoAddr = event.params.daoAddr;
+        // voteInfoEntity.proposalId = event.params.proposalId;
+        voteInfoEntity.startVoteTime = event.params.voteStartTime;
+        voteInfoEntity.stopVoteTime = event.params.voteStopTime;
+        voteInfoEntity.startVoteTimeString = new Date(event.params.voteStartTime.toI64() * 1000).toISOString();
+        voteInfoEntity.stopVoteTimeString = new Date(event.params.voteStopTime.toI64() * 1000).toISOString();
+        voteInfoEntity.nbYes = event.params.nbYes;
+        voteInfoEntity.nbNo = event.params.nbNo;
+        voteInfoEntity.currentSupport = event.params.currentSupportf;
+        voteInfoEntity.currentQuorum = event.params.currentQuorum;
+        voteInfoEntity.save();
+    }
 }

@@ -8,21 +8,21 @@ import {
 import {
     CollectiveTopUpProposalEntity,
     CollectiveProposalVoteInfo,
-    CollectiveDaoStatisticEntity
+    CollectiveDaoStatisticEntity,
+    // CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
 import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
 import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
-import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveFundingPoolAdapterContract";
-export function handleProposalCreated(event: ProposalCreated): void {
+// import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveFundingPoolAdapterContract";
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
+export function handleProposalCreated(event: ProposalCreated): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
 
     const collectiveVotingAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x907642cbfe4e58ddd14eaa320923fbe4c29721dd0950ae4cb3b2626e292791ae"));
     const collectiveVotingAdapterContract = CollectiveVotingAdapterContract.bind(collectiveVotingAdapterContractAddr);
     // const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
     // const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
-
-
     let entity = new CollectiveTopUpProposalEntity(event.params.proposalId.toHexString());
     const topupCon = ColletiveTopUpProposalAdapterContract.bind(event.address);
     const rel = topupCon.try_proposals(event.params.daoAddr, event.params.proposalId);
@@ -44,11 +44,10 @@ export function handleProposalCreated(event: ProposalCreated): void {
         event.params.daoAddr,
         entity.amount
     )
-
-
     entity.votingPowerToBeAllocated = votingPowerToBeAllocated.reverted ? BigInt.zero() : votingPowerToBeAllocated.value;
-
     entity.save();
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

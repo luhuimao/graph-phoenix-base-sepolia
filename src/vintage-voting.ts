@@ -24,19 +24,18 @@ export function handleSubmitVote(event: SubmitVote): void {
     if (!entity) {
         entity = new VintageVoting(event.transaction.hash.toHex())
     }
-    let voteInfoEntity = VintageProposalVoteInfo.load(event.params.proposalId.toHexString());
-    if (!voteInfoEntity) {
-        voteInfoEntity = new VintageProposalVoteInfo(event.params.proposalId.toHexString())
-        voteInfoEntity.totalWeights = BigInt.fromI32(0);
-
-        const vintageVotingInfoEntity = VintageVotingInfoEntity.load(event.params.daoAddr.toHexString());
-        if (vintageVotingInfoEntity) {
-            voteInfoEntity.support = vintageVotingInfoEntity.support;
-            voteInfoEntity.supportType = vintageVotingInfoEntity.supportType;
-            voteInfoEntity.quorum = vintageVotingInfoEntity.quorum;
-            voteInfoEntity.quorumType = vintageVotingInfoEntity.quorumType;
-        }
-    }
+    // let voteInfoEntity = VintageProposalVoteInfo.load(event.params.proposalId.toHexString());
+    // if (!voteInfoEntity) {
+    //     voteInfoEntity = new VintageProposalVoteInfo(event.params.proposalId.toHexString())
+    //     voteInfoEntity.totalWeights = BigInt.fromI32(0);
+    //     const vintageVotingInfoEntity = VintageVotingInfoEntity.load(event.params.daoAddr.toHexString());
+    //     if (vintageVotingInfoEntity) {
+    //         voteInfoEntity.support = vintageVotingInfoEntity.support;
+    //         voteInfoEntity.supportType = vintageVotingInfoEntity.supportType;
+    //         voteInfoEntity.quorum = vintageVotingInfoEntity.quorum;
+    //         voteInfoEntity.quorumType = vintageVotingInfoEntity.quorumType;
+    //     }
+    // }
 
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
@@ -50,15 +49,18 @@ export function handleSubmitVote(event: SubmitVote): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    voteInfoEntity.daoAddr = event.params.daoAddr;
-    voteInfoEntity.proposalId = event.params.proposalId;
-    voteInfoEntity.startVoteTime = event.params.voteStartTime;
-    voteInfoEntity.stopVoteTime = event.params.voteStopTime;
-    voteInfoEntity.startVoteTimeString = new Date(event.params.voteStartTime.toI64() * 1000).toISOString();
-    voteInfoEntity.stopVoteTimeString = new Date(event.params.voteStopTime.toI64() * 1000).toISOString();
-    voteInfoEntity.nbYes = event.params.nbYes;
-    voteInfoEntity.nbNo = event.params.nbNo;
-    voteInfoEntity.currentSupport = event.params.currentSupport;
-    voteInfoEntity.currentQuorum = event.params.currentQuorum;
-    voteInfoEntity.save();
+    let voteInfoEntity = VintageProposalVoteInfo.load(event.params.proposalId.toHexString());
+    if (voteInfoEntity) {
+        // voteInfoEntity.daoAddr = event.params.daoAddr;
+        // voteInfoEntity.proposalId = event.params.proposalId;
+        voteInfoEntity.startVoteTime = event.params.voteStartTime;
+        voteInfoEntity.stopVoteTime = event.params.voteStopTime;
+        voteInfoEntity.startVoteTimeString = new Date(event.params.voteStartTime.toI64() * 1000).toISOString();
+        voteInfoEntity.stopVoteTimeString = new Date(event.params.voteStopTime.toI64() * 1000).toISOString();
+        voteInfoEntity.nbYes = event.params.nbYes;
+        voteInfoEntity.nbNo = event.params.nbNo;
+        voteInfoEntity.currentSupport = event.params.currentSupport;
+        voteInfoEntity.currentQuorum = event.params.currentQuorum;
+        voteInfoEntity.save();
+    }
 }

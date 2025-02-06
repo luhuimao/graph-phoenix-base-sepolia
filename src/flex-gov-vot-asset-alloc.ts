@@ -12,7 +12,12 @@ import {
     ProposalProcessed,
     ProposalCreated
 } from "../generated/FlexGovernorVotingAssetAllocationProposalAdapterContract/FlexGovernorVotingAssetAllocationProposalAdapterContract"
-import { FLexGovernorVotingAssetAllocationProposalEntity, FlexProposalVoteInfo } from "../generated/schema";
+import {
+    FLexGovernorVotingAssetAllocationProposalEntity,
+    FlexProposalVoteInfo,
+    FlexDaoVoteConfigEntity
+} from "../generated/schema";
+import { newFlexProposalVoteInfoEntity } from "./flex-daoset-contract"
 
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new FLexGovernorVotingAssetAllocationProposalEntity(event.params.proposalId.toHexString());
@@ -46,6 +51,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.allocations = tem1;
     entity.typeInString = "Voting Asset Allocation";
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

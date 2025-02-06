@@ -17,12 +17,13 @@ import { DaoRegistry } from "../generated/StewardManagementContract/DaoRegistry"
 import { ERC20 } from "../generated/StewardManagementContract/ERC20";
 import { ERC721 } from "../generated/StewardManagementContract/ERC721";
 import { ERC1155 } from "../generated/StewardManagementContract/ERC1155";
-
+import { newFlexProposalVoteInfoEntity } from "./flex-daoset-contract"
 import {
     FlexStewardMangementProposal,
     FlexProposalVoteInfo,
     FlexGovernorOutVotingToBeRemovedEntity,
-    FlexGovernorInVotingToBeAllocatedEntity
+    FlexGovernorInVotingToBeAllocatedEntity,
+    FlexDaoVoteConfigEntity
 } from "../generated/schema";
 // import { ethers } from "ethers";
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -133,6 +134,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
             votingToBeAllocated.value;
         flexGovernorInVotingToBeAllocatedEntity.save();
     }
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 

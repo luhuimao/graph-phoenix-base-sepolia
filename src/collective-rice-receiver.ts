@@ -17,8 +17,10 @@ import {
     CollectiveProposalVoteInfo,
     CollectiveSetRiceReceiverProposalEntity,
     CollectiveDaoSetProposalEntity,
-    CollectiveDaoEntity
+    CollectiveDaoEntity,
+    CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -49,6 +51,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     daosetentity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     daosetentity.state = BigInt.fromI32(0);
     daosetentity.save();
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

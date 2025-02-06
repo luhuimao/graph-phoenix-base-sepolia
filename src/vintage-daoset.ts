@@ -59,6 +59,35 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.state = BigInt.fromI32(0);
     entity.vintageDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newVintageProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
+}
+
+export function newVintageProposalVoteInfoEntity(daoAddr: Bytes, proposalId: Bytes): void {
+    let voteInfoEntity = VintageProposalVoteInfo.load(proposalId.toHexString());
+    if (!voteInfoEntity) {
+        voteInfoEntity = new VintageProposalVoteInfo(proposalId.toHexString())
+        const vintageVotingInfoEntity = VintageVotingInfoEntity.load(daoAddr.toHexString());
+        if (vintageVotingInfoEntity) {
+            voteInfoEntity.support = vintageVotingInfoEntity.support;
+            voteInfoEntity.supportType = vintageVotingInfoEntity.supportType;
+            voteInfoEntity.quorum = vintageVotingInfoEntity.quorum;
+            voteInfoEntity.quorumType = vintageVotingInfoEntity.quorumType;
+        }
+
+        voteInfoEntity.daoAddr = daoAddr;
+        voteInfoEntity.proposalId = proposalId;
+        voteInfoEntity.totalWeights = BigInt.zero();
+        voteInfoEntity.startVoteTime = BigInt.zero();
+        voteInfoEntity.stopVoteTime = BigInt.zero();
+        voteInfoEntity.startVoteTimeString = new Date(voteInfoEntity.startVoteTime.toI64() * 1000).toISOString();
+        voteInfoEntity.stopVoteTimeString = new Date(voteInfoEntity.stopVoteTime.toI64() * 1000).toISOString();
+        voteInfoEntity.nbYes = BigInt.zero();
+        voteInfoEntity.nbNo = BigInt.zero();
+        voteInfoEntity.currentSupport = BigInt.zero();
+        voteInfoEntity.currentQuorum = BigInt.zero();
+        voteInfoEntity.save();
+    }
 }
 
 export function handleProposalExecuted(event: ProposalProcessed): void {

@@ -18,7 +18,8 @@ import {
     VintageDaoSetProposal,
     VintageDaoEntity
 } from "../generated/schema";
-// import { ethers } from "ethers";
+import { newVintageProposalVoteInfoEntity } from "./vintage-daoset";
+
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new VintageSetRiceReceiverProposalEntity(event.params.proposalId.toHexString());
 
@@ -57,6 +58,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
     daosetentity.save();
 
+    newVintageProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 

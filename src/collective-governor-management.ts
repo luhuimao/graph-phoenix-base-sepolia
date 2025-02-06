@@ -15,8 +15,10 @@ import {
     CollectiveProposalVoteInfo,
     CollectiveDaoStatisticEntity,
     CollectiveGovernorOutVotingToBeRemovedEntity,
-    CollectiveGovernorInVotingToBeAllocatedEntity
+    CollectiveGovernorInVotingToBeAllocatedEntity,
+    CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new CollectiveGovernorManagementProposal(event.params.proposalId.toHexString());
@@ -91,6 +93,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
             collectiveGovernorOutVotingToBeRemovedEntity.save();
         }
     }
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 

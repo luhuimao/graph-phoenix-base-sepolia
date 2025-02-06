@@ -22,7 +22,7 @@ import {
     CollectiveDaoVoteConfigEntity,
     CollectiveDaoFeeInfoEntity
 } from "../generated/schema"
-
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = CollectiveDaoSetProposalEntity.load(event.params.proposalId.toHexString())
 
@@ -62,6 +62,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.state = BigInt.fromI32(0);
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalExecuted(event: ProposalProcessed): void {

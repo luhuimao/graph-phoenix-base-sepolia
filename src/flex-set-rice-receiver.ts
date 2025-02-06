@@ -18,8 +18,10 @@ import {
     FlexSetRiceReceiverProposalEntity,
     FlexProposalVoteInfo,
     FlexDaosetProposal,
-    FlexDaoEntity
+    FlexDaoEntity,
+    FlexDaoVoteConfigEntity
 } from "../generated/schema";
+import { newFlexProposalVoteInfoEntity } from "./flex-daoset-contract"
 
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new FlexSetRiceReceiverProposalEntity(event.params.proposalId.toHexString());
@@ -61,6 +63,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     daosetentity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     daosetentity.flexDaoEntity = event.params.daoAddr.toHexString();
     daosetentity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

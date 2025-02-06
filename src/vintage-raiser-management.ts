@@ -15,10 +15,11 @@ import {
 
 import { DaoRegistry } from "../generated/VintageRaiserManagementContract/DaoRegistry";
 import { VintageVotingContract } from "../generated/VintageRaiserManagementContract/VintageVotingContract";
-import { ERC20 } from "../generated/VintageRaiserManagementContract/ERC20";
-import { ERC721 } from "../generated/VintageRaiserManagementContract/ERC721";
-import { ERC1155 } from "../generated/VintageRaiserManagementContract/ERC1155";
-import { VintageFundingPoolAdapterContract } from "../generated/VintageRaiserManagementContract/VintageFundingPoolAdapterContract";
+// import { ERC20 } from "../generated/VintageRaiserManagementContract/ERC20";
+// import { ERC721 } from "../generated/VintageRaiserManagementContract/ERC721";
+// import { ERC1155 } from "../generated/VintageRaiserManagementContract/ERC1155";
+// import { VintageFundingPoolAdapterContract } from "../generated/VintageRaiserManagementContract/VintageFundingPoolAdapterContract";
+import { newVintageProposalVoteInfoEntity } from "./vintage-daoset";
 
 import {
     VintageGovernorManagementProposal,
@@ -106,6 +107,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
         vintageGovernorInVotingToBeAllocatedEntity.votingToBeAllocated = votingToBeAllocated.reverted ? BigInt.zero() : votingToBeAllocated.value;
         vintageGovernorInVotingToBeAllocatedEntity.save();
     }
+
+    newVintageProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

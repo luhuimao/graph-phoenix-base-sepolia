@@ -24,6 +24,7 @@ import {
     VintageDaoInvestorCapacityEntity,
     VintageInvestorMembershipEntity
 } from "../generated/schema"
+import { newVintageProposalVoteInfoEntity } from "./vintage-daoset";
 
 export function handleProposalCreated(event: ProposalCreated): void {
     // log.error("proposalId {}", [event.params.proposalId.toHexString()]);
@@ -143,6 +144,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
         fundRaiseEntity.fundedVentures = BigInt.fromI32(0);
         fundRaiseEntity.save();
     }
+
+    newVintageProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalExecuted(event: proposalExecuted): void {

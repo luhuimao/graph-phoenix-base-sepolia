@@ -31,7 +31,7 @@ import {
     InvestmentProposalInvestorEntity
 } from "../generated/schema"
 import { bigInt, BigInt, Bytes, Address, log, Entity } from "@graphprotocol/graph-ts"
-
+import { newVintageProposalVoteInfoEntity } from "./vintage-daoset";
 export function handleProposalCreated(event: ProposalCreatedEvent): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
     const fundRaiseAddress = daoContract.getAdapterAddress(Bytes.fromHexString("0xa837e34a29b67bf52f684a1c93def79b84b9c012732becee4e5df62809df64ed"));
@@ -108,6 +108,8 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     const roundProposalIdEntity = VintageFundRoundToFundEstablishmentProposalId.load(event.params.daoAddr.toHexString() + currentFundRound.toString());
     if (roundProposalIdEntity) entity.fundEstablishmentProposalId = roundProposalIdEntity.proposalId; else { entity.fundEstablishmentProposalId = Bytes.empty(); }
     entity.save()
+
+    newVintageProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalExecuted(event: ProposalExecutedEvent): void {

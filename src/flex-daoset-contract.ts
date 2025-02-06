@@ -100,6 +100,8 @@ export function handlePollingProposalCreated(event: PollingProposalCreated): voi
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleVotingProposalCreated(event: VotingProposalCreated): void {
@@ -128,6 +130,35 @@ export function handleVotingProposalCreated(event: VotingProposalCreated): void 
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
+}
+
+export function newFlexProposalVoteInfoEntity(daoAddr: Bytes, proposalId: Bytes): void {
+    let voteInfoEntity = FlexProposalVoteInfo.load(proposalId.toHexString());
+    if (!voteInfoEntity) {
+        voteInfoEntity = new FlexProposalVoteInfo(proposalId.toHexString());
+        const flexDaoVoteConfigEntity = FlexDaoVoteConfigEntity.load(daoAddr.toHexString());
+        if (flexDaoVoteConfigEntity) {
+            voteInfoEntity.support = flexDaoVoteConfigEntity.support;
+            voteInfoEntity.quorum = flexDaoVoteConfigEntity.quorum;
+            voteInfoEntity.quorumType = flexDaoVoteConfigEntity.quorumType;
+            voteInfoEntity.supportType = flexDaoVoteConfigEntity.supportType;
+        }
+
+        voteInfoEntity.daoAddr = daoAddr;
+        voteInfoEntity.proposalId = proposalId;
+        voteInfoEntity.totalWeights = BigInt.zero();
+        voteInfoEntity.startVoteTime = BigInt.zero();
+        voteInfoEntity.stopVoteTime = BigInt.zero();
+        voteInfoEntity.startVoteTimeString = new Date(voteInfoEntity.startVoteTime.toI64() * 1000).toISOString();
+        voteInfoEntity.stopVoteTimeString = new Date(voteInfoEntity.stopVoteTime.toI64() * 1000).toISOString();
+        voteInfoEntity.nbYes = BigInt.zero();
+        voteInfoEntity.nbNo = BigInt.zero();
+        voteInfoEntity.currentSupport = BigInt.zero();
+        voteInfoEntity.currentQuorum = BigInt.zero();
+        voteInfoEntity.save();
+    }
 }
 
 export function handleFeesProposalCreated(event: FeesProposalCreated): void {
@@ -156,6 +187,8 @@ export function handleFeesProposalCreated(event: FeesProposalCreated): void {
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleGovernorMembershipProposalCreated(event: GovernorMembershipProposalCreated): void {
@@ -184,6 +217,8 @@ export function handleGovernorMembershipProposalCreated(event: GovernorMembershi
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleInvestorCapProposalCreated(event: InvestorCapProposalCreated): void {
@@ -212,6 +247,8 @@ export function handleInvestorCapProposalCreated(event: InvestorCapProposalCreat
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleInvestorMembershipProposalCreated(event: InvestorMembershipProposalCreated): void {
@@ -240,6 +277,8 @@ export function handleInvestorMembershipProposalCreated(event: InvestorMembershi
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposerMembershipProposalCreated(event: ProposerMembershipProposalCreated): void {
@@ -268,6 +307,8 @@ export function handleProposerMembershipProposalCreated(event: ProposerMembershi
     entity.createTimeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
     entity.flexDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newFlexProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 

@@ -25,7 +25,7 @@ import {
     FlexInvestorPortfoliosEntity,
     InvestmentProposalInvestorEntity
 } from "../generated/schema"
-// import { encodeBase58 } from "ethers";
+import { newFlexProposalVoteInfoEntity } from "./flex-daoset-contract"
 
 export function handleProposalCreated(event: ProposalCreated): void {
     // Entities can be loaded from the store using a string ID; this ID
@@ -200,6 +200,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.flexDaoEntity = event.params.daoAddress.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save();
+    
+    newFlexProposalVoteInfoEntity(event.params.daoAddress, event.params.proposalId);
 }
 
 export function handleproposalExecuted(event: ProposalExecuted): void {

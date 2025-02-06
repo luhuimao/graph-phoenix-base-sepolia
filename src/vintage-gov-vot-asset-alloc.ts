@@ -13,6 +13,7 @@ import {
     ProposalCreated
 } from "../generated/VintageGovernorVotingAssetAllocationProposalAdapterContract/VintageGovernorVotingAssetAllocationProposalAdapterContract"
 import { VintageGovernorVotingAssetAllocationProposalEntity, VintageProposalVoteInfo } from "../generated/schema";
+import { newVintageProposalVoteInfoEntity } from "./vintage-daoset";
 
 export function handleProposalCreated(event: ProposalCreated): void {
     let entity = new VintageGovernorVotingAssetAllocationProposalEntity(event.params.proposalId.toHexString());
@@ -47,6 +48,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.typeInString = "Voting Asset Allocation";
 
     entity.save();
+
+    newVintageProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handleProposalProcessed(event: ProposalProcessed): void {

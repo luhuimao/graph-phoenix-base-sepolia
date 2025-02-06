@@ -18,7 +18,8 @@ import { ColletiveFundRaiseProposalAdapterContract } from "../generated/Colletiv
 import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveClearFundProposalAdapterContract/CollectiveInvestmentPoolExtension";
 import {
     CollectiveClearFundProposalEntity,
-    CollectiveProposalVoteInfo
+    CollectiveProposalVoteInfo,
+    CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
 
 
@@ -55,6 +56,38 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.currencyAddr = fundRaiseToken;
     entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
     entity.save();
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
+}
+
+export function newCollectiveProposalVoteInfoEntity(daoAddr: Bytes, proposalId: Bytes): void {
+    let voteInfoEntity = CollectiveProposalVoteInfo.load(proposalId.toHexString());
+    if (!voteInfoEntity) {
+        voteInfoEntity = new CollectiveProposalVoteInfo(proposalId.toHexString());
+
+        const collectiveDaoVoteConfigEntity = CollectiveDaoVoteConfigEntity.load(daoAddr.toHexString());
+
+        if (collectiveDaoVoteConfigEntity) {
+            voteInfoEntity.support = collectiveDaoVoteConfigEntity.support;
+            voteInfoEntity.quorum = collectiveDaoVoteConfigEntity.quorum;
+            voteInfoEntity.supportType = collectiveDaoVoteConfigEntity.supportType;
+            voteInfoEntity.quorumType = collectiveDaoVoteConfigEntity.quorumType;
+        }
+
+        voteInfoEntity.totalWeights = BigInt.zero();
+        voteInfoEntity.daoAddr = daoAddr;
+        voteInfoEntity.proposalId = proposalId;
+        voteInfoEntity.startVoteTime = BigInt.zero();
+        voteInfoEntity.stopVoteTime = BigInt.zero();
+        voteInfoEntity.startVoteTimeString = new Date(voteInfoEntity.startVoteTime.toI64() * 1000).toISOString();
+        voteInfoEntity.stopVoteTimeString = new Date(voteInfoEntity.stopVoteTime.toI64() * 1000).toISOString();
+        voteInfoEntity.nbYes = BigInt.zero();
+        voteInfoEntity.nbNo = BigInt.zero();
+        voteInfoEntity.currentSupport = BigInt.zero();
+        voteInfoEntity.currentQuorum = BigInt.zero();
+
+        voteInfoEntity.save();
+    }
 }
 
 export function handleProposalExecuted(event: ProposalProcessed): void {
@@ -69,24 +102,6 @@ export function handleProposalExecuted(event: ProposalProcessed): void {
 
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
 
-    // event ProposalProcessed(
-    //     address daoAddr,
-    //     bytes32 proposalId,
-    //     ProposalState state,
-    //     uint256 voteResult,
-    //     uint256 allVotingWeight,
-    //     uint256 nbYes,
-    //     uint256 nbNo
-    // );
-    // emit ProposalProcessed(
-    //     address(dao),
-    //     proposalId,
-    //     proposal.state,
-    //     allWeight,
-    //     nbYes,
-    //     nbNo,
-    //     uint256(voteResult)
-    // );
     if (voteInfoEntity) {
         voteInfoEntity.nbYes = event.params.nbYes;
         voteInfoEntity.nbNo = event.params.nbNo;

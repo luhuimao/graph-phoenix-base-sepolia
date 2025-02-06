@@ -8,13 +8,15 @@ import {
 import { DaoRegistry } from "../generated/ColletiveFundingProposalAdapterContract/DaoRegistry";
 import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveFundingProposalAdapterContract/CollectiveInvestmentPoolExtension";
 import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveFundingProposalAdapterContract/ColletiveFundingPoolAdapterContract";
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
 import {
     CollectiveInvestmentProposalEntity,
     CollectiveDaoStatisticEntity,
     CollectiveProposalVoteInfo,
     CollectiveInvestorPortfoliosEntity,
-    InvestmentProposalInvestorEntity
+    InvestmentProposalInvestorEntity,
+    CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
@@ -30,7 +32,6 @@ export function handleProposalCreated(event: ProposalCreated): void {
     const COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT = daoContr.getConfiguration(Bytes.fromHexString("0x558062fa5fcc8623e6c743ab5b51793317989a5a93f03b32a485f94843f77da3"))
 
     if (!rel.reverted) {
-
         entity.daoAddr = event.params.daoAddr;
         entity.proposalId = event.params.proposalId;
         entity.approver = rel.value.getEscrowInfo().approver
@@ -63,6 +64,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.proposerCarryAmount = COLLECTIVE_PROPOSER_PAYBACK_TOKEN_REWARD_AMOUNT;
         entity.save();
     }
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 export function handlerProposalProcessed(event: ProposalExecuted): void {

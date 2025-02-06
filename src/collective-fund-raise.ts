@@ -8,8 +8,10 @@ import { DaoRegistry } from "../generated/ColletiveFundRaiseProposalAdapterContr
 import {
     CollectiveFundRaiseProposalEntity,
     CollectiveProposalVoteInfo,
-    CollectiveDaoEntity
+    CollectiveDaoEntity,
+    CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
+import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
 export function handleProposalCreated(event: ProposalCreated): void {
     const contract = ColletiveFundRaiseProposalAdapterContract.bind(event.address);
@@ -64,6 +66,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.save();
     }
+
+    newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
 
 
