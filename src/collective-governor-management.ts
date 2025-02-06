@@ -13,7 +13,9 @@ import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGover
 import {
     CollectiveGovernorManagementProposal,
     CollectiveProposalVoteInfo,
-    CollectiveDaoStatisticEntity
+    CollectiveDaoStatisticEntity,
+    CollectiveGovernorOutVotingToBeRemovedEntity,
+    CollectiveGovernorInVotingToBeAllocatedEntity
 } from "../generated/schema"
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -59,8 +61,35 @@ export function handleProposalCreated(event: ProposalCreated): void {
                 entity.depositAmount
             )
             entity.votingPowerToBeAllocated = votingPowerToBeAllocated.reverted ? BigInt.zero() : votingPowerToBeAllocated.value;
+
+            const collectiveGovernorInVotingToBeAllocatedEntity = new CollectiveGovernorInVotingToBeAllocatedEntity(
+                event.params.daoAddr.toHexString() +
+                event.params.proposalId.toHexString() +
+                event.params.account.toHexString());
+
+            collectiveGovernorInVotingToBeAllocatedEntity.daoAddr = event.params.daoAddr;
+            collectiveGovernorInVotingToBeAllocatedEntity.governorInProposalId = event.params.proposalId;
+            collectiveGovernorInVotingToBeAllocatedEntity.account = event.params.account;
+            collectiveGovernorInVotingToBeAllocatedEntity.votingToBeAllocated = votingPowerToBeAllocated.reverted ? BigInt.zero() : votingPowerToBeAllocated.value;
+            collectiveGovernorInVotingToBeAllocatedEntity.save();
         }
         entity.save();
+
+        if (entity.type == BigInt.fromI32(1)) {
+            const collectiveGovernorOutVotingToBeRemovedEntity = new CollectiveGovernorOutVotingToBeRemovedEntity(
+                event.params.daoAddr.toHexString() +
+                event.params.proposalId.toHexString() +
+                event.params.account.toHexString()
+            );
+
+            collectiveGovernorOutVotingToBeRemovedEntity.daoAddr = event.params.daoAddr;
+            collectiveGovernorOutVotingToBeRemovedEntity.governorOutProposalId = event.params.proposalId;
+            collectiveGovernorOutVotingToBeRemovedEntity.account = event.params.account;
+            const rel = collectiveVotingAdapterContract.try_getVotingWeight(event.params.daoAddr, event.params.account);
+            collectiveGovernorOutVotingToBeRemovedEntity.votingToBeRemoved = rel.reverted ? BigInt.zero() : rel.value;
+
+            collectiveGovernorOutVotingToBeRemovedEntity.save();
+        }
     }
 }
 

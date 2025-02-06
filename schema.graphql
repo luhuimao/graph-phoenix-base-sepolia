@@ -1727,6 +1727,22 @@ type CollectiveSetRiceReceiverProposalEntity @entity{
   collectiveDaoEntity: CollectiveDaoEntity
 }
 
+type CollectiveGovernorOutVotingToBeRemovedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  governorOutProposalId: Bytes!
+  account: Bytes!
+  votingToBeRemoved: BigInt!
+}
+
+type CollectiveGovernorInVotingToBeAllocatedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  governorInProposalId: Bytes!
+  account: Bytes!
+  votingToBeAllocated: BigInt!
+}
+
 type InvestmentReceiptNFTHolderEntity @entity{
   id: ID!
   proposalId: Bytes!
