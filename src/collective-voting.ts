@@ -13,7 +13,7 @@ import {
     CollectiveVotingAdapterContract,
     SubmitVote
 } from "../generated/CollectiveVotingAdapterContract/CollectiveVotingAdapterContract"
-import { CollectiveVoting, CollectiveProposalVoteInfo } from "../generated/schema"
+import { CollectiveVoting, CollectiveProposalVoteInfo, CollectiveDaoVoteConfigEntity } from "../generated/schema"
 
 export function handleSubmitVote(event: SubmitVote): void {
     // Entities can be loaded from the store using a string ID; this ID
@@ -26,8 +26,16 @@ export function handleSubmitVote(event: SubmitVote): void {
     }
     let voteInfoEntity = CollectiveProposalVoteInfo.load(event.params.proposalId.toHexString());
     if (!voteInfoEntity) {
-        voteInfoEntity = new CollectiveProposalVoteInfo(event.params.proposalId.toHexString())
+        voteInfoEntity = new CollectiveProposalVoteInfo(event.params.proposalId.toHexString());
         voteInfoEntity.totalWeights = BigInt.fromI32(0);
+        const collectiveDaoVoteConfigEntity = CollectiveDaoVoteConfigEntity.load(event.params.daoAddr.toHexString());
+
+        if (collectiveDaoVoteConfigEntity) {
+            voteInfoEntity.support = collectiveDaoVoteConfigEntity.support;
+            voteInfoEntity.quorum = collectiveDaoVoteConfigEntity.quorum;
+            voteInfoEntity.supportType = collectiveDaoVoteConfigEntity.supportType;
+            voteInfoEntity.quorumType = collectiveDaoVoteConfigEntity.quorumType;
+        }
     }
 
     // Entity fields can be set based on event parameters

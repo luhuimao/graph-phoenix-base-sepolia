@@ -13,7 +13,7 @@ import {
     VintageVotingContract,
     SubmitVote
 } from "../generated/VintageVotingContract/VintageVotingContract"
-import { VintageVoting, VintageProposalVoteInfo } from "../generated/schema"
+import { VintageVoting, VintageProposalVoteInfo, VintageVotingInfoEntity } from "../generated/schema"
 
 export function handleSubmitVote(event: SubmitVote): void {
     // Entities can be loaded from the store using a string ID; this ID
@@ -28,6 +28,14 @@ export function handleSubmitVote(event: SubmitVote): void {
     if (!voteInfoEntity) {
         voteInfoEntity = new VintageProposalVoteInfo(event.params.proposalId.toHexString())
         voteInfoEntity.totalWeights = BigInt.fromI32(0);
+
+        const vintageVotingInfoEntity = VintageVotingInfoEntity.load(event.params.daoAddr.toHexString());
+        if (vintageVotingInfoEntity) {
+            voteInfoEntity.support = vintageVotingInfoEntity.support;
+            voteInfoEntity.supportType = vintageVotingInfoEntity.supportType;
+            voteInfoEntity.quorum = vintageVotingInfoEntity.quorum;
+            voteInfoEntity.quorumType = vintageVotingInfoEntity.quorumType;
+        }
     }
 
     // Entity fields can be set based on event parameters

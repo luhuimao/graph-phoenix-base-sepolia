@@ -14,7 +14,7 @@ import {
     FlexPollingVotingContract,
     SubmitVote
 } from "../generated/FlexPollingVotingContract/FlexPollingVotingContract"
-import { FlexPollVoting, FlexProposalVoteInfo } from "../generated/schema"
+import { FlexPollVoting, FlexProposalVoteInfo, FlexDaoPollingInfoEntity } from "../generated/schema"
 
 export function handleSubmitVote(event: SubmitVote): void {
     // Entities can be loaded from the store using a string ID; this ID
@@ -30,6 +30,12 @@ export function handleSubmitVote(event: SubmitVote): void {
     if (!voteInfoEntity) {
         voteInfoEntity = new FlexProposalVoteInfo(event.params.proposalId.toHexString())
         voteInfoEntity.totalWeights = BigInt.fromI32(0);
+
+        const flexDaoPollingInfoEntity = FlexDaoPollingInfoEntity.load(event.params.daoAddr.toHexString());
+        if (flexDaoPollingInfoEntity) {
+            voteInfoEntity.support = flexDaoPollingInfoEntity.support;
+            voteInfoEntity.quorum = flexDaoPollingInfoEntity.quorum;
+        }
     }
 
     // Entity fields can be set based on event parameters

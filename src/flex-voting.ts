@@ -13,7 +13,7 @@ import {
     FlexVotingContract,
     SubmitVote
 } from "../generated/FlexVotingContract/FlexVotingContract"
-import { FlexVoting, FlexProposalVoteInfo } from "../generated/schema"
+import { FlexVoting, FlexProposalVoteInfo, FlexDaoVoteConfigEntity } from "../generated/schema"
 import { BigInt } from "@graphprotocol/graph-ts";
 
 export function handleSubmitVote(event: SubmitVote): void {
@@ -30,6 +30,13 @@ export function handleSubmitVote(event: SubmitVote): void {
     if (!voteInfoEntity) {
         voteInfoEntity = new FlexProposalVoteInfo(event.params.proposalId.toHexString());
         voteInfoEntity.totalWeights = BigInt.fromI32(0);
+        const flexDaoVoteConfigEntity = FlexDaoVoteConfigEntity.load(event.params.daoAddr.toHexString());
+        if (flexDaoVoteConfigEntity) {
+            voteInfoEntity.support = flexDaoVoteConfigEntity.support;
+            voteInfoEntity.quorum = flexDaoVoteConfigEntity.quorum;
+            voteInfoEntity.quorumType = flexDaoVoteConfigEntity.quorumType;
+            voteInfoEntity.supportType = flexDaoVoteConfigEntity.supportType;
+        }
     }
 
     // Entity fields can be set based on event parameters

@@ -399,6 +399,10 @@ type FlexProposalVoteInfo @entity{
   currentSupport: BigInt! # uint256
   currentQuorum: BigInt! # uint256
   totalWeights: BigInt! # uint256
+  support: BigInt
+  quorum: BigInt
+  supportType: BigInt
+  quorumType: BigInt
 }
 
 type InvestorBalance @entity{
@@ -811,6 +815,10 @@ type VintageProposalVoteInfo @entity{
   totalWeights: BigInt! # uint256
   currentSupport: BigInt! # uint256
   currentQuorum: BigInt! # uint256
+  support: BigInt
+  quorum: BigInt
+  supportType: BigInt
+  quorumType: BigInt
 }
 
 type VintageVoting @entity(immutable: true){
@@ -1242,6 +1250,10 @@ type CollectiveProposalVoteInfo @entity{
   totalWeights: BigInt! # uint256
   currentSupport: BigInt! # uint256
   currentQuorum: BigInt! # uint256
+  support: BigInt
+  quorum: BigInt
+  supportType: BigInt
+  quorumType: BigInt
 }
 
 type CollectiveVoting @entity(immutable: true){
