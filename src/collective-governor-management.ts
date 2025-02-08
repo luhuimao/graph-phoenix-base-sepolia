@@ -1,4 +1,4 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 import {
     ColletiveGovernorManagementAdapterContract,
     ProposalCreated,
@@ -6,7 +6,7 @@ import {
     GovernorQuit,
     StartVoting
 } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveGovernorManagementAdapterContract";
-
+import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveInvestmentPoolExtension"
 import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
 import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
 import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveFundingPoolAdapterContract";
@@ -26,8 +26,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
     const daoContract = DaoRegistry.bind(event.params.daoAddr);
 
-    // const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
-    // const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
+    const collectiveFundingPoolAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x8f5b4aabbdb8527d420a29cc90ae207773ad49b73c632c3cfd2f29eb8776f2ea"));
+    const collectiveFundingPoolAdapterContract = ColletiveFundingPoolAdapterContract.bind(collectiveFundingPoolAdapterContractAddr);
 
     const collectiveVotingAdapterContractAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x907642cbfe4e58ddd14eaa320923fbe4c29721dd0950ae4cb3b2626e292791ae"));
     const collectiveVotingAdapterContract = CollectiveVotingAdapterContract.bind(collectiveVotingAdapterContractAddr);
@@ -52,6 +52,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         entity.depositAmount = rel.value.getDepositAmount();
         entity.collectiveDaoEntity = event.params.daoAddr.toHexString();
         entity.votingPowerToBeAllocated = BigInt.zero();
+        entity.quitAmount = BigInt.zero();
         // 0. quantity 1. log2 2. 1 voter 1 vote
         // const votingWeightedType = daoContract.getConfiguration(Bytes.fromHexString("0xd093d4a34a12a221b19c0a6689d5449f1346aa769d15cca4e9782c36fda9339a"));
 
@@ -75,7 +76,6 @@ export function handleProposalCreated(event: ProposalCreated): void {
             collectiveGovernorInVotingToBeAllocatedEntity.votingToBeAllocated = votingPowerToBeAllocated.reverted ? BigInt.zero() : votingPowerToBeAllocated.value;
             collectiveGovernorInVotingToBeAllocatedEntity.save();
         }
-        entity.save();
 
         if (entity.type == BigInt.fromI32(1)) {
             const collectiveGovernorOutVotingToBeRemovedEntity = new CollectiveGovernorOutVotingToBeRemovedEntity(
@@ -91,8 +91,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
             collectiveGovernorOutVotingToBeRemovedEntity.votingToBeRemoved = rel.reverted ? BigInt.zero() : rel.value;
 
             collectiveGovernorOutVotingToBeRemovedEntity.save();
+
+            const bal = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, event.params.account);
+            entity.quitAmount = bal;
         }
     }
+    entity.save();
 
     newCollectiveProposalVoteInfoEntity(event.params.daoAddr, event.params.proposalId);
 }
@@ -127,6 +131,19 @@ export function handlerProposalProcessed(event: ProposalProcessed): void {
             collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
 
             collectiveDaoStatisticEntity.save();
+        }
+
+        if (entity.type == BigInt.fromI32(1) && event.params.state == 3) {
+            const dao = DaoRegistry.bind(event.params.daoAddr);
+            const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
+            const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
+            const tokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
+            const rel = collectiveFundingPoolExt.try_getPriorAmount(
+                Address.fromBytes(entity.governorAddress),
+                tokenAddr,
+                event.block.number.minus(BigInt.fromI32(1))
+            );
+            entity.quitAmount = rel.reverted ? entity.quitAmount : rel.value;
         }
     }
 

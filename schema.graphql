@@ -1138,7 +1138,8 @@ type VintageEscrowLiquidationFundEntity @entity{
   myWithdrawAmount: BigInt!
   myRefundable: BigInt!
   myConfirmedDepositAmount: BigInt!
-  myInvestmentAmount: BigInt!
+  myNetInvestmentAmount: BigInt!
+  myTotalInvestmentAmount: BigInt!
   myRedemptionAmount: BigInt!
   escrowBlockNum: BigInt!
 }
@@ -1287,6 +1288,7 @@ type CollectiveGovernorManagementProposal @entity{
   executeHash: Bytes!
   depositAmount: BigInt!
   votingPowerToBeAllocated: BigInt!
+  quitAmount: BigInt!
   collectiveDaoEntity: CollectiveDaoEntity
 }
 

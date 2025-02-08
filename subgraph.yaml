@@ -1136,6 +1136,8 @@ dataSources:
           file: ./abis/ColletiveFundingPoolAdapterContract.json
         - name: CollectiveVotingAdapterContract
           file: ./abis/CollectiveVotingAdapterContract.json
+        - name: CollectiveInvestmentPoolExtension
+          file: ./abis/CollectiveInvestmentPoolExtension.json
       eventHandlers:
         - event: GovernorQuit(address,address)
           handler: handleGovernorQuit

@@ -251,11 +251,14 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
     }
 
 
-    let myInvestmentAmount = BigInt.zero();
+    let myNetInvestmentAmount = BigInt.zero();
+    let myTotalInvestedAmount = BigInt.zero();
     if (!fundRound.reverted) {
         let investorInvestmentEntity = VintageInvestorInvestmentEntity.load(event.params.dao.toHexString() + fundRound.value.toHexString() + event.params.account.toHexString());
-        if (investorInvestmentEntity)
-            myInvestmentAmount = investorInvestmentEntity.netInvestedAmount;
+        if (investorInvestmentEntity) {
+            myNetInvestmentAmount = investorInvestmentEntity.netInvestedAmount;
+            myTotalInvestedAmount = investorInvestmentEntity.investedAmount;
+        }
     }
 
     let myRedemptionAmount = BigInt.zero();
@@ -281,7 +284,8 @@ export function handleEscrowFundFromLiquidation(event: EscrowFundFromLiquidation
         entity.withdrawTxHash = Bytes.empty();
         entity.fundRaiseId = event.params.fundRaiseId;
         entity.myConfirmedDepositAmount = confirmedDepositAmount;
-        entity.myInvestmentAmount = myInvestmentAmount;
+        entity.myTotalInvestmentAmount = myTotalInvestedAmount;
+        entity.myNetInvestmentAmount = myNetInvestmentAmount;
         entity.myRedemptionAmount = myRedemptionAmount;
         entity.token = event.params.token;
     }
