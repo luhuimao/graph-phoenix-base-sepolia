@@ -7,6 +7,39 @@ import {
     InvestmentReceiptNFTMintersEntity
 } from "../generated/schema"
 
+function tokenBalanceForInvestmentPID(Pid: Bytes, account: Address, ercContrAddr: Address): BigInt {
+    const entity = InvestmentReceiptNFTTokenIdEntity.load(Pid.toHexString());
+    const investmentReceiptERC721Contr = InvestmentReceiptERC721.bind(ercContrAddr);
+
+    let bal = BigInt.zero();
+    if (entity) {
+        if (entity.tokenIds.length > 0) {
+            for (let j = 0; j < entity.tokenIds.length; j++) {
+                const owner = investmentReceiptERC721Contr.ownerOf(entity.tokenIds[j]);
+                if (owner == account) {
+                    bal = bal.plus(BigInt.fromI32(1));
+                }
+            }
+        }
+    }
+
+    return bal;
+}
+
+function sharesByInvestmentPID(Pid: Bytes, account: Address, erc721ContrAddr: Address): BigInt {
+    let allShares = BigInt.zero();
+    const investmentReceiptERC721Contr = InvestmentReceiptERC721.bind(erc721ContrAddr);
+
+    const investmentReceiptNFTTokenIdEntity = InvestmentReceiptNFTTokenIdEntity.load(Pid.toHexString());
+    if (investmentReceiptNFTTokenIdEntity && investmentReceiptNFTTokenIdEntity.tokenIds.length > 0) {
+        for (let j = 0; j < investmentReceiptNFTTokenIdEntity.tokenIds.length; j++) {
+            if (investmentReceiptERC721Contr.ownerOf(investmentReceiptNFTTokenIdEntity.tokenIds[j]) == account)
+                allShares = allShares.plus(investmentReceiptNFTTokenIdEntity.shares[j]);
+        }
+    }
+    return allShares;
+}
+
 export function handleMinted(event: Minted): void {
     let entity = InvestmentReceiptNFTTokenIdEntity.load(event.params.proposalId.toHexString());
     const investmentReceiptERC721Contr = InvestmentReceiptERC721.bind(event.address);
@@ -38,19 +71,25 @@ export function handleMinted(event: Minted): void {
 
     let holderentity = InvestmentReceiptNFTHolderEntity.load(event.params.proposalId.toHexString());
     let tem1: string[] = [];
+    let tem5: BigInt[] = [];
     if (!holderentity) {
         holderentity = new InvestmentReceiptNFTHolderEntity(event.params.proposalId.toHexString());
         holderentity.proposalId = event.params.proposalId;
         tem1.push(event.params.minter.toHexString());
+        tem5.push(share);
     } else {
         if (holderentity.holders.length > 0) {
             for (let j = 0; j < holderentity.holders.length; j++) {
-                tem1.push(holderentity.holders[j])
+                tem1.push(holderentity.holders[j]);
+                tem5.push(holderentity.shares[j]);
             }
-            if (!contains(tem1, event.params.minter.toHexString()))
+            if (!contains(tem1, event.params.minter.toHexString())) {
                 tem1.push(event.params.minter.toHexString());
+                tem5.push(share);
+            }
         }
     }
+    holderentity.shares = tem5;
     holderentity.holders = tem1;
     holderentity.save();
 
@@ -62,13 +101,14 @@ export function handleMinted(event: Minted): void {
     } else {
         if (proposalEntity.proposalIds.length > 0) {
             for (let j = 0; j < proposalEntity.proposalIds.length; j++) {
-                tem2.push(proposalEntity.proposalIds[j].toHexString())
+                tem2.push(proposalEntity.proposalIds[j])
             }
 
         }
         if (!contains(tem2, event.params.proposalId.toHexString()))
             tem2.push(event.params.proposalId.toHexString());
 
+        proposalEntity.proposalIds = tem2;
         proposalEntity.save();
     }
 
@@ -94,29 +134,8 @@ export function handleMinted(event: Minted): void {
 
 export function handleTransfer(event: Transfer): void {
     const contr = InvestmentReceiptERC721.bind(event.address)
-    // let proposalEntity = InvestmentReceiptNFTProposalIdEntity.load(event.address.toHexString());
     const rel = contr.try_tokenIdToInvestmentProposalId(event.params.id);
     let iproposalId = !rel.reverted ? rel.value : Bytes.empty();
-
-    // if (proposalEntity) {
-    //     if (proposalEntity.proposalIds.length > 0) {
-    //         for (let j = 0; j < proposalEntity.proposalIds.length; j++) {
-    //             let tokenEntity = InvestmentReceiptNFTTokenIdEntity.load(proposalEntity.proposalIds[j].toHexString());
-    //             if (tokenEntity) {
-    //                 let tem: BigInt[] = [];
-    //                 if (tokenEntity.tokenIds.length > 0) {
-    //                     for (let i = 0; i < tokenEntity.tokenIds.length; i++) {
-    //                         tem.push(tokenEntity.tokenIds[i]);
-    //                     }
-    //                     if (containsBigInt(tem, event.params.id)) {
-    //                         iproposalId = proposalEntity.proposalIds[j];
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
     let holderentity = InvestmentReceiptNFTHolderEntity.load(iproposalId.toHexString());
 
@@ -126,16 +145,31 @@ export function handleTransfer(event: Transfer): void {
             tem3.push(holderentity.holders[j]);
         }
 
-        const index = tem3.indexOf(event.params.from.toHexString());
         const index2 = tem3.indexOf(event.params.to.toHexString());
-        if (index != -1) {
-            if (index2 == -1)
-                tem3[index] = event.params.to.toHexString();
-            else
-                tem3.splice(index, 1);
-        }
-        holderentity.holders = tem3;
+        if (index2 == -1)//receiver not existed in nft holder list
+            tem3.push(event.params.to.toHexString());
 
+        let index = tem3.indexOf(event.params.from.toHexString());
+        if (index != -1) {//sender existed in nft holder list
+            if (tokenBalanceForInvestmentPID(iproposalId, event.params.from, event.address).le(BigInt.zero())) {
+                if (index != -1)
+                    tem3.splice(index, 1);// remove sender from list
+            }
+        }
+
+        let tem1: BigInt[] = [];
+        if (tem3.length > 0) {
+            for (let j = 0; j < tem3.length; j++) {
+                const shares = sharesByInvestmentPID(
+                    iproposalId,
+                    Address.fromBytes((Address.fromHexString(tem3[j]))),
+                    event.address
+                );
+                tem1.push(shares);
+            }
+        }
+        holderentity.shares = tem1;
+        holderentity.holders = tem3;
         holderentity.save();
     }
 }

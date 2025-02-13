@@ -12,7 +12,7 @@ import { CollectiveDaoCreated } from "../generated/SummonCollectiveDao/SummonCol
 import { ColletiveGovernorManagementAdapterContract } from "../generated/SummonCollectiveDao/ColletiveGovernorManagementAdapterContract";
 import {
     DaoEntiy,
-    DaoEntityCounter,
+    // DaoEntityCounter,
     CollectiveDaoEntity,
     CollectiveDaoEntityCounter,
     CollectiveDaoGovernorMembershipEntity,
@@ -30,13 +30,13 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
     let collectiveDaoGovernorMembershipEntity = CollectiveDaoGovernorMembershipEntity.load(event.params.daoAddr.toHexString());
     let collectiveDaoVoteConfigEntity = CollectiveDaoVoteConfigEntity.load(event.params.daoAddr.toHexString());
     let collectiveDaoFeeInfoEntity = CollectiveDaoFeeInfoEntity.load(event.params.daoAddr.toHexString());
-    let fcounterEntity = DaoEntityCounter.load(event.address.toHexString());
+    // let fcounterEntity = DaoEntityCounter.load(event.address.toHexString());
     let collectiveDaoInvestorCapacityEntity = CollectiveDaoInvestorCapacityEntity.load(event.params.daoAddr.toHexString());
 
-    if (!fcounterEntity) {
-        fcounterEntity = new DaoEntityCounter(event.address.toHexString());
-        fcounterEntity.count = BigInt.fromI32(0);
-    }
+    // if (!fcounterEntity) {
+    //     fcounterEntity = new DaoEntityCounter(event.address.toHexString());
+    //     fcounterEntity.count = BigInt.fromI32(0);
+    // }
 
     if (entity) {
         // entity = new DaoEntiy(event.params.daoAddr.toHexString())
@@ -63,7 +63,7 @@ export function handleCollectiveDaoCreated(event: CollectiveDaoCreated): void {
     }
 
 
-    fcounterEntity.save();
+    // fcounterEntity.save();
 
     if (!collectiveDaoEntity) {
         collectiveDaoEntity = new CollectiveDaoEntity(event.params.daoAddr.toHexString());

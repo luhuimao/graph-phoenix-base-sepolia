@@ -1524,9 +1524,9 @@ dataSources:
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0xf83243646476717d32F1C3cf05c8206f0F7f4f28"
+      address: "0xe0Afa5783e890c21F79B35793184Aca0eFB15Fc7"
       abi: ManualVesting
-      startBlock: 19631989
+      startBlock: 21782605
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
