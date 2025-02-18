@@ -1094,9 +1094,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0xF9829fE5260EF42bC180920DC6BA0d8BfE1A462d"
+      address: "0xe40C9bF621A6cdEBB18894eDEff39B6609ce63f0"
       abi: CollectiveVotingAdapterContract
-      startBlock: 21475797
+      startBlock: 22038941
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1314,9 +1314,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x5847540C53911f82CC0476EB2bdbb9cd73e0ceFE"
+      address: "0x4C209b8d0fa67EB3E9a02a1c2bcb6C0459602342"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 21046737
+      startBlock: 22039025
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1349,9 +1349,9 @@ dataSources:
     name: CollectiveEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0x63571BCbfC67Fb73D6878Fd431670B943F8A1F8E"
+      address: "0xC26B79d695f2309cb7eB5BbD70aa1df90e456917"
       abi: CollectiveEscrowFundAdapterContract
-      startBlock: 12720531
+      startBlock: 22038946
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
