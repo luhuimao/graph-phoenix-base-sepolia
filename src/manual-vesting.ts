@@ -7,7 +7,7 @@
  * @LastEditTime: 2023-08-09 11:20:49
  */
 
-import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, Address, log } from "@graphprotocol/graph-ts";
 import { ManualVesting, CreateVesting, CreateVesting2, Withdraw, BatchVesting1, BatchVesting2 } from "../generated/ManualVesting/ManualVesting";
 import { ManualVestingERC721, Transfer } from "../generated/ManualVestingERC721/ManualVestingERC721";
 import { ERC20 } from "../generated/ManualVesting/ERC20";
@@ -38,6 +38,7 @@ export function handleCreateVesting(event: CreateVesting): void {
     entity.creator = event.transaction.from;
     entity.vestId = event.params.vestId;
     entity.recipient = event.params.recipient;
+    entity.originalRecipient = event.params.recipient;
     entity.tokenAddress = event.params.token;
     entity.erc721Address = vestInfo.getNftInfo().nftToken;
     entity.tokenId = vestInfo.getNftInfo().tokenId;
@@ -80,6 +81,7 @@ export function handleCreateVesting2(event: CreateVesting2): void {
     entity.creator = event.transaction.from;
     entity.vestId = event.params.vestId;
     entity.recipient = event.params.recipient;
+    entity.originalRecipient = event.params.recipient;
     entity.tokenAddress = event.params.token;
     entity.erc721Address = vestInfo.getNftInfo().nftToken;
     entity.tokenId = vestInfo.getNftInfo().tokenId;
@@ -148,6 +150,8 @@ export function handleWithdraw(event: Withdraw): void {
 
 export function handleNFTTransfer(event: Transfer): void {
     const manualVestingContrAddr = ManualVestingERC721.bind(event.address).vestContrAddress();
+    // log.debug("manualVestingContrAddr: {}", [manualVestingContrAddr.toHexString()]);
+    // log.debug("ManualVestingERC721 addr: {}", [event.address.toHexString()]);
     let vestingContract = ManualVesting.bind(manualVestingContrAddr);
     const vestId = vestingContract.try_tokenIdToVestId(event.address, event.params.id);
     if (!vestId.reverted) {
@@ -156,15 +160,16 @@ export function handleNFTTransfer(event: Transfer): void {
             entity.recipient = event.params.to;
             entity.save();
 
-            // if (entity.batchVestId != null) {
             let mvi = ManualVestInfoEntity.load(entity.batchVestId);
+            // let mvi = ManualVestInfoEntity.load(
+            //     entity.batchVestId +
+            //     "-" + entity.originalRecipient.toHexString()
+            // );
+
             if (mvi) {
                 mvi.recipient = event.params.to;
-
                 mvi.save();
             }
-            // }
-
         }
     }
 
@@ -226,6 +231,7 @@ export function handleBatchVesting1(event: BatchVesting1): void {
                     mvi.token = batchVestInfo.getVestInfo().token;
                     mvi.txHash = event.transaction.hash;
                     mvi.recipient = event.params.holders[j];
+                    mvi.originalRecipient = event.params.holders[j];
                     mvi.save();
                 }
             }
@@ -252,6 +258,7 @@ export function handleBatchVesting1(event: BatchVesting1): void {
                     mvi.token = batchVestInfo.getVestInfo().token;
                     mvi.txHash = event.transaction.hash;
                     mvi.recipient = event.params.investors[i];
+                    mvi.originalRecipient = event.params.investors[i];
                     mvi.save();
                 }
             }
@@ -318,6 +325,7 @@ export function handleBatchVesting2(event: BatchVesting2): void {
                     mvi.token = batchVestInfo.getVestInfo().token;
                     mvi.txHash = event.transaction.hash;
                     mvi.recipient = event.params.receivers[j];
+                    mvi.originalRecipient = event.params.receivers[j];
                     mvi.save();
                 }
             }

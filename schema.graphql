@@ -1800,6 +1800,7 @@ type ManualVestEntity @entity {
   creator: Bytes! # address
   vestId: BigInt! # uint256
   recipient: Bytes! # address
+  originalRecipient: Bytes!
   tokenAddress: Bytes! # address
   erc721Address: Bytes! # address
   tokenId: BigInt! # uint256
@@ -1868,4 +1869,5 @@ type ManualVestInfoEntity @entity{
   created: Boolean!
   txHash: Bytes!
   recipient: Bytes!
+  originalRecipient: Bytes!
 }
