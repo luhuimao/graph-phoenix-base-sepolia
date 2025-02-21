@@ -21,6 +21,7 @@ import {
 import { VintageFundRaiseAdapterContract } from "../generated/VintageFundRaiseAdapterContract/VintageFundRaiseAdapterContract";
 import { DaoRegistry } from "../generated/VintageFundingPoolAdapterContract/DaoRegistry";
 import { VintageFundingPoolExtension } from "../generated/VintageFundingPoolAdapterContract/VintageFundingPoolExtension";
+import { ERC20 } from "../generated/VintageFundingPoolAdapterContract/ERC20";
 import {
     VintageRedempteEntity,
     VintageFundRedemptionEntity,
@@ -36,6 +37,7 @@ import {
     VintageInvestorRedemptionsInFundRoundEntity,
     VintageEscrowFundEntity,
     VintageInvestorRefundEntity,
+    VintageFundRaisedEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -398,6 +400,11 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     const daoContract = DaoRegistry.bind(event.params.dao);
     const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x161fca6912f107b0f13c9c7275de7391b32d2ea1c52ffba65a3c961880a0c60f"));
     const fundingPoolExtContr = VintageFundingPoolExtension.bind(fundingPoolExtAddress);
+    const tokenAddr = fundingPoolExtContr.getFundRaisingTokenAddress();
+    const erc20 = ERC20.bind(tokenAddr);
+    const decimals = erc20.decimals();
+    const erc20Name = erc20.name();
+    const erc20Symbol = erc20.symbol();
     const fundRaisedState = fundingPoolAdapt.daoFundRaisingStates(event.params.dao);
     let successedFundCounter = VintageSuccessedFundCounter.load(event.params.dao.toString());
     if (!successedFundCounter) {
@@ -469,6 +476,23 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         VintageDaoStatisticsEntity.fundRaisedFromWei = VintageDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
         VintageDaoStatisticsEntity.save();
         fundRoundEntity.save();
+
+        let vintageFundRaisedEntity = VintageFundRaisedEntity.load(event.params.dao.toHexString() + tokenAddr.toHexString());
+        if (!vintageFundRaisedEntity) {
+            vintageFundRaisedEntity = new VintageFundRaisedEntity(event.params.dao.toHexString() + tokenAddr.toHexString());
+            vintageFundRaisedEntity.daoAddr = event.params.dao;
+            vintageFundRaisedEntity.tokenAddress = tokenAddr;
+            vintageFundRaisedEntity.raisedAmount = BigInt.zero();
+            vintageFundRaisedEntity.tokenName = erc20Name;
+            vintageFundRaisedEntity.tokenSymbol = erc20Symbol;
+            vintageFundRaisedEntity.tokenDecimals = BigInt.fromI32(decimals);
+            vintageFundRaisedEntity.investedAmount = BigInt.zero();
+            vintageFundRaisedEntity.investedAmountFromWei = "";
+        }
+        vintageFundRaisedEntity.raisedAmount = vintageFundRaisedEntity.raisedAmount.plus(event.params.fundRaisedAmount);
+        vintageFundRaisedEntity.raisedAmountFromWei = vintageFundRaisedEntity.raisedAmount.div(BigInt.fromI64(10 ** (decimals > 0 ? decimals : 1))).toString();
+        vintageFundRaisedEntity.save();
+
     }
     successedFundCounter.save();
 }

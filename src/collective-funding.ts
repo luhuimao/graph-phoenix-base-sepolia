@@ -9,14 +9,14 @@ import { DaoRegistry } from "../generated/ColletiveFundingProposalAdapterContrac
 import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveFundingProposalAdapterContract/CollectiveInvestmentPoolExtension";
 import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveFundingProposalAdapterContract/ColletiveFundingPoolAdapterContract";
 import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
-
+import { ERC20 } from "../generated/ColletiveFundingProposalAdapterContract/ERC20";
 import {
     CollectiveInvestmentProposalEntity,
     CollectiveDaoStatisticEntity,
     CollectiveProposalVoteInfo,
     CollectiveInvestorPortfoliosEntity,
     InvestmentProposalInvestorEntity,
-    CollectiveDaoVoteConfigEntity
+    CollectiveFundRaisedEntity
 } from "../generated/schema"
 // import { encodeBase58 } from "ethers";
 
@@ -106,8 +106,15 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
             collectiveDaoStatisticEntity.fundInvested = collectiveDaoStatisticEntity.fundInvested.plus(entity.investmentAmount);
             collectiveDaoStatisticEntity.fundInvestedFromWei = collectiveDaoStatisticEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
             collectiveDaoStatisticEntity.fundedVentures = collectiveDaoStatisticEntity.fundedVentures.plus(BigInt.fromI32(1));
-
             collectiveDaoStatisticEntity.save();
+
+            let collectiveFundRaisedEntity = CollectiveFundRaisedEntity.load(event.params.daoAddr.toHexString()
+                + entity.token.toHexString());
+            if (collectiveFundRaisedEntity) {
+                collectiveFundRaisedEntity.investedAmount = collectiveFundRaisedEntity.investedAmount.plus(entity.investmentAmount);
+                collectiveFundRaisedEntity.investedAmountFromWei = collectiveFundRaisedEntity.investedAmount.div(BigInt.fromI64(10 ** (collectiveFundRaisedEntity.tokenDecimals.toI32()))).toString();
+                collectiveFundRaisedEntity.save();
+            }
 
             const members = daoContr.try_getAllSteward();
             if (!members.reverted && members.value.length > 0) {
@@ -120,7 +127,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                     portfolio.investmentCurrency = entity.token;
                     portfolio.paybackCurrency = entity.paybackToken;
                     portfolio.price = entity.price;
-                    
+
                     const bal1 = collectiveFundingPoolAdapterContract.balanceOf(event.params.daoAddr, members.value[i]);
                     const raiseTokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
                     const bal2 = collectiveFundingPoolExt.try_getPriorAmount(

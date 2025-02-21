@@ -173,6 +173,8 @@ dataSources:
           file: ./abis/VintageFundRaiseAdapterContract.json
         - name: VintageFundingPoolExtension
           file: ./abis/VintageFundingPoolExtension.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Deposit(address,uint256,address)
           handler: handleDeposit
@@ -473,6 +475,8 @@ dataSources:
           file: ./abis/FlexPollingVotingContract.json
         - name: FlexFreeInEscrowFundAdapterContract
           file: ./abis/FlexFreeInEscrowFundAdapterContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address)
           handler: handleProposalCreated
@@ -1063,9 +1067,9 @@ dataSources:
     name: ColletiveTopUpProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x59AEa8D2eAAfEb135669D472da63753198393C30"
+      address: "0x2c3a36249BeC045924130dF8386fD182C273366D"
       abi: ColletiveTopUpProposalAdapterContract
-      startBlock: 15824448
+      startBlock: 22169780
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1094,9 +1098,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0xe40C9bF621A6cdEBB18894eDEff39B6609ce63f0"
+      address: "0x5643DA14F8b0f689c5e3F9d5cfe53d67589C2a32"
       abi: CollectiveVotingAdapterContract
-      startBlock: 22038941
+      startBlock: 22169740
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1117,9 +1121,9 @@ dataSources:
     name: ColletiveGovernorManagementAdapterContract
     network: base-sepolia
     source:
-      address: "0x7Ce1a90a160E834F298600bd2a8AbCc94eF3643E"
+      address: "0x19910Db8Ee820dccbb8A3eD708b46478673f2Df9"
       abi: ColletiveGovernorManagementAdapterContract
-      startBlock: 15824425
+      startBlock: 22169736
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1152,9 +1156,9 @@ dataSources:
     name: ColletiveFundRaiseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x615df332a22418CB2B633EE1d4594DAAc5D279C4"
+      address: "0xDeDdf5171a3b2Ee776452B52CEde72224bE4C258"
       abi: ColletiveFundRaiseProposalAdapterContract
-      startBlock: 20873924
+      startBlock: 22169753
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1179,9 +1183,9 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xF99DaEe159301a2F276753faF2d1bF801Dc7725f"
+      address: "0xE00cF31c86f73B6327473BB620D0c96AcaDD3175"
       abi: ColletiveFundingProposalAdapterContract
-      startBlock: 15824433
+      startBlock: 22169766
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1200,6 +1204,8 @@ dataSources:
           file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
         - name: CollectiveInvestmentPoolExtension
           file: ./abis/CollectiveInvestmentPoolExtension.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -1212,9 +1218,9 @@ dataSources:
     name: ColletiveExpenseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x779753eE813738B105874FDdd2A57c1F3e796031"
+      address: "0xC01763ceAb99E771a78303F58cf17e0D5C070014"
       abi: ColletiveExpenseProposalAdapterContract
-      startBlock: 15824451
+      startBlock: 22169784
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1237,9 +1243,9 @@ dataSources:
     name: ColletiveDaoSetProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x56139AF32E0C4763f11dD3A83C4359D25fbc54Da"
+      address: "0x79e4a09826914bc69C1db9B5041ad404e7CD1510"
       abi: ColletiveDaoSetProposalAdapterContract
-      startBlock: 15824430
+      startBlock: 22169731
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1264,9 +1270,9 @@ dataSources:
     name: CollectiveVestingAdapterContract
     network: base-sepolia
     source:
-      address: "0xeCDeA64bCb804e1c84D140A904e02099E59BaF31"
+      address: "0xDce6CBEC2930C7324FF9772b8f0e981e6Eb01026"
       abi: CollectiveVestingAdapterContract
-      startBlock: 17292571
+      startBlock: 22169772
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1289,9 +1295,9 @@ dataSources:
     name: CollectiveAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0xDd7E781E24d3DC761A8640Dc63A1630457f47350"
+      address: "0xfa9Cda2bAa8Ecfa425d6DE0E2C7B3386d3E3C894"
       abi: CollectiveAllocationAdapterContract
-      startBlock: 15702143
+      startBlock: 22169762
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1314,9 +1320,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x4C209b8d0fa67EB3E9a02a1c2bcb6C0459602342"
+      address: "0x1ff34e73721B1c27aBa80d6b6ff2D9a729BF38eC"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 22039025
+      startBlock: 22169744
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1333,6 +1339,8 @@ dataSources:
           file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
         - name: CollectiveInvestmentPoolExtension
           file: ./abis/CollectiveInvestmentPoolExtension.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Deposit(address,uint256,address)
           handler: handleDeposit
@@ -1349,9 +1357,9 @@ dataSources:
     name: CollectiveEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0xC26B79d695f2309cb7eB5BbD70aa1df90e456917"
+      address: "0xde5ca5Ca4464ccEFf2802744D435E3f8912a7598"
       abi: CollectiveEscrowFundAdapterContract
-      startBlock: 22038946
+      startBlock: 22169776
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1387,9 +1395,9 @@ dataSources:
     name: CollectiveFreeInEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0xb57CbfB2b8b1255070D624f1E9408f4E21bee12D"
+      address: "0x0D7163250f1FF9A43dBbd2694ADF2f9f4cAA3bE4"
       abi: CollectiveFreeInEscrowFundAdapterContract
-      startBlock: 11592197
+      startBlock: 22169786
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1413,9 +1421,9 @@ dataSources:
     name: ColletiveClearFundProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xbB21C1B3D17893FbBe40324141c5655069AE8B8A"
+      address: "0x9c03E5569549e42C7303cE84457656D5A55eDEbd"
       abi: ColletiveClearFundProposalAdapterContract
-      startBlock: 15824455
+      startBlock: 22169790
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1443,9 +1451,9 @@ dataSources:
     name: CollectiveRedemptionFeeEscrowAdapterContract
     network: base-sepolia
     source:
-      address: "0x780330E019F443DF64C7055Eee36AE0646302EDa"
+      address: "0x9Bb5C75Ff870B596A47DeD146806C09A4c6ff259"
       abi: CollectiveRedemptionFeeEscrowAdapterContract
-      startBlock: 12194517
+      startBlock: 22169794
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1476,9 +1484,9 @@ dataSources:
     name: colletiveSetRiceReceiverProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x42981e89C3f5c2b129FF6c22eC39855622Cf4cC6"
+      address: "0x7204d333895a24740260162b6b1d356E62c23a2c"
       abi: colletiveSetRiceReceiverProposalAdapterContract
-      startBlock: 15824459
+      startBlock: 22169798
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1557,9 +1565,9 @@ dataSources:
     name: ManualVestingERC721
     network: base-sepolia
     source:
-      address: "0x3C888ab9cD2Ea97379298F6098E264Fd585f0d12"
+      address: "0x1832995E93b64b8201008A320CaA4a8E2501906C"
       abi: ManualVestingERC721
-      startBlock: 22082398
+      startBlock: 22093006
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

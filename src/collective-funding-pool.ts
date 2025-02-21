@@ -21,6 +21,7 @@ import {
 import { ColletiveFundRaiseProposalAdapterContract } from "../generated/ColletiveFundingPoolAdapterContract/ColletiveFundRaiseProposalAdapterContract";
 import { DaoRegistry } from "../generated/VintageFundingPoolAdapterContract/DaoRegistry";
 import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveFundingPoolAdapterContract/CollectiveInvestmentPoolExtension";
+import { ERC20 } from "../generated/ColletiveFundingPoolAdapterContract/ERC20";
 import {
     // CollectiveRedempteEntity,
     CollectiveInvestorBalance,
@@ -33,7 +34,8 @@ import {
     // VintageFundRoundToFundEstablishmentProposalId,
     // VintageFundRaiseEntity,
     // VintageInvestorRedemptionsInFundRoundEntity,
-    // CollectiveEscrowFundEntity
+    // CollectiveEscrowFundEntity,
+    CollectiveFundRaisedEntity
 } from "../generated/schema"
 
 export function handleDeposit(event: Deposit): void {
@@ -177,6 +179,9 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
     const fundingPoolExtAddress = daoContract.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
     const fundingPoolExtContr = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
 
+    const COLLECTIVE_FUNDRAISE_STYLE = daoContract.getConfiguration(Bytes.fromHexString("0xf301d5aec67a9d816d38f9b645cac1e79a3308ff9803564bbe63a862db82f46b"));
+    const FUND_RAISING_MAX = daoContract.getConfiguration(Bytes.fromHexString("0x7e07fb4530796d057ca1d76d83f47aa8629dbb7e942ac28f30ad6f5e9e8d4189"));
+
     const collectiveNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
     const collectiveNewFundCont = ColletiveFundRaiseProposalAdapterContract.bind(collectiveNewFundContAddr);
     const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress)
@@ -189,18 +194,43 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         successedFundCounter.daoAddr = event.params.daoAddress;
         successedFundCounter.counter = BigInt.fromI32(0);
     }
+    let decimals = 0;
     let fundRaisedAmount = fundingPoolAdapt.fundRaisedByProposalId(event.params.daoAddress, fundRaiseProposalId);
-    const FUND_RAISING_MAX = daoContract.getConfiguration(Bytes.fromHexString("0x7e07fb4530796d057ca1d76d83f47aa8629dbb7e942ac28f30ad6f5e9e8d4189"));
     if (fundRaiseProposalEntity) {
+        const erc20 = ERC20.bind(Address.fromBytes(fundRaiseProposalEntity.acceptTokenAddr));
+        decimals = erc20.decimals();
+        const tokenName = erc20.name();
+        const tokenSymbol = erc20.symbol();
         // fundRaisedState == 2 ? fundRaiseProposalEntity.state = BigInt.fromI32(3) : fundRaiseProposalEntity.state = BigInt.fromI32(4);
         if (fundRaisedState == 2) {
             fundRaiseProposalEntity.state = BigInt.fromI32(3);
+
+            if (COLLECTIVE_FUNDRAISE_STYLE == BigInt.fromI32(1) && fundRaisedAmount > FUND_RAISING_MAX) {//free in 
+                fundRaisedAmount = FUND_RAISING_MAX;
+            }
+
+            let collectiveFundRaisedEntity = CollectiveFundRaisedEntity.load(event.params.daoAddress.toHexString() + fundRaiseProposalEntity.acceptTokenAddr.toHexString());
+            if (!collectiveFundRaisedEntity) {
+                collectiveFundRaisedEntity = new CollectiveFundRaisedEntity(event.params.daoAddress.toHexString() + fundRaiseProposalEntity.acceptTokenAddr.toHexString());
+                collectiveFundRaisedEntity.daoAddr = event.params.daoAddress;
+                collectiveFundRaisedEntity.tokenAddress = fundRaiseProposalEntity.acceptTokenAddr;
+                collectiveFundRaisedEntity.raisedAmount = BigInt.zero();
+                collectiveFundRaisedEntity.tokenName = tokenName;
+                collectiveFundRaisedEntity.tokenSymbol = tokenSymbol;
+                collectiveFundRaisedEntity.tokenDecimals = BigInt.fromI32(decimals);
+                collectiveFundRaisedEntity.investedAmount = BigInt.zero();
+                collectiveFundRaisedEntity.investedAmountFromWei = "";
+            }
+
+            collectiveFundRaisedEntity.raisedAmount = collectiveFundRaisedEntity.raisedAmount.plus(fundRaisedAmount);
+            collectiveFundRaisedEntity.raisedAmountFromWei = collectiveFundRaisedEntity.raisedAmount.div(BigInt.fromI64(10 ** (decimals > 0 ? decimals : 1))).toString();
+            collectiveFundRaisedEntity.save();
         } else {
             fundRaiseProposalEntity.state = BigInt.fromI32(4);
             fundRaiseProposalEntity.failedReason = "FundRaisingFailed";
         }
         fundRaiseProposalEntity.totalFund = fundRaisedAmount.gt(fundRaiseProposalEntity.fundRaiseMaxAmount) ? fundRaiseProposalEntity.fundRaiseMaxAmount : fundRaisedAmount;
-        fundRaiseProposalEntity.totalFundFromWei = fundRaiseProposalEntity.totalFund.div(BigInt.fromI64(10 ** 18)).toString();
+        fundRaiseProposalEntity.totalFundFromWei = fundRaiseProposalEntity.totalFund.div(BigInt.fromI64(10 ** (decimals > 0 ? decimals : 1))).toString();
         fundRaiseProposalEntity.save();
     }
 
@@ -224,13 +254,9 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
             collectiveDaoStatisticEntity.membersArr = [];
         }
 
-        const COLLECTIVE_FUNDRAISE_STYLE = daoContract.getConfiguration(Bytes.fromHexString("0xf301d5aec67a9d816d38f9b645cac1e79a3308ff9803564bbe63a862db82f46b"));
-        const FUND_RAISING_MAX = daoContract.getConfiguration(Bytes.fromHexString("0x7e07fb4530796d057ca1d76d83f47aa8629dbb7e942ac28f30ad6f5e9e8d4189"));
-
         if (COLLECTIVE_FUNDRAISE_STYLE == BigInt.fromI32(1) && fundRaisedAmount > FUND_RAISING_MAX) {//free in 
             fundRaisedAmount = FUND_RAISING_MAX;
         }
-
 
         collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(fundRaisedAmount);
         collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();

@@ -19,11 +19,13 @@ import { DaoRegistry } from "../generated/FlexFundingAdapterContract/DaoRegistry
 import { FlexInvestmentPoolAdapterContract } from "../generated/FlexFundingAdapterContract/FlexInvestmentPoolAdapterContract";
 import { FlexPollingVotingContract } from "../generated/FlexFundingAdapterContract/FlexPollingVotingContract";
 import { FlexFreeInEscrowFundAdapterContract } from "../generated/FlexFundingAdapterContract/FlexFreeInEscrowFundAdapterContract";
+import { ERC20 } from "../generated/FlexFundingAdapterContract/ERC20";
 import {
     FlexInvestmentProposal,
     FlexDaoStatistic,
     FlexInvestorPortfoliosEntity,
-    InvestmentProposalInvestorEntity
+    InvestmentProposalInvestorEntity,
+    FlexFundRaisedEntity
 } from "../generated/schema"
 import { newFlexProposalVoteInfoEntity } from "./flex-daoset-contract"
 
@@ -200,7 +202,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.flexDaoEntity = event.params.daoAddress.toHexString();
     // Entities can be written to the store with `.save()`
     entity.save();
-    
+
     newFlexProposalVoteInfoEntity(event.params.daoAddress, event.params.proposalId);
 }
 
@@ -222,6 +224,10 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
     if (entity) {
+        const erc20 = ERC20.bind(Address.fromBytes(entity.tokenAddress));
+        const decimals = erc20.decimals();
+        const erc20Name = erc20.name();
+        const erc20Symbol = erc20.symbol();
         entity.state = BigInt.fromI32(event.params.state);
 
         entity.paybackTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
@@ -364,16 +370,37 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
                 Address.fromBytes(Bytes.fromHexString("0x000000000000000000000000000000000000baBe")),
                 event.block.number.minus(BigInt.fromI32(1)));
 
-
+            let raisedAmount = BigInt.zero();
             if (proposalInfo.getFundRaiseInfo().fundRaiseType == 1) {
                 FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(totalBeforeExe);
+                raisedAmount = totalBeforeExe;
             } else {
                 FlexDaoStatisticsEntity.fundRaised = FlexDaoStatisticsEntity.fundRaised.plus(entity.totalFund);
+                raisedAmount = entity.totalFund;
 
             }
             FlexDaoStatisticsEntity.fundRaisedFromWei = FlexDaoStatisticsEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
 
             FlexDaoStatisticsEntity.save();
+
+            let flexFundRaisedEntity = FlexFundRaisedEntity.load(event.params.daoAddress.toHexString() + entity.tokenAddress.toHexString());
+            if (!flexFundRaisedEntity) {
+                flexFundRaisedEntity = new FlexFundRaisedEntity(event.params.daoAddress.toHexString() + entity.tokenAddress.toHexString());
+                flexFundRaisedEntity.tokenAddress = entity.tokenAddress;
+                flexFundRaisedEntity.daoAddr = event.params.daoAddress;
+                flexFundRaisedEntity.raisedAmount = BigInt.zero();
+                flexFundRaisedEntity.tokenName = erc20Name;
+                flexFundRaisedEntity.tokenSymbol = erc20Symbol;
+                flexFundRaisedEntity.tokenDecimals = BigInt.fromI32(decimals);
+                flexFundRaisedEntity.investedAmount = BigInt.zero();
+                flexFundRaisedEntity.investedAmountFromWei = "";
+            }
+            flexFundRaisedEntity.raisedAmount = flexFundRaisedEntity.raisedAmount.plus(raisedAmount);
+            flexFundRaisedEntity.raisedAmountFromWei = flexFundRaisedEntity.raisedAmount.div(BigInt.fromI64(10 ** (decimals > 0 ? decimals : 1))).toString();
+            flexFundRaisedEntity.investedAmount = flexFundRaisedEntity.investedAmount.plus(entity.ultimateInvestedFund);
+            flexFundRaisedEntity.investedAmountFromWei = flexFundRaisedEntity.investedAmount.div(BigInt.fromI64(10 ** (decimals > 0 ? decimals : 1))).toString();
+            flexFundRaisedEntity.save();
+
 
             const finalInvestors = new InvestmentProposalInvestorEntity(event.params.proposalId.toHexString());
             finalInvestors.daoAddr = event.params.daoAddress;

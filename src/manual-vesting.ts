@@ -150,8 +150,8 @@ export function handleWithdraw(event: Withdraw): void {
 
 export function handleNFTTransfer(event: Transfer): void {
     const manualVestingContrAddr = ManualVestingERC721.bind(event.address).vestContrAddress();
-    // log.debug("manualVestingContrAddr: {}", [manualVestingContrAddr.toHexString()]);
-    // log.debug("ManualVestingERC721 addr: {}", [event.address.toHexString()]);
+    log.debug("manualVestingContrAddr: {}", [manualVestingContrAddr.toHexString()]);
+    log.debug("ManualVestingERC721 addr: {}", [event.address.toHexString()]);
     let vestingContract = ManualVesting.bind(manualVestingContrAddr);
     const vestId = vestingContract.try_tokenIdToVestId(event.address, event.params.id);
     if (!vestId.reverted) {

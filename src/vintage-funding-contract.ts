@@ -28,7 +28,8 @@ import {
     VintageInvestorInvestmentEntity,
     VintageSuccessedFundCounter,
     VintageInvestorPortfoliosEntity,
-    InvestmentProposalInvestorEntity
+    InvestmentProposalInvestorEntity,
+    VintageFundRaisedEntity
 } from "../generated/schema"
 import { bigInt, BigInt, Bytes, Address, log, Entity } from "@graphprotocol/graph-ts"
 import { newVintageProposalVoteInfoEntity } from "./vintage-daoset";
@@ -161,8 +162,14 @@ export function handleProposalExecuted(event: ProposalExecutedEvent): void {
             VintageDaoStatisticsEntity.fundInvested = VintageDaoStatisticsEntity.fundInvested.plus(proposalEntity.investmentAmount);
             VintageDaoStatisticsEntity.fundInvestedFromWei = VintageDaoStatisticsEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
             VintageDaoStatisticsEntity.fundedVentures = VintageDaoStatisticsEntity.fundedVentures.plus(BigInt.fromI32(1));
-
             VintageDaoStatisticsEntity.save();
+
+            let vintageFundRaisedEntity = VintageFundRaisedEntity.load(event.params.daoAddr.toHexString() + proposalEntity.investmentToken.toHexString());
+            if (vintageFundRaisedEntity) {
+                vintageFundRaisedEntity.investedAmount = vintageFundRaisedEntity.investedAmount.plus(proposalEntity.investmentAmount);
+                vintageFundRaisedEntity.investedAmountFromWei = vintageFundRaisedEntity.investedAmount.div(BigInt.fromI64(10 ** (vintageFundRaisedEntity.tokenDecimals.toI32()))).toString();
+                vintageFundRaisedEntity.save();
+            }
 
             const finalInvestors = new InvestmentProposalInvestorEntity(event.params.proposalID.toHexString());
             finalInvestors.daoAddr = event.params.daoAddr;

@@ -1871,3 +1871,42 @@ type ManualVestInfoEntity @entity{
   recipient: Bytes!
   originalRecipient: Bytes!
 }
+
+type CollectiveFundRaisedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  raisedAmount: BigInt!
+  raisedAmountFromWei: String!
+  tokenAddress: Bytes!
+  tokenName: String!
+  tokenSymbol: String!
+  tokenDecimals: BigInt!
+  investedAmount: BigInt!
+  investedAmountFromWei: String!
+}
+
+type FlexFundRaisedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  raisedAmount: BigInt!
+  raisedAmountFromWei: String!
+  tokenAddress: Bytes!
+  tokenName: String!
+  tokenSymbol: String!
+  tokenDecimals: BigInt!
+  investedAmount: BigInt!
+  investedAmountFromWei: String!
+}
+
+type VintageFundRaisedEntity @entity{
+  id: ID!
+  daoAddr: Bytes!
+  raisedAmount: BigInt!
+  raisedAmountFromWei: String!
+  tokenAddress: Bytes!
+  tokenName: String!
+  tokenSymbol: String!
+  tokenDecimals: BigInt!
+  investedAmount: BigInt!
+  investedAmountFromWei: String!
+}
