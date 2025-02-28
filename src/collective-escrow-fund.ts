@@ -23,6 +23,7 @@ import { ColletiveFundingPoolAdapterContract } from "../generated/CollectiveEscr
 import { ColletiveFundRaiseProposalAdapterContract } from "../generated/CollectiveEscrowFundAdapterContract/ColletiveFundRaiseProposalAdapterContract";
 import { CollectiveInvestmentPoolExtension } from "../generated/CollectiveEscrowFundAdapterContract/CollectiveInvestmentPoolExtension";
 import { DaoRegistry } from "../generated/VintageEscrowFundAdapterContract/DaoRegistry";
+// import { ERC20 } from "../generated/ManualVesting/ERC20";
 import {
     // CollectiveEscrowFundEntity,
     CollectiveEscrowLiquidationFundEntity,
@@ -166,9 +167,10 @@ export function handleEscrowFundFromFailedFundRaising(event: EscrowFundFromFaile
     entity.fundRaisingId = event.params.fundRaisingId;
     entity.token = event.params.token;
     entity.minFundGoal = FUND_RAISING_TARGET;
-    entity.minFundGoalFromWei = entity.minFundGoal.div(BigInt.fromI64(10 ** 18)).toString();
+    // const decimals = ERC20.bind(event.params.token).decimals();
+    entity.minFundGoalFromWei = ""// entity.minFundGoal.div(BigInt.fromI64(10 ** (decimals))).toString();
     entity.finalRaised = poolAmount;
-    entity.finalRaisedFromWei = entity.finalRaised.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.finalRaisedFromWei = ""// entity.finalRaised.div(BigInt.fromI64(10 ** (decimals))).toString();
     entity.escrowBlockNum = event.block.number;
     // let rel1 = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
     entity.myAdvanceDepositAmount = event.params.amount;
@@ -282,12 +284,12 @@ export function handleEscrowFundFromOverRaised(event: EscrowFundFromOverRaised):
     entity.escrowBlockNum = event.block.number;
     // let rel1 = collectiveFundingPoolExt.try_getPriorAmount(event.params.account, event.params.token, event.block.number.minus(BigInt.fromI32(1)));
     const fundRaiseProId = collectiveFundRaiseProposalAdapterContract.try_lastProposalIds(event.params.dao);
-
+    // const decimals = ERC20.bind(event.params.token).decimals();
     let rel1 = collectiveFundingPoolAdapterContract.try_investorsDepositAmountByFundRaise(event.params.dao, fundRaiseProId.reverted ? Bytes.empty() : fundRaiseProId.value, event.params.account);
     entity.myAdvanceDepositAmount = rel1.reverted ? BigInt.fromI32(0) : rel1.value;
     entity.myRefundable = event.params.amount;
     entity.amount = event.params.amount;
-    entity.amountFromWei = entity.amount.div(BigInt.fromI64(10 ** 18)).toString()
+    entity.amountFromWei = ""// entity.amount.div(BigInt.fromI64(10 ** (decimals))).toString()
     entity.myConfirmedDepositAmount = entity.myAdvanceDepositAmount.minus(entity.myRefundable);
     entity.save();
 }

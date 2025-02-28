@@ -29,9 +29,9 @@ dataSources:
     name: VintageFundRaiseAdapterContract
     network: base-sepolia
     source:
-      address: "0xe2Fde7E7eB2fdA6A8Ea7139C9322BeD3156C5EaB"
+      address: "0x631084157BE28487842D8A737779079cEcE490f4"
       abi: VintageFundRaiseAdapterContract
-      startBlock: 20873907
+      startBlock: 22429739
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -60,9 +60,9 @@ dataSources:
     name: VintageVotingContract
     network: base-sepolia
     source:
-      address: "0x78D809431fE9131C963770760b8E87910BF80026"
+      address: "0x8cd3d2491e4351fB197E87d59A79D20aefDC0114"
       abi: VintageVotingContract
-      startBlock: 21087861
+      startBlock: 22429749
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -81,9 +81,9 @@ dataSources:
     name: VintageRaiserManagementContract
     network: base-sepolia
     source:
-      address: "0x45d7C1d0b0B0ec75Ccb642150803A7D0a6d48D8D"
+      address: "0xabFE9D956F90719004722e444582aB1Ba89160ef"
       abi: VintageRaiserManagementContract
-      startBlock: 10990257
+      startBlock: 22429753
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -117,9 +117,9 @@ dataSources:
     name: VintageFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xc678a8bF70f4aecB71883599778eb505D98d7Fe4"
+      address: "0x426E68FF3E89E524Fd0674F8FecCc15e07A2B297"
       abi: VintageFundingAdapterContract
-      startBlock: 20534087
+      startBlock: 22429758
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -140,6 +140,8 @@ dataSources:
           file: ./abis/VintageFundingPoolExtension.json
         - name: VintageRaiserManagementContract
           file: ./abis/VintageRaiserManagementContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -154,9 +156,9 @@ dataSources:
     name: VintageFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x60f03069EDa7581D621F766a57aF6024b74de09D"
+      address: "0x9aAdD4aA6c3A27C83D132ca922f8FC2652f2d1c6"
       abi: VintageFundingPoolAdapterContract
-      startBlock: 20966206
+      startBlock: 22431977
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -193,9 +195,9 @@ dataSources:
     name: VintageVesting
     network: base-sepolia
     source:
-      address: "0x7dd8e41164C2eEAC7E2BdAbb53ed10816e240f6C"
+      address: "0x550165f897abF2781086B45090CE5289A9416b6d"
       abi: VintageVesting
-      startBlock: 9680991
+      startBlock: 22429766
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -218,9 +220,9 @@ dataSources:
     name: VintageAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x0deE409D5A21CcAD056D3ad51E0200e671c22b4D"
+      address: "0x5F5B3B21db191a86D899dd999d0865b6FF335154"
       abi: VintageAllocationAdapterContract
-      startBlock: 6313431
+      startBlock: 22429762
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -243,9 +245,9 @@ dataSources:
     name: VintageEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0xc448f4eF185D2da7Ec0885D890aC24a57f783143"
+      address: "0xF372c1a5333D8061c1450272fA92Ce5666252162"
       abi: VintageEscrowFundAdapterContract
-      startBlock: 20481943
+      startBlock: 22429769
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -279,9 +281,9 @@ dataSources:
     name: VintageFreeInEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0xDAEaaF1FA8f073C8052cc7f97714549D888C4818"
+      address: "0xf6Df55aB73bBbBc6B153615BEA9e563c6Df44572"
       abi: VintageFreeInEscrowFundAdapterContract
-      startBlock: 6313465
+      startBlock: 22431801
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -305,9 +307,9 @@ dataSources:
     name: VintageDaoSetAdapterContract
     network: base-sepolia
     source:
-      address: "0x4C78C4beDc0768e9f2cf694c3d3774D824343be6"
+      address: "0x747F9AE88D4ad6Bd5B30d0E65aF3FceA62Da56AE"
       abi: VintageDaoSetAdapterContract
-      startBlock: 17246089
+      startBlock: 22431786
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -323,6 +325,8 @@ dataSources:
           file: ./abis/VintageFundingPoolAdapterContract.json
         - name: VintageRaiserManagementContract
           file: ./abis/VintageRaiserManagementContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32,uint8)
           handler: handleProposalCreated
@@ -335,9 +339,9 @@ dataSources:
     name: VintageGovernorVotingAssetAllocationProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xC15730Bcbd1622622983BBA79712833049D1C630"
+      address: "0x9F1aeE7E0ccBb6273f6e74E65067D9FE2464ad0A"
       abi: VintageGovernorVotingAssetAllocationProposalAdapterContract
-      startBlock: 19631949
+      startBlock: 22429799
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -350,6 +354,8 @@ dataSources:
           file: ./abis/VintageGovernorVotingAssetAllocationProposalAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address[],uint256[],uint256)
           handler: handleProposalCreated
@@ -360,9 +366,9 @@ dataSources:
     name: VintageSetRiceReceiverProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x6fC11492412F5e93902b80e9bE852A78Ba2EBBAd"
+      address: "0x08fD99A1eD4FFab923bB55fEA2A47c7543Ff66c1"
       abi: VintageSetRiceReceiverProposalAdapterContract
-      startBlock: 14527474
+      startBlock: 22429803
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -375,6 +381,8 @@ dataSources:
           file: ./abis/VintageSetRiceReceiverProposalAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256)
           handler: handleProposalCreated
@@ -450,9 +458,9 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base-sepolia
     source:
-      address: "0xd4FFf32476a14B7b821f3b19FDa3b111Df3DCFcd"
+      address: "0xCecE0a5a9d77DdA32eE73Fce6c2724b889B3314d"
       abi: FlexFundingAdapterContract
-      startBlock: 17772637
+      startBlock: 22429244
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -494,9 +502,9 @@ dataSources:
     name: FlexVesting
     network: base-sepolia
     source:
-      address: "0x7a5D2ccEE130baa35Da1F66EEb4a0c15F563FdA3"
+      address: "0xE70FA9a1BCbdd8CDd4c75b67712f7cfc22eEd022"
       abi: FlexVesting
-      startBlock: 15514007
+      startBlock: 22429222
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -521,9 +529,9 @@ dataSources:
     name: StewardManagementContract
     network: base-sepolia
     source:
-      address: "0xDe613208A2391c1c0BCD24A1354ACbE0057E5169"
+      address: "0xf4194d37bf6818B9c00805F87B0c62C64548FC5d"
       abi: StewardManagementContract
-      startBlock: 10296873
+      startBlock: 22432141
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -555,9 +563,9 @@ dataSources:
     name: FlexPollingVotingContract
     network: base-sepolia
     source:
-      address: "0x022D72904015115e332eD10d8Bc76505634b18d4"
+      address: "0x1Cc3f861308bBca706423ECeB6Cb355d305AA1CE"
       abi: FlexPollingVotingContract
-      startBlock: 6313147
+      startBlock: 22429240
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -578,9 +586,9 @@ dataSources:
     name: FlexVotingContract
     network: base-sepolia
     source:
-      address: "0xB1567b54Ee14403041e952832C1EebFedAbab044"
+      address: "0x13110b17EC473AF98dCD470198F7a5245cc4e892"
       abi: FlexVotingContract
-      startBlock: 20787112
+      startBlock: 22429235
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -601,9 +609,9 @@ dataSources:
     name: FlexInvestmentPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x3D5a6B663215F49d3B5724CAC0cBaC9F9B20943b"
+      address: "0x8F37729Eca2F96dA9b73715a82c09714F8fd6750"
       abi: FlexInvestmentPoolAdapterContract
-      startBlock: 19146506
+      startBlock: 22429231
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -628,9 +636,9 @@ dataSources:
     name: FlexAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0x619c4619c82B3d9817113AEF1d66e461d0146b03"
+      address: "0x682866d78c2fB6Ef4cE9469923212A8D4BaF6846"
       abi: FlexAllocationAdapterContract
-      startBlock: 15471026
+      startBlock: 22429227
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -654,9 +662,9 @@ dataSources:
     name: FlexDaoSetPollingAdapterContract
     network: base-sepolia
     source:
-      address: "0xC6EC4D4A1c51018F0a1Fb566ee6cEdFf7344fa47"
+      address: "0x05E1fbA4612224b16d8f5a9A618B0bd118bfd598"
       abi: FlexDaoSetPollingAdapterContract
-      startBlock: 10245627
+      startBlock: 22429267
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -692,9 +700,9 @@ dataSources:
     name: FlexDaoSetVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0xb3B93589c2CF07f6714Ad48C4Da367f830758D65"
+      address: "0xd521C3A8AD15B2Ff93c8371D2e0C9f82aC78706f"
       abi: FlexDaoSetVotingAdapterContract
-      startBlock: 12663531
+      startBlock: 22429271
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -718,9 +726,9 @@ dataSources:
     name: FlexDaoSetFeesAdapterContract
     network: base-sepolia
     source:
-      address: "0x473EE4F1b3a3C3B6C3625062AEa3E0176A0f59ad"
+      address: "0xE8bd7BDe23192E637B5Bb0c834AB864036F4E1AD"
       abi: FlexDaoSetFeesAdapterContract
-      startBlock: 10245627
+      startBlock: 22429275
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -744,9 +752,9 @@ dataSources:
     name: FlexDaoSetGovernorMembershipAdapterContract
     network: base-sepolia
     source:
-      address: "0x783383d339099ec3c6237774B1458E21c4C8Afa4"
+      address: "0x7C235bb8da62D5CC29D16d60881d502C13575293"
       abi: FlexDaoSetGovernorMembershipAdapterContract
-      startBlock: 10245627
+      startBlock: 22432057
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -772,9 +780,9 @@ dataSources:
     name: FlexDaoSetInvestorCapAdapterContract
     network: base-sepolia
     source:
-      address: "0xDE25B3A519c0527555f4fe9C5f84fB0eAda6091F"
+      address: "0x68833499815E70974294bdfF048e40a4FD8b340D"
       abi: FlexDaoSetInvestorCapAdapterContract
-      startBlock: 10245627
+      startBlock: 22432050
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -798,9 +806,9 @@ dataSources:
     name: FlexDaoSetInvestorMembershipAdapterContract
     network: base-sepolia
     source:
-      address: "0x5F009752f3e776af80f395f2124c6f665edda7b4"
+      address: "0xF2998DB4Ac07404cDbb07cD7630A4669c329C184"
       abi: FlexDaoSetInvestorMembershipAdapterContract
-      startBlock: 12663536
+      startBlock: 22429285
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -826,9 +834,9 @@ dataSources:
     name: FlexDaoSetProposerMembershipAdapterContract
     network: base-sepolia
     source:
-      address: "0x030E8331c46191aBF02120dfd1717d5009d31f11"
+      address: "0x5EB05f73Af0E7447ab851eBD4FfB25C24B777D16"
       abi: FlexDaoSetProposerMembershipAdapterContract
-      startBlock: 14614446
+      startBlock: 22429290
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -854,9 +862,9 @@ dataSources:
     name: FlexGovernorVotingAssetAllocationProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x1fb975084EC7B14E7EAc4D114fD179F3a06C0174"
+      address: "0x7E3EdF5B911b1434eB4204376225F195D46603E7"
       abi: FlexGovernorVotingAssetAllocationProposalAdapterContract
-      startBlock: 12413753
+      startBlock: 22429294
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -871,6 +879,8 @@ dataSources:
           file: ./abis/DaoRegistry.json
         - name: FlexFundingAdapterContract
           file: ./abis/FlexFundingAdapterContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address[],uint256[],uint256)
           handler: handleProposalCreated
@@ -882,9 +892,9 @@ dataSources:
     name: VestingERC721
     network: base-sepolia
     source:
-      address: "0x1184f8479De2655bc0494D456587754df946763f"
+      address: "0x525F50A6Bd9CD657B2A34546066584017B7BCd08"
       abi: VestingERC721
-      startBlock: 17292679
+      startBlock: 22430307
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -961,9 +971,9 @@ dataSources:
     name: FlexFreeInEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0x4eb495209dD39bCCf6B5f916971d28B33072FFe6"
+      address: "0xf5c74863f9Bce9661AE408cAbD59A23861F30d70"
       abi: FlexFreeInEscrowFundAdapterContract
-      startBlock: 6313013
+      startBlock: 22429257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -989,9 +999,9 @@ dataSources:
     name: FlexSetRiceReceiverProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x67db7c011Af1c2a9A919b1A28fF99F65B5eFbD30"
+      address: "0x145Cf63f82c4fa7652E0F2A4602f626118d0C496"
       abi: FlexSetRiceReceiverProposalAdapterContract
-      startBlock: 14527685
+      startBlock: 22432007
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1004,6 +1014,8 @@ dataSources:
           file: ./abis/DaoRegistry.json
         - name: FlexSetRiceReceiverProposalAdapterContract
           file: ./abis/FlexSetRiceReceiverProposalAdapterContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,uint256)
           handler: handleProposalCreated
@@ -1067,9 +1079,9 @@ dataSources:
     name: ColletiveTopUpProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x2c3a36249BeC045924130dF8386fD182C273366D"
+      address: "0x3B3fb7be5cfA8D032489F676872a43aD0dD49177"
       abi: ColletiveTopUpProposalAdapterContract
-      startBlock: 22169780
+      startBlock: 22427284
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1086,6 +1098,8 @@ dataSources:
           file: ./abis/CollectiveVotingAdapterContract.json
         - name: ColletiveFundingPoolAdapterContract
           file: ./abis/ColletiveFundingPoolAdapterContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -1098,9 +1112,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0x5643DA14F8b0f689c5e3F9d5cfe53d67589C2a32"
+      address: "0xcf009033Ce767a16b279610F1Ebdd366C3f81FDf"
       abi: CollectiveVotingAdapterContract
-      startBlock: 22169740
+      startBlock: 22427236
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1121,9 +1135,9 @@ dataSources:
     name: ColletiveGovernorManagementAdapterContract
     network: base-sepolia
     source:
-      address: "0x19910Db8Ee820dccbb8A3eD708b46478673f2Df9"
+      address: "0x7Ba4b826e30fD3FD1eFd34BF2BA3DD64c33E4C31"
       abi: ColletiveGovernorManagementAdapterContract
-      startBlock: 22169736
+      startBlock: 22427232
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1142,6 +1156,8 @@ dataSources:
           file: ./abis/CollectiveVotingAdapterContract.json
         - name: CollectiveInvestmentPoolExtension
           file: ./abis/CollectiveInvestmentPoolExtension.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: GovernorQuit(address,address)
           handler: handleGovernorQuit
@@ -1156,9 +1172,9 @@ dataSources:
     name: ColletiveFundRaiseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xDeDdf5171a3b2Ee776452B52CEde72224bE4C258"
+      address: "0x8c1fCad010c59BEDAB640A0Ec46899db48fb2E21"
       abi: ColletiveFundRaiseProposalAdapterContract
-      startBlock: 22169753
+      startBlock: 22427256
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1173,6 +1189,8 @@ dataSources:
           file: ./abis/DaoRegistry.json
         - name: ColletiveFundingPoolAdapterContract
           file: ./abis/ColletiveFundingPoolAdapterContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -1183,9 +1201,9 @@ dataSources:
     name: ColletiveFundingProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xE00cF31c86f73B6327473BB620D0c96AcaDD3175"
+      address: "0xD8f037Bb6902493B186C334206605791f4F4763B"
       abi: ColletiveFundingProposalAdapterContract
-      startBlock: 22169766
+      startBlock: 22427268
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1218,9 +1236,9 @@ dataSources:
     name: ColletiveExpenseProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0xC01763ceAb99E771a78303F58cf17e0D5C070014"
+      address: "0x2F6E65Be4335273253Cd0df601FE8E11cD19EDDE"
       abi: ColletiveExpenseProposalAdapterContract
-      startBlock: 22169784
+      startBlock: 22427288
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1233,6 +1251,8 @@ dataSources:
           file: ./abis/ColletiveExpenseProposalAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -1243,9 +1263,9 @@ dataSources:
     name: ColletiveDaoSetProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x79e4a09826914bc69C1db9B5041ad404e7CD1510"
+      address: "0xf0EAc2124756b13906Aaf1E4d231B689765fEcc0"
       abi: ColletiveDaoSetProposalAdapterContract
-      startBlock: 22169731
+      startBlock: 22427230
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1260,6 +1280,8 @@ dataSources:
           file: ./abis/DaoRegistry.json
         - name: ColletiveGovernorManagementAdapterContract
           file: ./abis/ColletiveGovernormanagementAdapterContract.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32,uint8)
           handler: handleProposalCreated
@@ -1270,9 +1292,9 @@ dataSources:
     name: CollectiveVestingAdapterContract
     network: base-sepolia
     source:
-      address: "0xDce6CBEC2930C7324FF9772b8f0e981e6Eb01026"
+      address: "0xb4406Cac07930Ce7D7dbdc63CF48290a02A65c33"
       abi: CollectiveVestingAdapterContract
-      startBlock: 22169772
+      startBlock: 22427276
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1295,9 +1317,9 @@ dataSources:
     name: CollectiveAllocationAdapterContract
     network: base-sepolia
     source:
-      address: "0xfa9Cda2bAa8Ecfa425d6DE0E2C7B3386d3E3C894"
+      address: "0x078F5D340aA054A77aeD6e54966A3eDB33AE825b"
       abi: CollectiveAllocationAdapterContract
-      startBlock: 22169762
+      startBlock: 22427264
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1320,9 +1342,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x1ff34e73721B1c27aBa80d6b6ff2D9a729BF38eC"
+      address: "0x714B14d0d95E3aa999b51E4cEE5a55F5a5946cB0"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 22169744
+      startBlock: 22432424
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1357,9 +1379,9 @@ dataSources:
     name: CollectiveEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0xde5ca5Ca4464ccEFf2802744D435E3f8912a7598"
+      address: "0x9bcF97547166d82D0aD10168bB598A2e6AaA4dbd"
       abi: CollectiveEscrowFundAdapterContract
-      startBlock: 22169776
+      startBlock: 22427280
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1395,9 +1417,9 @@ dataSources:
     name: CollectiveFreeInEscrowFundAdapterContract
     network: base-sepolia
     source:
-      address: "0x0D7163250f1FF9A43dBbd2694ADF2f9f4cAA3bE4"
+      address: "0x37d1Cb615Ee891d286E8cbCEe96823Ff79ffaA78"
       abi: CollectiveFreeInEscrowFundAdapterContract
-      startBlock: 22169786
+      startBlock: 22427292
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1421,9 +1443,9 @@ dataSources:
     name: ColletiveClearFundProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x9c03E5569549e42C7303cE84457656D5A55eDEbd"
+      address: "0x501e5b7899587Cd179B8e227295103BC810cAA6f"
       abi: ColletiveClearFundProposalAdapterContract
-      startBlock: 22169790
+      startBlock: 22432288
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1441,6 +1463,8 @@ dataSources:
           file: ./abis/ColletiveFundRaiseProposalAdapterContract.json
         - name: CollectiveInvestmentPoolExtension
           file: ./abis/CollectiveInvestmentPoolExtension.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
@@ -1451,9 +1475,9 @@ dataSources:
     name: CollectiveRedemptionFeeEscrowAdapterContract
     network: base-sepolia
     source:
-      address: "0x9Bb5C75Ff870B596A47DeD146806C09A4c6ff259"
+      address: "0xC042746cd797f7FA2F3f58F37ccDb2225510537D"
       abi: CollectiveRedemptionFeeEscrowAdapterContract
-      startBlock: 22169794
+      startBlock: 22427300
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1484,9 +1508,9 @@ dataSources:
     name: colletiveSetRiceReceiverProposalAdapterContract
     network: base-sepolia
     source:
-      address: "0x7204d333895a24740260162b6b1d356E62c23a2c"
+      address: "0xc9A88b69ef9a5132DA64eEF5CB1165036362Be6f"
       abi: colletiveSetRiceReceiverProposalAdapterContract
-      startBlock: 22169798
+      startBlock: 22432240
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1498,20 +1522,21 @@ dataSources:
           file: ./abis/colletiveSetRiceReceiverProposalAdapterContract.json
         - name: DaoRegistry
           file: ./abis/DaoRegistry.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
         - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint256,uint256,uint256)
           handler: handleProposalProcessed
       file: ./src/collective-rice-receiver.ts
-
   - kind: ethereum
     name: InvestmentReceiptERC721
     network: base-sepolia
     source:
-      address: "0xFE31B3F11D8a2474b0E75A50D5982160b45d15Bc"
+      address: "0x57822e35bF293eA633Fc78BdB65a90C08883B492"
       abi: InvestmentReceiptERC721
-      startBlock: 19631943
+      startBlock: 22430311
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1527,14 +1552,13 @@ dataSources:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
       file: ./src/investment-receipt-nft.ts
-
   - kind: ethereum
     name: ManualVesting
     network: base-sepolia
     source:
-      address: "0xe0Afa5783e890c21F79B35793184Aca0eFB15Fc7"
+      address: "0x278936B6FF0AFf73F5dbf3cb10B47bC4E3C94f34"
       abi: ManualVesting
-      startBlock: 21782605
+      startBlock: 22430353
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1565,9 +1589,9 @@ dataSources:
     name: ManualVestingERC721
     network: base-sepolia
     source:
-      address: "0x1832995E93b64b8201008A320CaA4a8E2501906C"
+      address: "0x86228aDF7Bb697A6503e78E16560727C8761A11F"
       abi: ManualVestingERC721
-      startBlock: 22093006
+      startBlock: 22430379
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

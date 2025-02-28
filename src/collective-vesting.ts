@@ -14,6 +14,7 @@ import {
     Withdraw
 } from "../generated/CollectiveVestingAdapterContract/CollectiveVestingAdapterContract";
 import { VintageVestingERC721, Transfer } from "../generated/VintageVestingERC721/VintageVestingERC721";
+// import { ERC20 } from "../generated/ManualVesting/ERC20";
 import {
     CollectiveVestEntity,
     CollectiveUserVestInfo,
@@ -71,7 +72,8 @@ export function handleCreateVesting(event: CreateVesting): void {
         userVestInfo.vestingInterval = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingInterval : BigInt.fromI32(0);
         userVestInfo.vestingEndTime = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.vestingEndTime : BigInt.fromI32(0);
         userVestInfo.totalAmount = collectiveFundingProposalEntity ? collectiveFundingProposalEntity.paybackAmount : BigInt.fromI32(0);
-        userVestInfo.totalAmountFromWei = userVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        // const decimals = ERC20.bind(event.params.token).decimals();
+        userVestInfo.totalAmountFromWei = ""// userVestInfo.totalAmount.div(BigInt.fromI64(10 ** decimals)).toString();
         userVestInfo.tokenAddress = event.params.token;
     }
 

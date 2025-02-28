@@ -18,6 +18,7 @@ import {
     CollectiveGovernorInVotingToBeAllocatedEntity,
     CollectiveDaoVoteConfigEntity
 } from "../generated/schema"
+import { ERC20 } from "../generated/ManualVesting/ERC20";
 import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
 
 export function handleProposalCreated(event: ProposalCreated): void {

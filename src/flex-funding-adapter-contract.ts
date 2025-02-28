@@ -56,10 +56,11 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.daoAddress = event.params.daoAddress;
     entity.proposer = event.params.proposer;
     entity.tokenAddress = proposalInfo.getInvestmentInfo().tokenAddress;
+    const decimals = ERC20.bind(Address.fromBytes(entity.tokenAddress)).decimals();
     entity.minInvestmentAmount = proposalInfo.getInvestmentInfo().minInvestmentAmount;
     entity.maxInvestmentAmount = proposalInfo.getInvestmentInfo().maxInvestmentAmount;
-    entity.minInvestmentAmountFromWei = entity.minInvestmentAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.maxInvestmentAmountFromWei = entity.maxInvestmentAmount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.maxInvestmentAmountFromWei = "";
+    entity.minInvestmentAmountFromWei = entity.minInvestmentAmount.div(BigInt.fromI64(10 ** decimals)).toString();
     entity.escrow = proposalInfo.getInvestmentInfo().escrow;
     entity.paybackTokenAddr = proposalInfo.getInvestmentInfo().paybackTokenAddr;
     entity.paybackTokenAmount = proposalInfo.getInvestmentInfo().paybackTokenAmount;
@@ -88,8 +89,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.fundRaiseEndTimeString = new Date(entity.fundRaiseEndTime.toI64() * 1000).toISOString();
     entity.minDepositAmount = proposalInfo.getFundRaiseInfo().minDepositAmount;
     entity.maxDepositAmount = proposalInfo.getFundRaiseInfo().maxDepositAmount;
-    entity.minDepositAmountFromWei = entity.minDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
-    entity.maxDepositAmountFromWei = entity.maxDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.minDepositAmountFromWei = entity.minDepositAmount.div(BigInt.fromI64(10 ** decimals)).toString();
+    entity.maxDepositAmountFromWei = entity.maxDepositAmount.div(BigInt.fromI64(10 ** decimals)).toString();
     entity.investorIdentification = proposalInfo.getFundRaiseInfo().investorIdentification;
     entity.bType = BigInt.fromI32(proposalInfo.getFundRaiseInfo().investorIdentificationInfo.bType);
     entity.bChainId = proposalInfo.getFundRaiseInfo().investorIdentificationInfo.bChainId;

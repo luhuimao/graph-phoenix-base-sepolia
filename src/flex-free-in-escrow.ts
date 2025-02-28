@@ -15,7 +15,7 @@ import {
     WithDraw as WithDrawEvent,
     FlexFreeInEscrowFundAdapterContract
 } from "../generated/FlexFreeInEscrowFundAdapterContract/FlexFreeInEscrowFundAdapterContract";
-
+// import { ERC20 } from "../generated/ManualVesting/ERC20";
 import { DaoRegistry } from "../generated/FlexFreeInEscrowFundAdapterContract/DaoRegistry";
 import { FlexInvestmentPoolExtension } from "../generated/FlexFreeInEscrowFundAdapterContract/FlexInvestmentPoolExtension";
 import {
@@ -59,7 +59,8 @@ export function handleEscrowFund(event: EscorwFundEvent): void {
     entity.withdrawTimeStamp = BigInt.fromI32(0);
     entity.withdrawDateTime = "0";
     entity.amount = event.params.amount;
-    entity.amountFromWei = entity.amount.div(BigInt.fromI64(10 ** 18)).toString();
+    // const decimals = ERC20.bind(event.params.token).decimals();
+    entity.amountFromWei = ""//entity.amount.div(BigInt.fromI64(10 ** decimals)).toString();
     entity.withdrawTxHash = Bytes.empty();
     entity.escrowBlockNum = event.block.number;
     entity.myAdvanceDepositAmount = BigInt.fromI32(0);

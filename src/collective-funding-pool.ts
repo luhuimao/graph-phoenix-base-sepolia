@@ -48,26 +48,31 @@ export function handleDeposit(event: Deposit): void {
     let entity = CollectiveInvestorActivity.load(event.transaction.hash.toHex())
     // Entities only exist after they have been saved to the store;
     // `null` checks allow to create entities on demand
+
+    const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress);
+
     if (!entity) {
         entity = new CollectiveInvestorActivity(event.transaction.hash.toHex());
         const rel = collectiveNewFundCont.try_lastProposalIds(event.params.daoAddress)
         entity.proposalId = rel.reverted ? Bytes.empty() : rel.value;
     }
-
+    let decimals = 0;
+    let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
+    if (fundRaiseProposalEntity)
+        decimals = ERC20.bind(Address.fromBytes(fundRaiseProposalEntity.acceptTokenAddr)).decimals();
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
     entity.daoAddr = event.params.daoAddress;
     entity.account = event.params.account;
     entity.type = "deposit";
     entity.amount = event.params.amount;
-    entity.amountFromWei = event.params.amount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.amountFromWei = event.params.amount.div(BigInt.fromI64(10 ** decimals)).toString();
     entity.timeStamp = event.block.timestamp;
     entity.timeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
 
     // Entities can be written to the store with `.save()`
     entity.save()
 
-    const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress);
 
     let collectiveInvestorBalance = CollectiveInvestorBalance.load(event.params.daoAddress.toHexString() + fundRaiseProposalId.toHexString() + event.params.account.toHexString());
 
@@ -79,12 +84,13 @@ export function handleDeposit(event: Deposit): void {
         collectiveInvestorBalance.balance = BigInt.zero();
 
         let fundId = BigInt.zero();
-        let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
-        if (fundRaiseProposalEntity) fundId = fundRaiseProposalEntity.fundRaiseId;
+        if (fundRaiseProposalEntity) {
+            fundId = fundRaiseProposalEntity.fundRaiseId;
+        }
         collectiveInvestorBalance.fundId = fundId;
     }
     collectiveInvestorBalance.balance = collectiveInvestorBalance.balance.plus(event.params.amount);
-    collectiveInvestorBalance.balanceFromWei = collectiveInvestorBalance.balance.div(BigInt.fromI64(10 ** 18)).toString();
+    collectiveInvestorBalance.balanceFromWei = collectiveInvestorBalance.balance.div(BigInt.fromI64(10 ** decimals)).toString();
 
     collectiveInvestorBalance.save();
 }
@@ -115,7 +121,11 @@ export function handleWithDraw(event: WithDraw): void {
     const daoContract = DaoRegistry.bind(event.params.daoAddress);
     const collectiveNewFundContAddr = daoContract.getAdapterAddress(Bytes.fromHexString("0x3a06648a49edffe95b8384794dfe9cf3ab34782fab0130b4c91bfd53f3407e6b"));
     const collectiveNewFundCont = ColletiveFundRaiseProposalAdapterContract.bind(collectiveNewFundContAddr);
-
+    const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress);
+    let fundRaiseProposalEntity = CollectiveFundRaiseProposalEntity.load(fundRaiseProposalId.toHexString());
+    let decimals = 0;
+    if (fundRaiseProposalEntity)
+        decimals = ERC20.bind(Address.fromBytes(fundRaiseProposalEntity.acceptTokenAddr)).decimals();
 
     // Entity fields can be set based on event parameters
     entity.txHash = event.transaction.hash;
@@ -123,7 +133,7 @@ export function handleWithDraw(event: WithDraw): void {
     entity.account = event.params.account;
     entity.type = "withdraw";
     entity.amount = event.params.amount;
-    entity.amountFromWei = event.params.amount.div(BigInt.fromI64(10 ** 18)).toString();
+    entity.amountFromWei = event.params.amount.div(BigInt.fromI64(10 ** decimals)).toString();
     entity.timeStamp = event.block.timestamp;
     entity.timeString = new Date(event.block.timestamp.toI64() * 1000).toISOString();
 
@@ -134,12 +144,11 @@ export function handleWithDraw(event: WithDraw): void {
     const fundRaiseEnTime = daoContract.getConfiguration(Bytes.fromHexString("0x533afc15b6312917b5e28e2272ea69d44e5ea8e00d3bd57cada1275c2f14c9e8"));
 
     if (event.block.timestamp.gt(fundRaiseStartTime) && event.block.timestamp.lt(fundRaiseEnTime)) {
-        const fundRaiseProposalId = collectiveNewFundCont.lastProposalIds(event.params.daoAddress);
         let collectiveInvestorBalance = CollectiveInvestorBalance.load(event.params.daoAddress.toHexString() + fundRaiseProposalId.toHexString() + event.params.account.toHexString());
 
         if (collectiveInvestorBalance) {
             collectiveInvestorBalance.balance = collectiveInvestorBalance.balance.minus(event.params.amount);
-            collectiveInvestorBalance.balanceFromWei = collectiveInvestorBalance.balance.div(BigInt.fromI64(10 ** 18)).toString();
+            collectiveInvestorBalance.balanceFromWei = collectiveInvestorBalance.balance.div(BigInt.fromI64(10 ** decimals)).toString();
 
             collectiveInvestorBalance.save();
         }
@@ -259,7 +268,7 @@ export function handleProcessFundRaise(event: ProcessFundRaise): void {
         }
 
         collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(fundRaisedAmount);
-        collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
+        collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** decimals)).toString();
         collectiveDaoStatisticEntity.save();
     }
     successedFundCounter.save();

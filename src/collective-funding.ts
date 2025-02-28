@@ -79,8 +79,9 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
 
     const fundingPoolExtAddress = daoContr.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
     const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
-
     if (!rel.reverted && entity) {
+        const decimals = ERC20.bind(Address.fromBytes(entity.token)).decimals();
+
         entity.state = BigInt.fromI32(rel.value.getState());
         entity.executeBlockNum = rel.value.getExecuteBlockNum();
         entity.executeHash = event.transaction.hash;
@@ -104,7 +105,7 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                 collectiveDaoStatisticEntity.membersArr = [];
             }
             collectiveDaoStatisticEntity.fundInvested = collectiveDaoStatisticEntity.fundInvested.plus(entity.investmentAmount);
-            collectiveDaoStatisticEntity.fundInvestedFromWei = collectiveDaoStatisticEntity.fundInvested.div(BigInt.fromI64(10 ** 18)).toString();
+            collectiveDaoStatisticEntity.fundInvestedFromWei = collectiveDaoStatisticEntity.fundInvested.div(BigInt.fromI64(10 ** decimals)).toString();
             collectiveDaoStatisticEntity.fundedVentures = collectiveDaoStatisticEntity.fundedVentures.plus(BigInt.fromI32(1));
             collectiveDaoStatisticEntity.save();
 
@@ -176,9 +177,9 @@ export function handlerProposalProcessed(event: ProposalExecuted): void {
                     myNetPaybackTokenAmount = myTotalPaybackTokenAmount.minus(myScoutCarryAmount);
 
                     portfolio.totalInvestedAmount = myInvestedAmount;
-                    portfolio.totalInvestedAmountFromWei = portfolio.totalInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    portfolio.totalInvestedAmountFromWei = portfolio.totalInvestedAmount.div(BigInt.fromI64(10 ** decimals)).toString();
                     portfolio.netInvestedAmount = netInvestedAmount;
-                    portfolio.netInvestedAmountFromWei = portfolio.netInvestedAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                    portfolio.netInvestedAmountFromWei = portfolio.netInvestedAmount.div(BigInt.fromI64(10 ** decimals)).toString();
                     portfolio.governorFeeAmount = BigInt.zero();
                     portfolio.governorCarryAmount = BigInt.zero();
                     portfolio.ScoutFeeAmount = myScoutFeeAmount;

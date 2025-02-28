@@ -9,7 +9,7 @@ import {
     CollectiveTopUpProposalEntity,
     CollectiveProposalVoteInfo,
     CollectiveDaoStatisticEntity,
-    // CollectiveDaoVoteConfigEntity
+    CollectiveFundRaisedEntity
 } from "../generated/schema"
 import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
 import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
@@ -77,6 +77,14 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
             collectiveDaoStatisticEntity.fundRaised = collectiveDaoStatisticEntity.fundRaised.plus(entity.amount);
             collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
             collectiveDaoStatisticEntity.save();
+
+            let collectiveFundRaisedEntity = CollectiveFundRaisedEntity.load(event.params.daoAddr.toHexString() + entity.token.toHexString());
+            if (collectiveFundRaisedEntity) {
+                collectiveFundRaisedEntity.raisedAmount = collectiveFundRaisedEntity.raisedAmount.plus(entity.amount);
+                collectiveFundRaisedEntity.raisedAmountFromWei = collectiveFundRaisedEntity.raisedAmount.div(BigInt.fromI64
+                    (10 ** (collectiveFundRaisedEntity.tokenDecimals.toI32()))).toString();
+                collectiveFundRaisedEntity.save();
+            }
         }
     }
 

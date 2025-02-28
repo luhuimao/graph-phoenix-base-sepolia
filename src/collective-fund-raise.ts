@@ -1,10 +1,12 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 import {
     ColletiveFundRaiseProposalAdapterContract,
     ProposalCreated,
     proposalExecuted
 } from "../generated/ColletiveFundRaiseProposalAdapterContract/ColletiveFundRaiseProposalAdapterContract";
 import { DaoRegistry } from "../generated/ColletiveFundRaiseProposalAdapterContract/DaoRegistry"
+// import { ERC20 } from "../generated/ColletiveFundingPoolAdapterContract/ERC20";
+
 import {
     CollectiveFundRaiseProposalEntity,
     CollectiveProposalVoteInfo,
@@ -23,13 +25,14 @@ export function handleProposalCreated(event: ProposalCreated): void {
         // entity.fundRaiseId = !contract.try_fundRaisingId(event.params.daoAddr).reverted ? contract.try_fundRaisingId(event.params.daoAddr).value : BigInt.zero();
         entity.acceptTokenAddr = rel.value.getFundInfo().tokenAddress;
         entity.fundRaiseTarget = rel.value.getFundInfo().miniTarget;
-        entity.fundRaiseTargetFromWei = entity.fundRaiseTarget.div(BigInt.fromI64(10 ** 18)).toString();
+        // const decimals = ERC20.bind(Address.fromBytes(entity.acceptTokenAddr)).decimals();
+        entity.fundRaiseTargetFromWei = "";// entity.fundRaiseTarget.div(BigInt.fromI64(10 ** (decimals))).toString();
         entity.fundRaiseMaxAmount = rel.value.getFundInfo().maxCap;
-        entity.fundRaiseMaxAmountFromWei = entity.fundRaiseMaxAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        entity.fundRaiseMaxAmountFromWei = ""//entity.fundRaiseMaxAmount.div(BigInt.fromI64(10 ** (decimals))).toString();
         entity.lpMinDepositAmount = rel.value.getFundInfo().miniDeposit;
-        entity.lpMinDepositAmountFromWei = entity.lpMinDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        entity.lpMinDepositAmountFromWei = ""//entity.lpMinDepositAmount.div(BigInt.fromI64(10 ** (decimals))).toString();
         entity.lpMaxDepositAmount = rel.value.getFundInfo().maxDeposit;
-        entity.lpMaxDepositAmountFromWei = entity.lpMaxDepositAmount.div(BigInt.fromI64(10 ** 18)).toString();
+        entity.lpMaxDepositAmountFromWei = ""// entity.lpMaxDepositAmount.div(BigInt.fromI64(10 ** (decimals))).toString();
         entity.fundRaiseStartTime = rel.value.getTimeInfo().startTime;
         entity.fundRaiseEndTime = rel.value.getTimeInfo().endTime;
         entity.priorityDepositEnable = rel.value.getPriorityDepositor().enable;

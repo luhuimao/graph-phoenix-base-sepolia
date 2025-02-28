@@ -98,7 +98,8 @@ export function handleProposalCreated(event: ProposalCreated): void {
             case 0:
                 const erc20Contr = ERC20.bind(FLEX_VOTING_ASSET_TOKEN_ADDRESS);
                 const bal1 = erc20Contr.try_balanceOf(event.params.account);
-                assetAmount = bal1.reverted ? BigInt.zero() : bal1.value.div(BigInt.fromI64(10 ** 18));
+                const decimals = erc20Contr.decimals();
+                assetAmount = bal1.reverted ? BigInt.zero() : bal1.value.div(BigInt.fromI64(10 ** decimals));
                 break;
             case 1:
                 const erc721Contr = ERC721.bind(FLEX_VOTING_ASSET_TOKEN_ADDRESS);

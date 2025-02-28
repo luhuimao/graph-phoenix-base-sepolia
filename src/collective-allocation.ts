@@ -18,6 +18,7 @@ import {
     CollectiveVestingEligibleUsers,
     CollectiveUserVestInfo
 } from "../generated/schema"
+// import { ERC20 } from "../generated/ManualVesting/ERC20";
 import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
 
 export function handleAllocateToken(event: AllocateTokenEvent): void {
@@ -50,7 +51,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
         const vestingEndTime = vintageFundingProposalEntity.vestingEndTime;
 
         let allocContract = CollectiveAllocationAdapterContract.bind(event.address);
-
+        // const paybackTokenDecimals = ERC20.bind(Address.fromBytes(vintageFundingProposalEntity.paybackToken)).decimals();
         //investors
         for (var i = 0; i < entity.lps.length; i++) {
             let collectiveUserVestInfo = new CollectiveUserVestInfo(entity.proposalId.toHexString() + "-" + entity.lps[i]);
@@ -68,7 +69,7 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
             collectiveUserVestInfo.vestingInterval = vestingInterval;
             collectiveUserVestInfo.vestingEndTime = vestingEndTime;
             collectiveUserVestInfo.totalAmount = paybackAmount;
-            collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+            collectiveUserVestInfo.totalAmountFromWei = ""// collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** (paybackTokenDecimals))).toString();
             collectiveUserVestInfo.created = false;
             collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
             collectiveUserVestInfo.save();
@@ -95,14 +96,14 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
                 collectiveUserVestInfo.vestingInterval = vestingInterval;
                 collectiveUserVestInfo.vestingEndTime = vestingEndTime;
                 collectiveUserVestInfo.totalAmount = vestInfo.getTokenAmount();
-                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.totalAmountFromWei = ""// collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** (paybackTokenDecimals))).toString();
                 collectiveUserVestInfo.created = false;
                 collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
 
                 collectiveUserVestInfo.save();
             } else {
                 collectiveUserVestInfo.totalAmount = collectiveUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
-                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.totalAmountFromWei = ""// collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** (paybackTokenDecimals))).toString();
                 collectiveUserVestInfo.save();
             }
 
@@ -126,14 +127,14 @@ export function handleAllocateToken(event: AllocateTokenEvent): void {
                 collectiveUserVestInfo.vestingInterval = vestingInterval;
                 collectiveUserVestInfo.vestingEndTime = vestingEndTime;
                 collectiveUserVestInfo.totalAmount = vestInfo.getTokenAmount();
-                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.totalAmountFromWei = ""//collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** (paybackTokenDecimals))).toString();
                 collectiveUserVestInfo.created = false;
                 collectiveUserVestInfo.tokenAddress = vintageFundingProposalEntity.paybackToken;
 
                 collectiveUserVestInfo.save();
             } else {
                 collectiveUserVestInfo.totalAmount = collectiveUserVestInfo.totalAmount.plus(vestInfo.getTokenAmount());
-                collectiveUserVestInfo.totalAmountFromWei = collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** 18)).toString();
+                collectiveUserVestInfo.totalAmountFromWei = ""// collectiveUserVestInfo.totalAmount.div(BigInt.fromI64(10 ** (paybackTokenDecimals))).toString();
                 collectiveUserVestInfo.save();
             }
         }
