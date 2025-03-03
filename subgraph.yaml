@@ -1112,9 +1112,9 @@ dataSources:
     name: CollectiveVotingAdapterContract
     network: base-sepolia
     source:
-      address: "0xcf009033Ce767a16b279610F1Ebdd366C3f81FDf"
+      address: "0x58afa9C10A781Bea0Fe2f06D6b1e2406A760DCb4"
       abi: CollectiveVotingAdapterContract
-      startBlock: 22427236
+      startBlock: 22602969
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
