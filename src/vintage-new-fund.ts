@@ -123,6 +123,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
         fundRaiseEntity.fundRaiseProposalId = event.params.proposalId;
         const ercname = erc20.try_name();
         fundRaiseEntity.tokenName = ercname.reverted ? "" : ercname.value;
+        fundRaiseEntity.tokenDecimals = BigInt.fromI32(erc20.decimals());
         fundRaiseEntity.fundNumber = " ";
         fundRaiseEntity.raisedAmount = BigInt.fromI32(0);
         fundRaiseEntity.raisedAmountFromWei = "0";

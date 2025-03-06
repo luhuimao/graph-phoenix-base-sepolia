@@ -892,9 +892,9 @@ dataSources:
     name: VestingERC721
     network: base-sepolia
     source:
-      address: "0x525F50A6Bd9CD657B2A34546066584017B7BCd08"
+      address: "0x201Fc4f92a23D1aBFf774B21BA886Ee8bEbC3f4c"
       abi: VestingERC721
-      startBlock: 22430307
+      startBlock: 22650271
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1342,9 +1342,9 @@ dataSources:
     name: ColletiveFundingPoolAdapterContract
     network: base-sepolia
     source:
-      address: "0x714B14d0d95E3aa999b51E4cEE5a55F5a5946cB0"
+      address: "0x42485fD6c0efdeF8fbef4f8E715506e016DEa102"
       abi: ColletiveFundingPoolAdapterContract
-      startBlock: 22432424
+      startBlock: 22684472
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1475,9 +1475,9 @@ dataSources:
     name: CollectiveRedemptionFeeEscrowAdapterContract
     network: base-sepolia
     source:
-      address: "0xC042746cd797f7FA2F3f58F37ccDb2225510537D"
+      address: "0xea42cb4Ccd67Ff8E53E996c98b33D63ADd9C2e5D"
       abi: CollectiveRedemptionFeeEscrowAdapterContract
-      startBlock: 22427300
+      startBlock: 22688744
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1534,9 +1534,9 @@ dataSources:
     name: InvestmentReceiptERC721
     network: base-sepolia
     source:
-      address: "0x57822e35bF293eA633Fc78BdB65a90C08883B492"
+      address: "0x24D723f361730042AFb16Ff1f2AE1C8FcDD10De1"
       abi: InvestmentReceiptERC721
-      startBlock: 22430311
+      startBlock: 22650276
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1589,9 +1589,9 @@ dataSources:
     name: ManualVestingERC721
     network: base-sepolia
     source:
-      address: "0x86228aDF7Bb697A6503e78E16560727C8761A11F"
+      address: "0x496fB0AA9d162062e06306eaD30847Ea055aD31D"
       abi: ManualVestingERC721
-      startBlock: 22430379
+      startBlock: 22650280
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

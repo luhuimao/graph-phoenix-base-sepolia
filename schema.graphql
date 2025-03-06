@@ -1020,6 +1020,7 @@ type VintageFundRaiseEntity @entity{
   tokenSymbol: String!
   fundNumber: String!
   tokenName: String!
+  tokenDecimals: BigInt!
   raisedAmount: BigInt! # uint256
   raisedAmountFromWei: String!
   miniGoalAmount: BigInt! # uint256

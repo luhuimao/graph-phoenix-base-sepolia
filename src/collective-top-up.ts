@@ -11,6 +11,7 @@ import {
     CollectiveDaoStatisticEntity,
     CollectiveFundRaisedEntity
 } from "../generated/schema"
+import { ERC20 } from "../generated/ColletiveTopUpProposalAdapterContract/ERC20";
 import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
 import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
 // import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveFundingPoolAdapterContract";
@@ -79,6 +80,18 @@ export function handleProposalProcessed(event: ProposalProcessed): void {
             collectiveDaoStatisticEntity.save();
 
             let collectiveFundRaisedEntity = CollectiveFundRaisedEntity.load(event.params.daoAddr.toHexString() + entity.token.toHexString());
+            if (!collectiveFundRaisedEntity) {
+                const erc20 = ERC20.bind(Address.fromBytes(entity.token));
+                collectiveFundRaisedEntity = new CollectiveFundRaisedEntity(event.params.daoAddr.toHexString() + entity.token.toHexString());
+                collectiveFundRaisedEntity.daoAddr = event.params.daoAddr;
+                collectiveFundRaisedEntity.tokenAddress = entity.token;
+                collectiveFundRaisedEntity.raisedAmount = BigInt.zero();
+                collectiveFundRaisedEntity.tokenName = erc20.name();
+                collectiveFundRaisedEntity.tokenSymbol = erc20.symbol();
+                collectiveFundRaisedEntity.tokenDecimals = BigInt.fromI32(erc20.decimals());
+                collectiveFundRaisedEntity.investedAmount = BigInt.zero();
+                collectiveFundRaisedEntity.investedAmountFromWei = "";
+            }
             if (collectiveFundRaisedEntity) {
                 collectiveFundRaisedEntity.raisedAmount = collectiveFundRaisedEntity.raisedAmount.plus(entity.amount);
                 collectiveFundRaisedEntity.raisedAmountFromWei = collectiveFundRaisedEntity.raisedAmount.div(BigInt.fromI64

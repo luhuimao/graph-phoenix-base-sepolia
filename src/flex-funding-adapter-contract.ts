@@ -67,7 +67,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
     entity.paybackTokenAmountFromWei = entity.paybackTokenAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.price = proposalInfo.getInvestmentInfo().price;
     entity.minReturnAmount = proposalInfo.getInvestmentInfo().minReturnAmount;
-    entity.maxReturnAmount = proposalInfo.getInvestmentInfo().maxReturnAmount.plus(BigInt.fromI32(10000));
+    entity.maxReturnAmount = proposalInfo.getInvestmentInfo().maxReturnAmount;
     entity.minReturnAmountFromWei = entity.minReturnAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.maxReturnAmountFromWei = entity.maxReturnAmount.div(BigInt.fromI64(10 ** 18)).toString();
     entity.approverAddr = proposalInfo.getInvestmentInfo().approverAddr;

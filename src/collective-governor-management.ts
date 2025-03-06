@@ -10,13 +10,15 @@ import { CollectiveInvestmentPoolExtension } from "../generated/ColletiveGoverno
 import { CollectiveVotingAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/CollectiveVotingAdapterContract"
 import { DaoRegistry } from "../generated/ColletiveGovernorManagementAdapterContract/DaoRegistry";
 import { ColletiveFundingPoolAdapterContract } from "../generated/ColletiveGovernorManagementAdapterContract/ColletiveFundingPoolAdapterContract";
+import { ERC20 } from "../generated/ColletiveGovernorManagementAdapterContract/ERC20";
 import {
     CollectiveGovernorManagementProposal,
     CollectiveProposalVoteInfo,
     CollectiveDaoStatisticEntity,
     CollectiveGovernorOutVotingToBeRemovedEntity,
     CollectiveGovernorInVotingToBeAllocatedEntity,
-    CollectiveDaoVoteConfigEntity
+    CollectiveDaoVoteConfigEntity,
+    CollectiveFundRaisedEntity
 } from "../generated/schema"
 // import { ERC20 } from "../generated/ManualVesting/ERC20";
 import { newCollectiveProposalVoteInfoEntity } from "./collective-clear-fund-proposal";
@@ -105,6 +107,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
 export function handlerProposalProcessed(event: ProposalProcessed): void {
     let entity = CollectiveGovernorManagementProposal.load(event.params.proposalId.toHexString());
+    const dao = DaoRegistry.bind(event.params.daoAddr);
+    const tokenAddr = dao.getAddressConfiguration(Bytes.fromHexString("0x7fa36390a0e9b8b8004035572fd8345b1128cea12d1763a1baf8fbd4fb7b2027"))
+
     if (entity) {
         entity.state = BigInt.fromI32(event.params.state);
         entity.stateInString = event.params.state == 3 ? "Succeed" : "Failed";
@@ -132,13 +137,32 @@ export function handlerProposalProcessed(event: ProposalProcessed): void {
             collectiveDaoStatisticEntity.fundRaisedFromWei = collectiveDaoStatisticEntity.fundRaised.div(BigInt.fromI64(10 ** 18)).toString();
 
             collectiveDaoStatisticEntity.save();
+
+            let collectiveFundRaisedEntity = CollectiveFundRaisedEntity.load(event.params.daoAddr.toHexString() + tokenAddr.toHexString());
+            if (!collectiveFundRaisedEntity) {
+                const erc20 = ERC20.bind(tokenAddr);
+                collectiveFundRaisedEntity = new CollectiveFundRaisedEntity(event.params.daoAddr.toHexString() + tokenAddr.toHexString());
+                collectiveFundRaisedEntity.daoAddr = event.params.daoAddr;
+                collectiveFundRaisedEntity.tokenAddress = tokenAddr;
+                collectiveFundRaisedEntity.raisedAmount = BigInt.zero();
+                collectiveFundRaisedEntity.tokenName = erc20.name();
+                collectiveFundRaisedEntity.tokenSymbol = erc20.symbol();
+                collectiveFundRaisedEntity.tokenDecimals = BigInt.fromI32(erc20.decimals());
+                collectiveFundRaisedEntity.investedAmount = BigInt.zero();
+                collectiveFundRaisedEntity.investedAmountFromWei = "";
+            }
+            if (collectiveFundRaisedEntity) {
+                collectiveFundRaisedEntity.raisedAmount = collectiveFundRaisedEntity.raisedAmount.plus(entity.depositAmount);
+                collectiveFundRaisedEntity.raisedAmountFromWei = collectiveFundRaisedEntity.raisedAmount.div(BigInt.fromI64
+                    (10 ** (collectiveFundRaisedEntity.tokenDecimals.toI32()))).toString();
+                collectiveFundRaisedEntity.save();
+            }
         }
 
         if (entity.type == BigInt.fromI32(1) && event.params.state == 3) {
-            const dao = DaoRegistry.bind(event.params.daoAddr);
             const fundingPoolExtAddress = dao.getExtensionAddress(Bytes.fromHexString("0x3909e87234f428ccb8748126e2c93f66a62f92a70d315fa5803dec6362be07ab"));
             const collectiveFundingPoolExt = CollectiveInvestmentPoolExtension.bind(fundingPoolExtAddress);
-            const tokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
+            // const tokenAddr = collectiveFundingPoolExt.getFundRaisingTokenAddress();
             const rel = collectiveFundingPoolExt.try_getPriorAmount(
                 Address.fromBytes(entity.governorAddress),
                 tokenAddr,
