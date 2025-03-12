@@ -439,6 +439,7 @@ type FlexUserVestInfo @entity{
   daoAddr: Bytes! # address
   investmentProposalId: Bytes! # bytes32
   recipient: Bytes! # address
+  originalRecipient: Bytes!
   vestingStartTime: BigInt! # uint256
   vestingCliffEndTime: BigInt! # uint256
   vestingInterval: BigInt! # uint256
@@ -780,6 +781,7 @@ type VintageUserVestInfo @entity{
   daoAddr: Bytes! # address
   investmentProposalId: Bytes! # bytes32
   recipient: Bytes! # address
+  originalRecipient: Bytes!
   vestingStartTime: BigInt! # uint256
   vestingCliffEndTime: BigInt! # uint256
   vestingInterval: BigInt! # uint256
@@ -1422,6 +1424,7 @@ type CollectiveUserVestInfo @entity{
   daoAddr: Bytes! # address
   investmentProposalId: Bytes! # bytes32
   recipient: Bytes! # address
+  originalRecipient: Bytes!
   vestingStartTime: BigInt! # uint256
   vestingCliffEndTime: BigInt! # uint256
   vestingInterval: BigInt! # uint256
@@ -1843,6 +1846,8 @@ type BatchManualVestingEntity @entity{
   createDateTime: String!
   createdTime: BigInt!
   receivers: [String!]
+  investors: [String!]
+  holders: [String!]
   amounts: [BigInt!]
   vestIds: [BigInt!]!
   startTime: BigInt! # uint256
