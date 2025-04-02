@@ -51,8 +51,6 @@ dataSources:
       eventHandlers:
         - event: ProposalCreated(address,bytes32)
           handler: handleProposalCreated
-          calls:
-            DaoRegistry.getCurrentFundEstablishmentProposalId: DaoRegistry[event.params.daoAddr].getCurrentFundEstablishmentProposalId()
         - event: proposalExecuted(address,bytes32,uint8,uint128,uint128,uint128,uint256)
           handler: handleProposalExecuted
       file: ./src/vintage-new-fund.ts
@@ -81,9 +79,9 @@ dataSources:
     name: VintageRaiserManagementContract
     network: base
     source:
-      address: "0x7F00C0f61A4d306f829e044B5276f6489fE0Cebc"
+      address: "0x7Ae71A9018A5d99f57139a7cc40c06ACb3279981"
       abi: VintageRaiserManagementContract
-      startBlock: 27526830
+      startBlock: 28349129
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -108,8 +106,6 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256,uint8)
           handler: handleProposalCreated
-          calls:
-            VintageRaiserManagementContract.try_proposals: VintageRaiserManagementContract[event.address].proposals(event.params.daoAddr, event.params.proposalId)
         - event:  ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
           handler: handleProposalProcessed
       file: ./src/vintage-raiser-management.ts
@@ -149,8 +145,6 @@ dataSources:
           handler: handleProposalExecuted
         - event: StartVote(address,bytes32)
           handler: handleStartVote
-          calls:
-            VintageFundingAdapterContract.proposals: VintageFundingAdapterContract[event.address].proposals(event.params.daoAddr,event.params.proposalID)
       file: ./src/vintage-funding-contract.ts
   - kind: ethereum
     name: VintageFundingPoolAdapterContract
@@ -188,8 +182,6 @@ dataSources:
           handler: handleClearFund
         - event: ProcessFundRaise(address,uint256,uint256,uint256)
           handler: handleProcessFundRaise   
-          calls:
-            VintageFundingPoolAdapterContract.daoFundRaisingStates: VintageFundingPoolAdapterContract[event.address].daoFundRaisingStates(event.params.dao)
       file: ./src/vintage-funding-pool.ts
   - kind: ethereum
     name: VintageVesting
@@ -211,8 +203,6 @@ dataSources:
       eventHandlers:
         - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128,bytes32)
           handler: handleCreateVesting
-          calls:
-            VintageVesting.vests: VintageVesting[event.address].vests(event.params.vestId)
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
       file: ./src/vintage-vesting.ts
@@ -332,8 +322,6 @@ dataSources:
           handler: handleProposalCreated
         - event:   ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
           handler: handleProposalExecuted
-          calls:
-            VintageDaoSetAdapterContract.governorMembershipProposals: VintageDaoSetAdapterContract[event.address].governorMembershipProposals(event.params.daoAddr, event.params.proposalId)
       file: ./src/vintage-daoset.ts
   - kind: ethereum
     name: VintageGovernorVotingAssetAllocationProposalAdapterContract
@@ -386,12 +374,8 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256)
           handler: handleProposalCreated
-          calls:
-            VintageSetRiceReceiverProposalAdapterContract.try_proposals: VintageSetRiceReceiverProposalAdapterContract[event.address].proposals(event.params.daoAddr, event.params.proposalId)
         - event: ProposalProcessed(address,bytes32,uint8,uint256,uint128,uint128,uint128)
           handler: handleProposalProcessed
-          calls:
-            VintageSetRiceReceiverProposalAdapterContract.try_proposals: VintageSetRiceReceiverProposalAdapterContract[event.address].proposals(event.params.daoAddr, event.params.proposalId)
       file: ./src/vintage-set-rice-receiver.ts
   - kind: ethereum
     name: SummonDao
@@ -458,9 +442,9 @@ dataSources:
     name: FlexFundingAdapterContract
     network: base
     source:
-      address: "0x8694Eb708e45029b4807bEfc35771cAa1b516cD4"
+      address: "0x4F708db0272B4883c2B049317bA88BCDcFea750f"
       abi: FlexFundingAdapterContract
-      startBlock: 27526830
+      startBlock: 28394192
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -488,15 +472,8 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address)
           handler: handleProposalCreated
-          calls:
-            FlexFundingAdapterContract.Proposals: FlexFundingAdapterContract[event.address].Proposals(event.params.daoAddress,event.params.proposalId)
-            FlexFundingAdapterContract.try_getPriorityDepositedWhitelist: FlexFundingAdapterContract[event.address].getPriorityDepositedWhitelist(event.params.daoAddress, event.params.proposalId)
-            FlexFundingAdapterContract.protocolFee: FlexFundingAdapterContract[event.address].protocolFee()
         - event: ProposalExecuted(address,bytes32,uint8,address[])
           handler: handleproposalExecuted
-          calls:
-            FlexFundingAdapterContract.Proposals: FlexFundingAdapterContract[event.address].Proposals(event.params.daoAddress,event.params.proposalId)
-            FlexFundingAdapterContract.protocolFee: FlexFundingAdapterContract[event.address].protocolFee()
       file: ./src/flex-funding-adapter-contract.ts
   - kind: ethereum
     name: FlexVesting
@@ -520,8 +497,6 @@ dataSources:
       eventHandlers:
         - event:  CreateVesting(indexed uint256,address,indexed address,uint32,uint32,uint32,uint32,uint128,uint128,bytes32)
           handler: handleCreateVesting
-          calls:
-            FlexVesting.vests: FlexVesting[event.address].vests(event.params.vestId)
         - event: Withdraw(indexed uint256,indexed address,indexed uint256,bool)
           handler: handleWithdraw
       file: ./src/flex-vesting-contract.ts
@@ -554,8 +529,6 @@ dataSources:
       eventHandlers:
         - event:  ProposalCreated(address,bytes32,address,uint256,uint256,uint8)
           handler: handleProposalCreated
-          calls:
-            StewardManagementContract.try_proposals: StewardManagementContract[event.address].proposals(event.params.daoAddr, event.params.proposalId)
         - event:  ProposalProcessed(address,bytes32,uint8,uint128,uint256,uint256,uint256)
           handler: handleProposalProcessed
       file: ./src/flex-steward-management.ts
@@ -579,8 +552,6 @@ dataSources:
       eventHandlers:
         - event: SubmitVote(address,bytes32,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256,uint256)
           handler: handleSubmitVote
-          calls:
-            FlexPollingVotingContract.getVotingWeight: FlexPollingVotingContract[event.address].getVotingWeight(event.params.daoAddr, event.params.voter)
       file: ./src/flex-poll-voting.ts
   - kind: ethereum
     name: FlexVotingContract
@@ -602,8 +573,6 @@ dataSources:
       eventHandlers:
         - event: SubmitVote(address,bytes32,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256,uint256)
           handler: handleSubmitVote
-          calls:
-            FlexVotingContract.getVotingWeight: FlexVotingContract[event.address].getVotingWeight(event.params.daoAddr,event.params.voter)
       file: ./src/flex-voting.ts
   - kind: ethereum
     name: FlexInvestmentPoolAdapterContract
@@ -906,10 +875,6 @@ dataSources:
       eventHandlers:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleERC721Transfer
-          calls:
-            VestingERC721.vintageVestContrAddress: VestingERC721[event.address].vintageVestContrAddress()
-            VestingERC721.flexVestContrAddress: VestingERC721[event.address].flexVestContrAddress()
-            VestingERC721.collectiveVestContrAddress: VestingERC721[event.address].collectiveVestContrAddress()
       file: ./src/vestingERC721.ts
   - kind: ethereum
     name: VintageVestingERC721
@@ -933,8 +898,6 @@ dataSources:
       eventHandlers:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleERC721Transfer
-          calls:
-            VintageVestingERC721.vestAddress: VintageVestingERC721[event.address].vestAddress()
       file: ./src/vintage-vesting.ts
   - kind: ethereum
     name: FlexVestingERC721
@@ -1163,9 +1126,9 @@ dataSources:
     name: ColletiveFundRaiseProposalAdapterContract
     network: base
     source:
-      address: "0x44f69fD392D8092A9377a59BFb5B5d7ae8153b0f"
+      address: "0xe32af6Cfff45154BF8CaF7Eb59004da17Deb5F1E"
       abi: ColletiveFundRaiseProposalAdapterContract
-      startBlock: 27526830
+      startBlock: 28394143
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
