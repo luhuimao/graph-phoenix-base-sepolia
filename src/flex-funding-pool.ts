@@ -44,6 +44,7 @@ export function handleDeposit(event: Deposit): void {
     if (!InvestorBalanceEntity) {
         InvestorBalanceEntity = new InvestorBalance(event.params.daoAddress.toHexString() + event.params.proposalId.toHexString() + event.params.account.toHexString());
         InvestorBalanceEntity.balance = BigInt.fromI64(0);
+        InvestorBalanceEntity.advanceBalance = BigInt.fromI64(0);
         InvestorBalanceEntity.daoAddr = event.params.daoAddress;
         InvestorBalanceEntity.proposalId = event.params.proposalId;
         InvestorBalanceEntity.account = event.params.account;
@@ -64,6 +65,7 @@ export function handleDeposit(event: Deposit): void {
     entity.save()
 
     InvestorBalanceEntity.balance = InvestorBalanceEntity.balance.plus(event.params.amount);
+    InvestorBalanceEntity.advanceBalance = InvestorBalanceEntity.advanceBalance.plus(event.params.amount);
     InvestorBalanceEntity.balanceFromWei = InvestorBalanceEntity.balance.div(BigInt.fromI64(10 ** 18)).toString();
     InvestorBalanceEntity.save();
 
@@ -144,6 +146,7 @@ export function handleWithDraw(event: WithDraw): void {
             event.params.daoAddress.toHexString() + event.params.proposalId.toHexString() + event.params.account.toHexString()
         );
         InvestorBalanceEntity.balance = BigInt.fromI64(0);
+        InvestorBalanceEntity.advanceBalance = BigInt.fromI64(0);
         InvestorBalanceEntity.daoAddr = event.params.daoAddress;
         InvestorBalanceEntity.proposalId = event.params.proposalId;
         InvestorBalanceEntity.account = event.params.account;
@@ -163,6 +166,9 @@ export function handleWithDraw(event: WithDraw): void {
     // Entities can be written to the store with `.save()`
     entity.save()
 
+    if (event.block.timestamp < proposalInfo.getFundRaiseInfo().fundRaiseEndTime) {
+        InvestorBalanceEntity.advanceBalance = InvestorBalanceEntity.advanceBalance.minus(event.params.amount);
+    }
 
     InvestorBalanceEntity.balance = InvestorBalanceEntity.balance.minus(event.params.amount);
     InvestorBalanceEntity.balanceFromWei = InvestorBalanceEntity.balance.div(BigInt.fromI64(10 ** 18)).toString();

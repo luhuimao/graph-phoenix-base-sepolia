@@ -459,6 +459,9 @@ export function handleproposalExecuted(event: ProposalExecuted): void {
             entity.investors = tem;
             finalInvestors.save();
         }
+        else {
+            entity.ultimateInvestedFund = BigInt.zero()
+        }
 
         entity.save();
     }

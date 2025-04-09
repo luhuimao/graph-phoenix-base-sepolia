@@ -78,7 +78,7 @@ export function handleCreateVesting2(event: CreateVesting2): void {
     entity.description = vestInfo.getVestInfo().description;
     entity.txHash = event.transaction.hash;
     entity.NFTEnalbe = vestInfo.getNftInfo().nftToken == Bytes.empty() ? false : true;
-    entity.creator = event.transaction.from;
+    entity.creator = event.params.recipient;
     entity.vestId = event.params.vestId;
     entity.recipient = event.params.recipient;
     entity.originalRecipient = event.params.recipient;
@@ -99,7 +99,7 @@ export function handleCreateVesting2(event: CreateVesting2): void {
     entity.claimedAmount = BigInt.fromI32(0);
     entity.claimedAmountFromWei = "0";
     entity.blockNumber = event.block.number;
-    entity.batchVestId = event.params.batchId.toHexString() + "-" + event.transaction.from.toHexString();
+    entity.batchVestId = event.params.batchId.toHexString() + "-" + event.params.recipient.toHexString();
     entity.batchId = event.params.batchId;
     entity.save();
 
@@ -119,7 +119,7 @@ export function handleCreateVesting2(event: CreateVesting2): void {
         batchVestInfo.save();
     }
 
-    let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.transaction.from.toHexString());
+    let mvi = ManualVestInfoEntity.load(event.params.batchId.toHexString() + "-" + event.params.recipient.toHexString());
     if (mvi) {
         mvi.created = true;
 
@@ -134,18 +134,19 @@ export function handleWithdraw(event: Withdraw): void {
         entity.claimedAmount = entity.claimedAmount.plus(event.params.amount);
         entity.claimedAmountFromWei = entity.claimedAmount.div(BigInt.fromI64(10 ** 18)).toString();
         entity.save();
-    }
 
-    let claimedEntity = ManualVestingClaimedActivityEntity.load(event.transaction.hash.toHexString());
-    if (!claimedEntity) {
-        claimedEntity = new ManualVestingClaimedActivityEntity(event.transaction.hash.toHexString());
-        claimedEntity.account = event.transaction.from;
-        claimedEntity.claimedAmount = event.params.amount;
-        claimedEntity.vestId = event.params.vestId;
-        claimedEntity.txHash = event.transaction.hash;
-        claimedEntity.timeStamp = event.block.timestamp;
+
+        let claimedEntity = ManualVestingClaimedActivityEntity.load(event.transaction.hash.toHexString());
+        if (!claimedEntity) {
+            claimedEntity = new ManualVestingClaimedActivityEntity(event.transaction.hash.toHexString());
+            claimedEntity.account = entity.recipient;
+            claimedEntity.claimedAmount = event.params.amount;
+            claimedEntity.vestId = event.params.vestId;
+            claimedEntity.txHash = event.transaction.hash;
+            claimedEntity.timeStamp = event.block.timestamp;
+        }
+        claimedEntity.save();
     }
-    claimedEntity.save();
 }
 
 export function handleNFTTransfer(event: Transfer): void {

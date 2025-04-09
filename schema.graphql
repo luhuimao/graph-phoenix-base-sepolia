@@ -412,6 +412,7 @@ type InvestorBalance @entity{
   proposalId: Bytes! # address
   balance: BigInt! # uint256
   balanceFromWei: String!
+  advanceBalance: BigInt! # uint256
 }
 
 type InvestorAtivity @entity(immutable: true){
