@@ -1917,3 +1917,131 @@ type VintageFundRaisedEntity @entity{
   investedAmount: BigInt!
   investedAmountFromWei: String!
 }
+
+type TreasuryDAOEntity @entity{
+  id: ID!
+  _address: Bytes! # address
+  _creator: Bytes! # address
+  _name: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  _votingContractAddress: Bytes! # address
+  _proposalContractAddress: Bytes! # address
+  _configuratorContractAddress: Bytes! # address
+  _daoLenContractAddress: Bytes! # address
+  treasuryDAOGovernorEligibilityInfo: TreasuryDAOGovernorEligibilityInfo
+  treasuryDAOVotingInfo: TreasuryDAOVotingInfo
+}
+
+type TreasuryDAOGovernorEligibilityInfo @entity{
+  id: ID!
+  enable: Boolean!
+  name: String
+  verifyType:BigInt!
+  minAmount: BigInt!
+  tokenAddress:  Bytes! # address
+  treasuryDAOEntity: TreasuryDAOEntity
+}
+
+type TreasuryDAOVotingInfo @entity{
+  id: ID!
+  treasuryDAOEntity: TreasuryDAOEntity
+  supportType: BigInt!
+  quorumType: BigInt!
+  support: BigInt!
+  quorum: BigInt!
+  votingAssetType: BigInt!
+  tokenAddress:Bytes! # address
+  tokenID : BigInt!
+  votingWeightedType: BigInt!
+  votingPeriod: BigInt!
+}
+
+type TreasuryDaoExpenseProposalEntity @entity {
+  id: ID!
+  proposalId: Bytes! # address
+  daoAddress: Bytes! # address
+  createTime: BigInt!
+  stopVoteTime: BigInt!
+  tokenType: BigInt!
+  tokenAddress: Bytes! # address
+  amount: BigInt!
+  receiver: Bytes! # address
+  state: BigInt!
+  proposer: Bytes! # address
+  executeHash: Bytes!
+}
+
+type TreasuryDaoGovernorEligibilityProposalEntity @entity {
+  id: ID!
+  proposalId: Bytes! # address
+  daoAddress: Bytes! # address
+  createTime: BigInt!
+  enable: Boolean!
+  name: String
+  verifyType:BigInt!
+  minAmount: BigInt!
+  tokenAddress:  Bytes! # address
+  tokenId: BigInt!
+  stopVoteTime: BigInt!
+  state: BigInt!
+  proposer: Bytes! # address
+  executeHash: Bytes!
+}
+
+type TreasuryDaoGovernorVotingProposalEntity @entity {
+  id: ID!
+  proposalId: Bytes! # address
+  daoAddress: Bytes! # address
+  createTime: BigInt!
+  supportType: BigInt!
+  quorumType: BigInt!
+  support: BigInt!
+  quorum: BigInt!
+  votingAssetType: BigInt!
+  tokenAddress:Bytes! # address
+  tokenID : BigInt!
+  votingWeightedType: BigInt!
+  votingPeriod: BigInt!
+  gracePeriod : BigInt!
+  stopVoteTime : BigInt!
+  state : BigInt!
+  proposer: Bytes! # address
+  executeHash: Bytes!
+}
+
+type TreasuryDaoVotingEntity @entity{
+  id: ID!
+  daoAddr: Bytes! # address
+  voter: Bytes! # address
+  proposalId: Bytes! # address
+  voteValue: BigInt!
+  currentQuorum: BigInt!
+  currentSupport: BigInt!
+  nbNo: BigInt!
+  nbYes: BigInt!
+  voteStartTime: BigInt!
+  voteStopTime: BigInt!
+  votingTime: BigInt!
+  txHash:Bytes! # address
+}
+
+type TreasuryDAOProposalVoteInfo @entity{
+  id:ID!
+  daoAddr: Bytes! # address
+  proposalId: Bytes! # address
+  startVoteTime: BigInt! # uint256
+  stopVoteTime: BigInt! # uint256
+  startVoteTimeString: String!
+  stopVoteTimeString: String!
+  nbYes: BigInt! # uint256
+  nbNo: BigInt! # uint256
+  currentSupport: BigInt! # uint256
+  currentQuorum: BigInt! # uint256
+  totalWeights: BigInt! # uint256
+  support: BigInt
+  quorum: BigInt
+  supportType: BigInt
+  quorumType: BigInt
+}

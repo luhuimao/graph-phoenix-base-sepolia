@@ -1509,9 +1509,9 @@ dataSources:
     name: ManualVesting
     network: base
     source:
-      address: "0x49876a20bB86714e98A7E4d0a33d85a4011b3455"
+      address: "0x154A22D942633773D36C3840CF042A8ED20e07C1"
       abi: ManualVesting
-      startBlock: 27526830
+      startBlock: 30721611
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1542,9 +1542,9 @@ dataSources:
     name: ManualVestingERC721
     network: base
     source:
-      address: "0xd0ACC38927DaF52c7545b1095720D947b1eB6f3B"
+      address: "0x2761D71005288741b7B5900b2e12d7B6f4e78Fa0"
       abi: ManualVestingERC721
-      startBlock: 27526830
+      startBlock: 30721611
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -1561,3 +1561,66 @@ dataSources:
         - event:  Transfer(indexed address,indexed address,indexed uint256)
           handler: handleNFTTransfer
       file: ./src/manual-vesting.ts
+
+  - kind: ethereum
+    name: Summon
+    network: base
+    source:
+      address: "0xAdc4B7Dd3946035D0E9efb1ddf9B7B7752320513"
+      abi: Summon
+      startBlock: 31417367
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - DAOCreated
+      abis:
+        - name: Summon
+          file: ./abis/Summon.json
+        - name: Dao
+          file: ./abis/Dao.json
+        - name: DaoLens
+          file: ./abis/DaoLens.json
+      eventHandlers:
+        - event: DAOCreated(address,address,string)
+          handler: handleDAOCreated
+      file: ./src/summon.ts
+  - kind: ethereum
+    name: EventEmitter
+    network: base
+    source:
+      address: "0x153c104907302D1521A318E6Bf3f242Ee7106285"
+      abi: EventEmitter
+      startBlock: 32106954
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - DAOCreated
+      abis:
+        - name: Proposals
+          file: ./abis/proposals.json
+        - name: Dao
+          file: ./abis/Dao.json
+        - name: DaoLens
+          file: ./abis/DaoLens.json
+        - name: EventEmitter
+          file: ./abis/EventEmitter.json
+      eventHandlers:
+        - event: ExpenseProposalCreated(address,bytes32)
+          handler: handleExpenseProposalCreated
+        - event: ExpenseProposalProcessed(bytes32,uint8,uint256,uint256)
+          handler: handleExpenseProposalProcessed
+        - event: GovernanceVotingProposalCreated(address,bytes32)
+          handler: handleGovernanceVotingProposalCreated
+        - event: GovernanceVotingProposalProcessed(bytes32,uint8,uint256,uint256)
+          handler: handleGovernanceVotingProposalProcessed
+        - event: GovernanceEligibilityProposalCreated(address,bytes32)
+          handler: handleGovernanceEligibilityProposalCreated
+        - event: GovernanceEligibilityProposalProcessed(bytes32,uint8,uint256,uint256)
+          handler: handleGovernanceEligibilityProposalProcessed
+        - event: SubmitVote(address,bytes32,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleSubmitVote
+      file: ./src/proposals.ts
